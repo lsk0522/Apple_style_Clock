@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import com.lsk0522.nightstand.core.design.component.NightstandTabBar
 import com.lsk0522.nightstand.core.design.component.TabItem
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
@@ -36,6 +39,9 @@ fun MainScreen(modifier: Modifier = Modifier) {
     val palette = NightstandTheme.palette
     var selectedIndex by rememberSaveable { mutableIntStateOf(MAIN_TAB_INDEX) }
 
+    // The tab content is what the floating bar blurs.
+    val tabHaze = remember { HazeState() }
+
     val tabs = listOf(
         TabItem(stringResource(R.string.tab_widgets), DesignR.drawable.ic_tab_widgets),
         TabItem(stringResource(R.string.tab_charging), DesignR.drawable.ic_tab_charging),
@@ -51,12 +57,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(palette.groupedBackground),
     ) {
-        when (selectedIndex) {
-            0 -> WidgetsTab()
-            1 -> ChargingTab()
-            2 -> SettingsTab()
-            3 -> DeveloperTab()
-            else -> DonateTab()
+        Box(modifier = Modifier.hazeSource(tabHaze)) {
+            when (selectedIndex) {
+                0 -> WidgetsTab()
+                1 -> ChargingTab()
+                2 -> SettingsTab()
+                3 -> DeveloperTab()
+                else -> DonateTab()
+            }
         }
 
         NightstandTabBar(
@@ -64,6 +72,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
             selectedIndex = selectedIndex,
             onSelect = { selectedIndex = it },
             modifier = Modifier.align(Alignment.BottomCenter),
+            hazeState = tabHaze,
         )
     }
 }

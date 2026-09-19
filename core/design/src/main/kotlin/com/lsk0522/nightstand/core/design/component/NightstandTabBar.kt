@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.lsk0522.nightstand.core.design.theme.NightstandMotion
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
+import dev.chrisbanes.haze.HazeState
 
 /** One entry in the bottom bar. */
 @Immutable
@@ -55,13 +56,14 @@ fun NightstandTabBar(
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(horizontal = BAR_SIDE_INSET, vertical = BAR_BOTTOM_INSET)
-            .liquidGlass(RoundedCornerShape(percent = 50))
+            .liquidGlass(RoundedCornerShape(percent = 50), hazeState)
             .height(BAR_HEIGHT),
         verticalAlignment = Alignment.CenterVertically,
     ) {

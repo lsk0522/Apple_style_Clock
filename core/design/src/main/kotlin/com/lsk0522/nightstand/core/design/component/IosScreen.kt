@@ -34,6 +34,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
 
@@ -55,6 +57,11 @@ fun IosScreen(
 ) {
     val palette = NightstandTheme.palette
     val density = LocalDensity.current
+
+    // The list is what the navigation bar blurs. It has its own state rather
+    // than the tab bar's, because the bar is drawn inside this screen -- if it
+    // shared a source that contained itself the effect would feed on itself.
+    val navHaze = remember { HazeState() }
     val collapseAfter = remember(density) { with(density) { 36.dp.toPx() } }
 
     val collapsed by remember {
@@ -75,6 +82,7 @@ fun IosScreen(
             .background(palette.groupedBackground),
     ) {
         LazyColumn(
+            modifier = Modifier.hazeSource(navHaze),
             state = listState,
             contentPadding = PaddingValues(
                 top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + NAV_BAR_HEIGHT,
@@ -105,7 +113,7 @@ fun IosScreen(
                 .fillMaxWidth()
                 .align(Alignment.TopStart)
                 .alpha(barAlpha)
-                .liquidGlass(RectangleShape),
+                .liquidGlass(RectangleShape, navHaze),
         ) {
             Box(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
             Box(

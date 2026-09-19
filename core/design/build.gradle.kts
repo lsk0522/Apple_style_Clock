@@ -9,6 +9,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    // api: screens need HazeState to mark their own scrolling content as the
+    // blur source, so the type has to leak out of this module.
+    api(libs.haze)
 
     testImplementation(libs.junit)
 }
