@@ -9,10 +9,10 @@
 
 | | |
 |---|---|
-| **진행 중 Phase** | **Phase 0 (기초 공사) — 거의 완료, CI 검증 중** |
+| **진행 중 Phase** | **Phase 0 (기초 공사) 완료 ✅** — 다음은 Phase 1 |
 | **마지막 갱신** | 2026-09-20 |
-| **마지막 커밋** | `3565c79` chore(phase0): Gradle 멀티 모듈 프로젝트 기초 공사 |
-| **빌드 상태** | GitHub Actions 첫 빌드 검증 중 |
+| **마지막 커밋** | `v0.1.0-phase0` 태그 (Phase 0 마감) |
+| **빌드 상태** | 🟢 **CI 그린** — 빌드·단위테스트·린트 통과, 디버그 APK 14MB 생성 |
 | **다음 마일스톤** | **v0.1 MVP = Phase 0~5** (약 3주) |
 
 ### 확정된 설정
@@ -28,16 +28,17 @@
 
 | | |
 |---|---|
-| Gradle | 8.14.3 |
-| AGP | 8.13.2 |
-| Kotlin | 2.4.20 |
+| Gradle | 9.7.1 |
+| AGP | 9.4.1 |
+| Kotlin | 2.4.20 (AGP 내장 — 별도 플러그인 적용 금지) |
 | KSP | 2.3.12 |
 | Hilt | 2.60.1 |
 | Compose BOM | 2026.09.00 |
+| SDK | compileSdk **37** / targetSdk 36 / minSdk 29 |
 | JDK | 17 (Temurin) |
 
-> ⚠️ AGP는 9.4.1까지 나와 있으나, 메이저 변경 리스크를 피해 8.x 최신을 채택.
-> AGP 9 마이그레이션은 Phase 10에서 검토.
+> Phase 0에서 실제 빌드를 돌려 확정한 조합. 제약과 함정은 `CLAUDE.md` 의
+> "AGP 9 에서 반드시 지킬 것" 참조.
 
 ---
 
@@ -73,32 +74,45 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 - [x] `Design.md` 작성 (Apple HIG + getdesign.md 기반 토큰 명세)
 - [x] 주요 결정 확정 (앱 이름 · minSdk · MVP 범위)
 - [x] GitHub 원격 연결 및 푸시 (`lsk0522/Apple_style_Clock`)
-- [x] **Phase 0** — Gradle Wrapper 8.14.3 (공식 배포본)
-- [x] **Phase 0** — Version Catalog + build-logic 컨벤션 플러그인
+- [x] **Phase 0** — Gradle Wrapper 9.7.1 (공식 배포본)
+- [x] **Phase 0** — Version Catalog + build-logic 컨벤션 플러그인 5종
 - [x] **Phase 0** — 10개 모듈 골격 생성
 - [x] **Phase 0** — app 매니페스트 · 권한 선언 · 어댑티브 런처 아이콘
 - [x] **Phase 0** — core:design 토큰 구현 (Squircle 연속 곡률 포함)
-- [x] **Phase 0** — GitHub Actions CI (디버그 APK 아티팩트)
 - [x] **Phase 0** — Pretendard 가변 폰트 번들 (OFL, 6.7MB)
+- [x] **Phase 0** — GitHub Actions CI (빌드·테스트·린트 + APK 아티팩트)
+- [x] **Phase 0** — **AGP 9 마이그레이션 및 CI 그린 달성** 🟢
 
 ---
 
 ## 🚧 진행 중
 
-- [ ] **Phase 0** — CI 첫 빌드 그린 만들기
-      (로컬에 Android SDK가 없어 CI가 유일한 검증 수단)
+없음 — Phase 0 완료. Phase 1 착수 대기.
 
 ---
 
 ## 📋 다음 할 일 (우선순위 순)
 
-1. **CI 빌드 그린 확인** — 실패 시 로그 보고 수정
-2. **[사용자]** Android Studio 설치 (선택 — CI만으로도 진행 가능)
-3. **[사용자]** CI 아티팩트에서 APK 받아 S25 Ultra 설치 확인
-4. **Phase 1** — iOS풍 공통 컴포넌트 (리스트 셀, 토글, 세그먼트, 시트)
-5. **Phase 1** — 하단 5섹션 탭바 (이미지 아이콘 · 글래스 블러 배경)
-6. **Phase 1** — 5개 탭 화면 + 네비게이션 그래프
+1. **[사용자]** CI 아티팩트에서 APK 받아 S25 Ultra 설치 확인
+   → Actions 탭 → 최신 성공 run → `nightstand-debug-apk`
+2. **[사용자]** (선택) Android Studio 설치 — CI만으로도 계속 진행 가능
+3. **Phase 1** — 탭바 아이콘 이미지 에셋 5종 제작
+4. **Phase 1** — iOS풍 공통 컴포넌트 (리스트 셀, 토글, 세그먼트, 모달 시트)
+5. **Phase 1** — 하단 5섹션 탭바 (글래스 블러 배경 · 선택 애니메이션)
+6. **Phase 1** — 5개 탭 화면 골격 + 네비게이션 그래프
 7. **Phase 2** — 충전 감지 엔진 (`core:common` / `feature:charging`)
+
+---
+
+## 🧱 Phase 0 에서 배운 것 (다음 세션이 같은 함정에 빠지지 않도록)
+
+| 겪은 문제 | 해결 |
+|---|---|
+| build-logic 이 KSP jar 의 Kotlin 2.3 메타데이터를 못 읽음 | build-logic 클래스패스엔 **AGP jar 만** 둔다 |
+| Hilt 2.60.1 이 AGP 9.0+ 요구 | AGP 8 유지 대신 **AGP 9 로 상향** (Hilt 2.58 이하로 내리는 선택지도 있음) |
+| AGP 9 가 `kotlin.android` 플러그인 적용을 거부 | AGP 9 는 **Kotlin 내장** — 플러그인 적용하지 않는다 |
+| `projects.core.design` 해석 실패 | `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")` 는 Gradle 9 에서도 필요 |
+| AAR 메타데이터 검사 실패 (18건) | 최신 AndroidX 가 **compileSdk 37** 요구 |
 
 ---
 

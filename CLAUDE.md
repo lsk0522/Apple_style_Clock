@@ -1,3 +1,24 @@
+| | |
+|---|---|
+| Gradle | 9.7.1 |
+| AGP | 9.4.1 |
+| Kotlin | 2.4.20 (AGP 내장) · KSP 2.3.12 |
+| Hilt | 2.60.1 |
+| Compose BOM | 2026.09.00 |
+| SDK | compileSdk 37 / targetSdk 36 / minSdk 29 |
+| JDK | 17 (Temurin) |
+
+### AGP 9 에서 반드시 지킬 것 (Phase 0 에서 실제로 깨졌던 것들)
+
+1. **`org.jetbrains.kotlin.android` 플러그인을 적용하지 않는다.** AGP 9 는 Kotlin 을
+   내장하고 있어서, 함께 적용하면 빌드가 거부된다.
+2. **`build-logic` 클래스패스에는 AGP jar 만 둔다.** KSP·Compose·Kotlin 플러그인 jar 를
+   올리면 Gradle 내장 Kotlin 이 그 최신 메타데이터를 못 읽어 컴파일이 깨진다.
+   (이 플러그인들은 전부 id 로만 적용하므로 타입이 필요 없다.)
+3. **Hilt 는 2.59 부터 AGP 9 필수.** AGP 를 내리려면 Hilt 2.58 이하로 같이 내려야 한다.
+4. **`enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`** 는 Gradle 9 에서도 필요하다.
+   빼면 `projects.core.design` 이 해석되지 않는다.
+5. **compileSdk 는 37.** 최신 AndroidX 가 요구한다. targetSdk 는 Play 기준 36 유지.
 # CLAUDE.md — AI 세션용 프로젝트 컨텍스트
 
 > 새 세션이 코드베이스를 다시 훑지 않고 바로 작업할 수 있도록 하는 요약본.
@@ -111,10 +132,27 @@ chore(ci): GitHub Actions 빌드 워크플로 추가
 
 | | |
 |---|---|
-| Gradle | 8.14.3 · AGP 8.13.2 · Kotlin 2.4.20 · KSP 2.3.12 |
-| Hilt 2.60.1 · Compose BOM 2026.09.00 · JDK 17 |
+| Gradle | 9.7.1 |
+| AGP | 9.4.1 |
+| Kotlin | 2.4.20 (AGP 내장) · KSP 2.3.12 |
+| Hilt | 2.60.1 |
+| Compose BOM | 2026.09.00 |
+| SDK | compileSdk **37** / targetSdk 36 / minSdk 29 |
+| JDK | 17 (Temurin) |
 
-AGP는 9.x가 나와 있으나 메이저 변경 리스크 때문에 8.x 최신을 쓴다.
+### AGP 9 에서 반드시 지킬 것 — Phase 0 에서 실제로 깨졌던 것들
+
+1. **`org.jetbrains.kotlin.android` 플러그인을 적용하지 않는다.**
+   AGP 9 는 Kotlin 을 내장하고 있어, 함께 적용하면 빌드가 거부된다.
+2. **`build-logic` 클래스패스에는 AGP jar 만 둔다.**
+   KSP·Compose·Kotlin 플러그인 jar 를 올리면 Gradle 내장 Kotlin 이 그
+   최신 메타데이터를 읽지 못해 컴파일이 깨진다. 이 플러그인들은 전부
+   id 로만 적용하므로 타입이 필요 없다.
+3. **Hilt 는 2.59 부터 AGP 9 가 필수.**
+   AGP 를 내리려면 Hilt 도 2.58 이하로 함께 내려야 한다.
+4. **`enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")` 는 Gradle 9 에서도 필요.**
+   빼면 `projects.core.design` 이 해석되지 않는다.
+5. **compileSdk 는 37.** 최신 AndroidX 가 요구한다. targetSdk 는 Play 기준 36 유지.
 
 ## 컨벤션 플러그인 (build-logic/)
 

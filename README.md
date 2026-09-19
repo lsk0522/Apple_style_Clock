@@ -7,7 +7,8 @@
 아이폰을 무선 충전기에 가로로 올리면 나타나는 **StandBy 화면**.
 그 경험을 안드로이드에서 그대로 — 그리고 **안드로이드 위젯의 자유도까지 더해서** 구현합니다.
 
-[![Status](https://img.shields.io/badge/status-planning-orange)]()
+[![Build](https://github.com/lsk0522/Apple_style_Clock/actions/workflows/build.yml/badge.svg)](https://github.com/lsk0522/Apple_style_Clock/actions/workflows/build.yml)
+[![Status](https://img.shields.io/badge/status-Phase%201%20in%20progress-orange)]()
 [![Platform](https://img.shields.io/badge/platform-Android-3DDC84)]()
 [![Language](https://img.shields.io/badge/language-Kotlin-7F52FF)]()
 [![UI](https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4)]()
@@ -20,8 +21,12 @@
 ---
 
 > [!IMPORTANT]
-> **현재 이 프로젝트는 기획 단계입니다.** 아직 설치 가능한 앱이 없습니다.
-> 전체 구현 계획은 **[plan.md](plan.md)**, 진행 상황은 **[PROGRESS.md](PROGRESS.md)** 에서 확인하세요.
+> **현재 개발 초기 단계입니다.** 기능은 아직 들어가지 않았지만,
+> 프로젝트 골격과 CI는 완성되어 **디버그 APK가 자동으로 빌드**됩니다.
+>
+> - 설계 문서: **[plan.md](plan.md)** · **[Design.md](Design.md)**
+> - 진행 상황: **[PROGRESS.md](PROGRESS.md)**
+> - 최신 APK: [Actions](https://github.com/lsk0522/Apple_style_Clock/actions/workflows/build.yml) 에서 최신 성공 빌드 → `nightstand-debug-apk`
 
 ---
 
@@ -71,17 +76,22 @@
 
 ## 📲 설치
 
-> 아직 배포 전입니다. 아래는 배포 후 방법입니다.
+### 방법 1 — Google Play (배포 예정)
 
-### 방법 1 — Google Play (예정)
+아직 등록 전입니다.
 
-Play 스토어에서 검색해 설치합니다.
+### 방법 2 — 개발 빌드 APK (지금 가능)
 
-### 방법 2 — APK 직접 설치 (개발 빌드)
+푸시될 때마다 GitHub Actions가 디버그 APK를 만들어 둡니다.
 
-1. [Releases](https://github.com/lsk0522/Apple_style_Clock/releases) 에서 최신 `.apk` 다운로드
-2. 파일을 열고 **"이 출처 허용"** 을 켠 뒤 설치
-3. 앱을 실행해 아래 [최초 설정](#-최초-설정-3분)을 진행
+1. [Actions 탭](https://github.com/lsk0522/Apple_style_Clock/actions/workflows/build.yml) 열기
+2. 맨 위 초록색 성공 빌드 클릭
+3. 아래 **Artifacts** 에서 `nightstand-debug-apk` 다운로드 (zip)
+4. 압축을 풀어 `.apk` 를 폰으로 옮긴 뒤 열기
+5. **"이 출처 허용"** 을 켜고 설치
+6. 앱을 실행해 아래 [최초 설정](#-최초-설정-3분)을 진행
+
+> 개발 빌드는 패키지명이 `...nightstand.debug` 라서 정식 버전과 동시에 설치됩니다.
 
 ---
 
@@ -173,7 +183,7 @@ StandBy는 **충전 중에만** 동작하므로 배터리가 줄어들지 않습
 <details>
 <summary><b>화면 번인이 걱정돼요</b></summary>
 
-1분마다 화면 전체를 아주 조금씩(±4dp) 움직여 같은 픽셀이 계속 켜지지 않게 합니다.
+10분마다 화면 전체를 아주 조금씩(1~2px) 움직여 같은 픽셀이 계속 켜지지 않게 합니다.
 어두운 곳에서는 밝기를 자동으로 낮춥니다.
 
 </details>
@@ -212,10 +222,14 @@ StandBy는 **충전 중에만** 동작하므로 배터리가 줄어들지 않습
 | | |
 |---|---|
 | JDK | 17 (Temurin 권장) |
-| Android Studio | Ladybug 이상 |
-| Android SDK | API 36 |
+| Gradle | 9.7.1 — wrapper 포함이라 따로 설치 불필요 |
+| AGP | 9.4.1 |
+| Android SDK | compileSdk 37 / targetSdk 36 |
 | 최소 지원 | Android 10 (API 29) |
 | 패키지명 | `com.lsk0522.nightstand` |
+
+> AGP 9는 Kotlin을 내장하므로 `org.jetbrains.kotlin.android` 플러그인을 적용하면 안 됩니다.
+> 모듈 설정은 `build-logic/` 의 컨벤션 플러그인으로 일원화되어 있습니다.
 
 ### 빌드
 
@@ -270,7 +284,10 @@ docs(readme): 설치 가이드 보강
 
 ## 📄 라이선스
 
-MIT License — 자유롭게 쓰고, 고치고, 배포하세요.
+[MIT License](LICENSE) — 자유롭게 쓰고, 고치고, 배포하세요.
+
+번들된 폰트 등 제3자 저작물 고지는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 를 참고하세요.
+(Pretendard, SIL Open Font License 1.1)
 
 ## ⚖️ 고지
 
