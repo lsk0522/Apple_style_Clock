@@ -101,3 +101,61 @@ chore(ci): GitHub Actions 빌드 워크플로 추가
 
 로컬에 Android SDK가 없을 수 있으므로, **GitHub Actions가 푸시마다 디버그 APK를 아티팩트로 생성**한다.
 빌드 확인이 필요하면 CI 결과를 본다.
+
+---
+
+## 빌드 툴체인 (Phase 0에서 확정 — 추측하지 말 것)
+
+`gradle/libs.versions.toml` 이 단일 진실 공급원이다. 버전을 바꿀 때는
+**Maven 저장소에서 실제 존재 여부를 확인한 뒤** 바꾼다.
+
+| | |
+|---|---|
+| Gradle | 8.14.3 · AGP 8.13.2 · Kotlin 2.4.20 · KSP 2.3.12 |
+| Hilt 2.60.1 · Compose BOM 2026.09.00 · JDK 17 |
+
+AGP는 9.x가 나와 있으나 메이저 변경 리스크 때문에 8.x 최신을 쓴다.
+
+## 컨벤션 플러그인 (build-logic/)
+
+모듈 설정은 절대 복붙하지 않는다. 새 모듈은 한 줄로 끝낸다.
+
+```kotlin
+plugins { alias(libs.plugins.nightstand.android.feature) }   // feature/*
+plugins { alias(libs.plugins.nightstand.android.library) }   // core/*
+```
+
+| 플러그인 | 하는 일 |
+|---|---|
+| `nightstand.android.application` | app 모듈 · SDK 레벨 · JVM 17 |
+| `nightstand.android.library` | 라이브러리 모듈 공통 설정 |
+| `nightstand.android.compose` | Compose 활성화 + BOM + 공통 의존성 |
+| `nightstand.android.hilt` | Hilt + KSP |
+| `nightstand.android.feature` | library + compose + hilt + core 모듈 + 네비게이션 |
+
+## 디자인 토큰 위치 (core:design)
+
+| 파일 | 내용 |
+|---|---|
+| `theme/Color.kt` | 트루 블랙 캔버스, 서피스 계층, 야간 적색 |
+| `theme/Type.kt` | tnum 고정폭 필수, body는 17sp (16sp 아님) |
+| `theme/Font.kt` | Pretendard 가변 폰트 (SF Pro 대체) |
+| `theme/Dimen.kt` | 8pt 그리드, `Radius.concentric(outer, padding)` |
+| `theme/Squircle.kt` | 애플 연속 곡률 — **`RoundedCornerShape` 쓰지 말 것** |
+| `theme/Motion.kt` | 스프링 스펙, StandBy 2초 지연 + 800ms 페이드인 |
+| `theme/Theme.kt` | `NightstandTheme` · `LocalNightstandPalette` |
+
+상세 근거는 `Design.md` 참조.
+
+## 검증 방법 — 로컬 빌드 불가
+
+이 개발 환경에는 **JDK / Android SDK가 없다.** 유일한 검증 수단은 CI다.
+
+```bash
+git push                    # 푸시하면 GitHub Actions가 빌드
+gh run list --limit 3       # 상태 확인
+gh run view <id> --log-failed   # 실패 로그
+```
+
+빌드 성공 시 Actions 아티팩트 `nightstand-debug-apk` 에서 APK를 받아
+S25 Ultra에 설치해 확인한다.

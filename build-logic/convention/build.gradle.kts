@@ -16,10 +16,12 @@ kotlin {
 }
 
 dependencies {
+    // Only plugins whose *types* the convention code touches belong here.
+    // KSP and the Compose compiler plugin are applied by id, so adding their
+    // jars would just put Kotlin 2.3-metadata classes on a classpath that
+    // Gradle compiles with its own embedded Kotlin 2.0 — which cannot read them.
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
-    compileOnly(libs.ksp.gradlePlugin)
-    compileOnly(libs.compose.gradlePlugin)
 }
 
 gradlePlugin {

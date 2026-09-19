@@ -8,13 +8,9 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
 /**
- * Typography tokens — Design.md §2.
- *
- * TODO(next): Phase 1 — bundle Pretendard (KR) + Inter (EN) into
- * `core/design/src/main/res/font` and point [NightstandFontFamily] at them.
- * SF Pro cannot be shipped: its licence covers Apple platforms only.
+ * Typography tokens - Design.md section 2.
  */
-val NightstandFontFamily: FontFamily = FontFamily.Default
+val NightstandFontFamily: FontFamily = Pretendard
 
 /**
  * Tabular figures. Without this the clock jitters every second, because `1`
