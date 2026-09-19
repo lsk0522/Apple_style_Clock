@@ -72,6 +72,7 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 - [x] 프로젝트 기획 및 기술 조사
 - [x] `plan.md` (v0.3) · `README.md` · `PROGRESS.md` · `CLAUDE.md` 작성
 - [x] `Design.md` 작성 (Apple HIG + getdesign.md 기반 토큰 명세)
+- [x] `iOS_Design.md` 작성 (iOS 17/18 StandBy 모드 네이티브 아키텍처 및 SwiftUI 엔지니어링 전용 명세)
 - [x] 주요 결정 확정 (앱 이름 · minSdk · MVP 범위)
 - [x] GitHub 원격 연결 및 푸시 (`lsk0522/Apple_style_Clock`)
 - [x] **Phase 0** — Gradle Wrapper 9.7.1 (공식 배포본)
