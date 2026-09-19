@@ -29,8 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
@@ -48,6 +50,7 @@ fun IosScreen(
     title: String,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
+    bottomClearance: Dp = FLOATING_BAR_CLEARANCE,
     content: LazyListScope.() -> Unit,
 ) {
     val palette = NightstandTheme.palette
@@ -75,7 +78,9 @@ fun IosScreen(
             state = listState,
             contentPadding = PaddingValues(
                 top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + NAV_BAR_HEIGHT,
-                bottom = 24.dp,
+                // The tab bar floats over this list, so the last row needs room
+                // to clear it.
+                bottom = 24.dp + bottomClearance,
             ),
         ) {
             item(key = "largeTitle") {
@@ -93,13 +98,14 @@ fun IosScreen(
             content()
         }
 
-        // The collapsed bar, faded in over the scrolling content.
+        // iOS 27 calls this the uniform toolbar: once content scrolls under
+        // the bar it turns to glass so the title stays legible.
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopStart)
                 .alpha(barAlpha)
-                .background(palette.bar),
+                .liquidGlass(RectangleShape),
         ) {
             Box(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
             Box(
@@ -114,12 +120,6 @@ fun IosScreen(
                     color = palette.label,
                 )
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.5.dp)
-                    .background(palette.separator),
-            )
         }
     }
 }

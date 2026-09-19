@@ -2,13 +2,13 @@ package com.lsk0522.nightstand.feature.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,27 +44,26 @@ fun MainScreen(modifier: Modifier = Modifier) {
         TabItem(stringResource(R.string.tab_donate), DesignR.drawable.ic_tab_donate),
     )
 
-    Column(
+    // A Box, not a Column: since iOS 26 the tab bar floats *over* the content
+    // rather than sitting below it, and the list scrolls underneath.
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(palette.groupedBackground),
     ) {
-        Box(modifier = Modifier.weight(1f)) {
-            // Each tab keeps its own scroll position, so they are kept in the
-            // composition rather than swapped through AnimatedContent.
-            when (selectedIndex) {
-                0 -> WidgetsTab()
-                1 -> ChargingTab()
-                2 -> SettingsTab()
-                3 -> DeveloperTab()
-                else -> DonateTab()
-            }
+        when (selectedIndex) {
+            0 -> WidgetsTab()
+            1 -> ChargingTab()
+            2 -> SettingsTab()
+            3 -> DeveloperTab()
+            else -> DonateTab()
         }
 
         NightstandTabBar(
             items = tabs,
             selectedIndex = selectedIndex,
             onSelect = { selectedIndex = it },
+            modifier = Modifier.align(Alignment.BottomCenter),
         )
     }
 }

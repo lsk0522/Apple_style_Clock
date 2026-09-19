@@ -68,6 +68,22 @@ object NightstandColor {
         /** Fill used for inline controls such as segmented backgrounds. */
         val FillLight = Color(0x1F787880)
         val FillDark = Color(0x2E787880)
+
+        // ── Liquid Glass (iOS 26, tuned to the iOS 27 revision) ──────────
+        //
+        // iOS 27 pulled the default transparency back from iOS 26 because the
+        // original was hard to read over busy content, so these fills are
+        // closer to opaque than the first Liquid Glass release.
+        val GlassLight = Color(0xB8FFFFFF) // ~72% white
+        val GlassDark = Color(0xB81E1E20) // ~72% near-black
+
+        /** Bright rim along the lit (top) edge — the specular highlight. */
+        val GlassSpecularLight = Color(0xA6FFFFFF)
+        val GlassSpecularDark = Color(0x47FFFFFF)
+
+        /** The darkened outer edge iOS 27 added to separate glass from content. */
+        val GlassEdgeLight = Color(0x2E000000)
+        val GlassEdgeDark = Color(0x73000000)
     }
 
     /** The StandBy clock canvas — Design.md §4. Dark only, by design. */

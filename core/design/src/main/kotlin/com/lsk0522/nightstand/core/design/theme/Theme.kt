@@ -35,6 +35,12 @@ data class NightstandPalette(
     val destructive: Color,
     val switchTrackOff: Color,
     val fill: Color,
+    /** Liquid Glass material for floating bars and sheets. */
+    val glass: Color,
+    /** Bright rim along the lit edge of a glass element. */
+    val glassSpecular: Color,
+    /** Darkened outer edge iOS 27 added to lift glass off the content. */
+    val glassEdge: Color,
     val isDark: Boolean,
 )
 
@@ -54,6 +60,9 @@ private val LightPalette = NightstandPalette(
     destructive = NightstandColor.Ios.RedLight,
     switchTrackOff = NightstandColor.Ios.SwitchTrackOffLight,
     fill = NightstandColor.Ios.FillLight,
+    glass = NightstandColor.Ios.GlassLight,
+    glassSpecular = NightstandColor.Ios.GlassSpecularLight,
+    glassEdge = NightstandColor.Ios.GlassEdgeLight,
     isDark = false,
 )
 
@@ -73,6 +82,9 @@ private val DarkPalette = NightstandPalette(
     destructive = NightstandColor.Ios.RedDark,
     switchTrackOff = NightstandColor.Ios.SwitchTrackOffDark,
     fill = NightstandColor.Ios.FillDark,
+    glass = NightstandColor.Ios.GlassDark,
+    glassSpecular = NightstandColor.Ios.GlassSpecularDark,
+    glassEdge = NightstandColor.Ios.GlassEdgeDark,
     isDark = true,
 )
 

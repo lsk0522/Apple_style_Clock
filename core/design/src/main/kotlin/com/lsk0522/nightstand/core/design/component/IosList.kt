@@ -292,7 +292,9 @@ fun RowIconTile(
 
 /** iOS inset-grouped side margin. */
 val SECTION_INSET: Dp = 16.dp
-private val CARD_RADIUS: Dp = 10.dp
+// iOS 26 rounded grouped cards noticeably further than the old 10pt so their
+// corners sit concentric with the display curve; 27 kept that.
+private val CARD_RADIUS: Dp = 18.dp
 private val ROW_PADDING: Dp = 16.dp
 private val ROW_MIN_HEIGHT: Dp = 44.dp
 private val LEADING_ICON_SIZE: Dp = 29.dp
