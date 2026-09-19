@@ -27,6 +27,8 @@ data class NightstandPalette(
     val accent: Color,
     val hairline: Color,
     val glassRim: Color,
+    /** Translucent bar material sitting over the content behind it. */
+    val tabBar: Color,
 )
 
 private val StandardPalette = NightstandPalette(
@@ -41,6 +43,7 @@ private val StandardPalette = NightstandPalette(
     accent = NightstandColor.AccentOrange,
     hairline = NightstandColor.BorderHairline,
     glassRim = NightstandColor.BorderGlassRim,
+    tabBar = NightstandColor.TabBarGlass,
 )
 
 private val NightVisionPalette = StandardPalette.copy(

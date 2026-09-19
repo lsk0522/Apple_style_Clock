@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 하단 탭바 (순서 고정: 위젯 · 충전 판별 · 메인 · 개발자 · 후원) -->
+    <string name="tab_widgets">위젯</string>
+    <string name="tab_charging">충전</string>
+    <string name="tab_main">메인</string>
+    <string name="tab_developer">개발자</string>
+    <string name="tab_donate">후원</string>
+
+    <!-- Phase 1 임시 안내문 — 각 기능 구현 시 실제 화면으로 교체 -->
+    <string name="placeholder_widgets">폰에 설치된 위젯을 StandBy 화면에 올리고\n순서와 자동 넘김을 설정합니다.\n\nPhase 5에서 구현됩니다.</string>
+    <string name="placeholder_charging">무선·유선·도크 중 어떤 충전에서\n시계를 띄울지 고릅니다.\n\nPhase 2에서 구현됩니다.</string>
+    <string name="placeholder_main">시계 스타일, 테마, 미리보기 등\n전체 설정이 들어갑니다.\n\nPhase 3~4에서 구현됩니다.</string>
+    <string name="placeholder_developer">로그, 센서 실시간 값,\n충전 이벤트 시뮬레이션.\n\nPhase 8에서 구현됩니다.</string>
+    <string name="placeholder_donate">개발자에게 커피 한 잔.\n\nPhase 9에서 구현됩니다.</string>
+</resources>

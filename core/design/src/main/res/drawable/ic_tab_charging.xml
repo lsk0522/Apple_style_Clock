@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 탭 2 — 충전 판별: 번개와 무선 전파 -->
+<!-- SF Symbols 스타일 모노라인. 24dp 캔버스, 스트로크 1.7, 둥근 캡/조인. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFFFF">
+    <path
+        android:pathData="M13.2,2.5 L6.6,12.4 H11.3 L10.8,21.5 L17.4,11.6 H12.7 Z"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="1.7"
+        android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path
+        android:pathData="M19.4,6.6 a6.5,6.5 0 0 1 0,10.8"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="1.7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M4.6,17.4 a6.5,6.5 0 0 1 0,-10.8"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="1.7"
+        android:strokeLineCap="round" />
+</vector>

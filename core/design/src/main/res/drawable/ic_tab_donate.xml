@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 탭 5 — 후원: 하트 -->
+<!-- SF Symbols 스타일 모노라인. 24dp 캔버스, 스트로크 1.7, 둥근 캡/조인. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFFFF">
+    <path
+        android:pathData="M12,20.4 C12,20.4 3.2,14.8 3.2,9.1 A4.9,4.9 0 0 1 12,6.7 A4.9,4.9 0 0 1 20.8,9.1 C20.8,14.8 12,20.4 12,20.4 Z"
+        android:strokeColor="#FFFFFFFF" android:strokeWidth="1.7"
+        android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>

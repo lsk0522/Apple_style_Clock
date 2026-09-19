@@ -18,10 +18,15 @@ captures/
 .externalNativeBuild/
 .cxx/
 
-# Signing — never commit these
+# Signing
+# Release keys must never be committed.
 *.jks
 *.keystore
 keystore.properties
+# The debug key is the exception: it is deliberately shared so that every CI
+# build is signed identically and installs as an update instead of forcing an
+# uninstall. It grants nothing -- it never signs a release.
+!signing/debug.jks
 
 # IDE
 .idea/

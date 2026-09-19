@@ -4,19 +4,43 @@ plugins {
     alias(libs.plugins.nightstand.android.hilt)
 }
 
+// Every CI build gets a higher versionCode than the one before it, so a freshly
+// downloaded APK installs *over* the copy already on the phone. Local builds
+// fall back to 1.
+val buildNumber = providers.environmentVariable("GITHUB_RUN_NUMBER")
+    .orNull?.toIntOrNull() ?: 1
+
 android {
     namespace = "com.lsk0522.nightstand"
 
     defaultConfig {
         applicationId = "com.lsk0522.nightstand"
-        versionCode = 1
-        versionName = "0.1.0-phase0"
+        versionCode = buildNumber
+        versionName = "0.1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        // A checked-in debug key. CI runners generate a throwaway debug keystore
+        // on every run, which changes the signature each build and makes Android
+        // refuse the install ("app not installed"). Pinning the key here is what
+        // turns each new APK into a plain update.
+        //
+        // This key is deliberately public and signs debug builds only; the
+        // release key is created separately in Phase 11 and never committed.
+        getByName("debug") {
+            storeFile = rootProject.file("signing/debug.jks")
+            storePassword = "nightstand"
+            keyAlias = "nightstand-debug"
+            keyPassword = "nightstand"
+        }
     }
 
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
+            versionNameSuffix = "-debug.$buildNumber"
+            signingConfig = signingConfigs.getByName("debug")
         }
         release {
             isMinifyEnabled = true
