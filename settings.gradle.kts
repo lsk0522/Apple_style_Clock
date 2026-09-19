@@ -25,8 +25,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Nightstand"
 
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
 include(":app")
 
 // Core — shared foundations
