@@ -1,63 +1,69 @@
 ---
-version: 1.1.0
+version: 1.2.0
 name: Apple-StandBy-Clock-Design-System
 project: Nightstand (com.lsk0522.nightstand)
-description: Apple Human Interface Guidelines(HIG) 및 getdesign.md 분석 표준을 결합한 Android StandBy 시계·위젯 전용 디자인 시스템 명세서. 라이트 모드(Parchment/Ink)와 다크 모드(OLED Black/White), 야간 암순응 모드(Night Vision Red)의 3단계 테마 체계, SF Pro 기반 고정폭(tabular numbers) 타이포그래피, 스퀴클(Squircle) 동심 곡률, 스프링 물리학 인터랙션을 완벽히 정의합니다.
+description: iOS 17/18 StandBy 모드 네이티브 아키텍처(SwiftUI/WidgetKit) 및 Apple HIG를 철저히 분석하여 작성한 종합 디자인 시스템 명세서. 3단 뷰 계층(듀얼 위젯 스택/사진/5대 시계 페이스), G2 연속성(style .continuous), 시스템 머티리얼(Vibrancy & Blurs), 시맨틱 라벨 계층, 야간 암순응 모드, 그리고 Android Jetpack Compose 1:1 구현 매핑을 포함합니다.
 
-# 3-Tier Semantic Color Tokens (Light / Dark / Night Vision)
+# 1. iOS Semantic Color System (Light / Dark / Night Vision)
 colors:
-  # Shared Interactive Brand Colors
-  primary: "#0066cc"                # Action Blue (getdesign.md 라이트 기본 액션)
-  primary-focus: "#0071e3"          # 포커스 링
-  primary-on-dark: "#2997ff"        # Sky Link Blue (다크 환경 가독성 액션 블루)
-  accent-orange: "#FF9500"          # Apple Watch Ultra / 스톱워치 시그니처 오렌지
-  
-  # ☀️ Light Mode Tokens (주간 스탠바이 및 메인 5개 탭 관리 UI)
+  # Shared Interactive System Tints (iOS Human Interface Guidelines)
+  system-blue: "#007AFF"             # iOS 기본 시스템 블루
+  system-blue-dark: "#0A84FF"        # 다크 모드 고대비 블루
+  system-orange: "#FF9500"           # Apple Watch Ultra / 스톱워치 시그니처 오렌지
+  system-orange-dark: "#FF9F0A"      # 다크 모드 오렌지
+  system-red: "#FF3B30"              # 경고 및 알림 레드
+  system-red-dark: "#FF453A"         # 야간 모드 및 다크 레드 (Night Vision Accent)
+
+  # ☀️ iOS Light Mode Hierarchy
   light:
-    canvas: "#FFFFFF"               # 퓨어 화이트 캔버스
-    canvas-parchment: "#F5F5F7"     # 시그니처 애플 오프화이트 (배경 및 구분 영역)
-    surface-card: "#FFFFFF"         # 위젯 및 설정 카드 배경
-    surface-card-secondary: "#FAFAFC" # 펄(Pearl) 서브 카드 / 버튼 배경
-    surface-glass: "rgba(255, 255, 255, 0.80)" # 주간 블러 머티리얼
-    text-primary: "#1D1D1F"         # Near-Black Ink (헤드라인, 메인 시간)
-    text-secondary: "rgba(29, 29, 31, 0.60)" # 60% Ink (보조 날짜, 설명 레이블)
-    text-tertiary: "rgba(29, 29, 31, 0.35)"  # 35% Ink (비활성 눈금, 단위)
-    text-quaternary: "rgba(29, 29, 31, 0.18)" # 18% Ink (미세 구분선)
-    border-hairline: "rgba(0, 0, 0, 0.08)"    # 1px 카드 테두리 (미세 헤어라인)
-    border-glass-rim: "rgba(255, 255, 255, 0.60)" # 글래스 하이라이트
+    system-background: "#FFFFFF"          # 기본 캔버스 백색
+    secondary-system-background: "#F2F2F7"# Parchment 회색 계열 (그룹 배경)
+    tertiary-system-background: "#FFFFFF" # 카드 서피스
+    system-fill: "rgba(120, 120, 128, 0.20)"
+    secondary-system-fill: "rgba(120, 120, 128, 0.16)"
+    tertiary-system-fill: "rgba(118, 118, 128, 0.12)"
+    quaternary-system-fill: "rgba(116, 116, 128, 0.08)"
+    label: "#000000"                      # 100% 검정 메인 텍스트
+    secondary-label: "rgba(60, 60, 67, 0.60)"   # 60% 보조 라벨
+    tertiary-label: "rgba(60, 60, 67, 0.30)"    # 30% 3차 라벨/눈금
+    quaternary-label: "rgba(60, 60, 67, 0.18)"  # 18% 미세 구분선
+    separator: "rgba(60, 60, 67, 0.29)"
+    border-glass-rim: "rgba(255, 255, 255, 0.70)" # 상단 림 하이라이트
 
-  # 🌙 Dark Mode Tokens (표준 StandBy 거치 및 다크 테마 UI)
+  # 🌙 iOS Dark Mode Hierarchy (StandBy 표준)
   dark:
-    canvas: "#000000"               # StandBy 캔버스 트루 블랙 (OLED 소자 절전 & 무한 대비)
-    canvas-secondary: "#1C1C1E"     # 다크 서피스 1차 (카드 기본 배경)
-    surface-card: "#1C1C1E"         # 위젯 카드 배경
-    surface-card-secondary: "#2C2C2E" # 호버, 칩, 모달 배경
-    surface-glass: "rgba(30, 30, 35, 0.70)" # 야간 블러 머티리얼
-    text-primary: "#FFFFFF"         # 100% 화이트 (메인 시간, 핵심 수치)
-    text-secondary: "rgba(255, 255, 255, 0.60)" # 60% 화이트 (날짜, 서브 레이블)
-    text-tertiary: "rgba(255, 255, 255, 0.30)"  # 30% 화이트 (비활성 눈금, 단위)
-    text-quaternary: "rgba(255, 255, 255, 0.18)" # 18% 화이트 (미세 구분선)
-    border-hairline: "rgba(255, 255, 255, 0.08)"  # 위젯 카드 미세 외곽선
-    border-glass-rim: "rgba(255, 255, 255, 0.12)" # 글래스 상단 1px 림 라이트
+    system-background: "#000000"          # OLED 트루 블랙 (소자 0 nit 소등)
+    secondary-system-background: "#1C1C1E"# 다크 서피스 1차 (위젯 카드 배경)
+    tertiary-system-background: "#2C2C2E" # 다크 서피스 2차 (호버, 모달, 칩)
+    system-fill: "rgba(120, 120, 128, 0.36)"
+    secondary-system-fill: "rgba(120, 120, 128, 0.32)"
+    tertiary-system-fill: "rgba(118, 118, 128, 0.24)"
+    quaternary-system-fill: "rgba(116, 116, 128, 0.18)"
+    label: "#FFFFFF"                      # 100% 백색 메인 시간/숫자
+    secondary-label: "rgba(235, 235, 245, 0.60)" # 60% 보조 라벨/날짜
+    tertiary-label: "rgba(235, 235, 245, 0.30)"  # 30% 눈금선/단위
+    quaternary-label: "rgba(235, 235, 245, 0.18)" # 18% 미세 외곽선
+    separator: "rgba(84, 84, 88, 0.65)"
+    border-glass-rim: "rgba(255, 255, 255, 0.12)" # 글래스 1px 림 라이트
 
-  # 🚨 Night Vision Mode Tokens (취침 조도 5lux 이하 모노크롬 레드 모드)
+  # 🚨 iOS Night Vision Mode (조도 5lux 이하 취침 모노크롬 레드)
   night-vision:
-    canvas: "#000000"               # 완벽한 딥 블랙 유지
-    text-primary: "#FF453A"         # Night Glow Red (암순응 보호 메인 시간)
-    text-secondary: "#801B17"       # Muted Red (보조 정보, 날짜)
-    text-tertiary: "#4D110E"        # Deep Dim Red (비활성 눈금)
-    surface-card: "rgba(255, 69, 58, 0.06)" # 미세한 적색 틴트 글래스
-    border-glass-rim: "rgba(255, 69, 58, 0.18)" # 적색 림 라이트
+    system-background: "#000000"          # 100% 블랙 유지
+    label: "#FF453A"                      # Night Glow Red (암순응 보호 메인 시간)
+    secondary-label: "#801B17"            # Muted Red (보조 날짜)
+    tertiary-label: "#4D110E"             # Deep Dim Red (비활성 눈금)
+    surface-card: "rgba(255, 69, 58, 0.06)"# 은은한 적색 틴트 글래스
+    border-glass-rim: "rgba(255, 69, 58, 0.25)"
 
+# 2. iOS Typography Specs
 typography:
-  # Clock Displays (고정폭 tnum 필수 적용)
   hero-clock-display:
     fontFamily: "SF Pro Display, Pretendard, system-ui, sans-serif"
     fontSize: 140px
     fontWeight: 700
     lineHeight: 0.95
     letterSpacing: -0.04em
-    fontFeatureSettings: "'tnum' 1"
+    fontFeatureSettings: "'tnum' 1" # iOS .monospacedDigit() 대응
   hero-clock-medium:
     fontFamily: "SF Pro Display, Pretendard, system-ui, sans-serif"
     fontSize: 88px
@@ -72,8 +78,6 @@ typography:
     lineHeight: 1.05
     letterSpacing: -0.02em
     fontFeatureSettings: "'tnum' 1"
-  
-  # UI Hierarchy
   display-title:
     fontFamily: "SF Pro Display, Pretendard, system-ui, sans-serif"
     fontSize: 34px
@@ -92,12 +96,6 @@ typography:
     fontWeight: 400
     lineHeight: 1.47
     letterSpacing: -0.02em
-  body-strong:
-    fontFamily: "SF Pro Text, Pretendard, system-ui, sans-serif"
-    fontSize: 17px
-    fontWeight: 600
-    lineHeight: 1.3
-    letterSpacing: -0.02em
   caption:
     fontFamily: "SF Pro Text, Pretendard, system-ui, sans-serif"
     fontSize: 14px
@@ -111,15 +109,18 @@ typography:
     lineHeight: 1.2
     letterSpacing: 0.02em
 
+# 3. iOS Continuous Corner Radii
 rounded:
   none: 0px
   xs: 6px
   sm: 10px
   md: 16px
-  lg: 24px       # 위젯 카드 표준 스퀴클 곡률
-  xl: 32px       # 대형 패널 곡률
-  pill: 9999px   # 액션 버튼, 태그 캡슐
+  widget-corner: 22px # iOS 17 systemSmall 위젯 표준 곡률 (.continuous)
+  lg: 24px
+  panel: 32px
+  pill: 9999px
 
+# 4. Spacing System
 spacing:
   xxs: 4px
   xs: 8px
@@ -127,184 +128,217 @@ spacing:
   md: 16px
   lg: 24px
   xl: 32px
-  xxl: 48px
+  widget-gutter: 24px
   screen-margin: 32px
-
-components:
-  standby-container:
-    padding: "{spacing.screen-margin}"
-  widget-card:
-    rounded: "{rounded.lg}"
-    padding: "{spacing.lg}"
-  button-primary-pill:
-    typography: "{typography.body-strong}"
-    rounded: "{rounded.pill}"
-    padding: "11px 22px"
-  tab-bar-container:
-    height: "64px"
 ---
 
-# Design System Specification: Apple StandBy Clock
+# iOS StandBy Architecture & Design System Specification
 
-> **Project**: Nightstand (`com.lsk0522.nightstand`)  
-> **Reference Standard**: [getdesign.md/apple](https://getdesign.md/apple/design-md) + Apple Human Interface Guidelines (HIG)  
-> **Target Platforms**: Android (Galaxy S25 Ultra One UI 7 / Android 15), Jetpack Compose  
+> **Target Standard**: Apple iOS 17/18 StandBy Mode, WidgetKit Framework, Human Interface Guidelines (HIG)  
+> **Android Target**: Nightstand (`com.lsk0522.nightstand`), Galaxy S25 Ultra (One UI 7), Jetpack Compose  
+> **Specification Version**: 1.2.0  
 
 ---
 
-## 1. 듀얼 테마 체계: 라이트 모드 vs 다크 모드 vs 야간 모드
+## 1. iOS StandBy의 3단 화면 아키텍처 (Screen Hierarchy)
 
-본 디자인 시스템은 **라이트(Light), 다크(Dark), 야간 암순응(Night Vision Red)**의 3단계 완전 테마 체계를 지원합니다.
+iOS StandBy는 단순한 시계 앱이 아니라, **기기가 가로로 충전 거치되었을 때 시스템 레벨에서 구동되는 전용 대시보드**입니다. 사용자는 **좌우 수평 스와이프(Horizontal Drag)**로 3가지 메인 뷰를 전환합니다:
 
 ```mermaid
 flowchart LR
-    subgraph Theme_Engine["Nightstand 3-Tier Theme Matrix"]
-        direction TB
-        L["☀️ Light Mode\nParchment Canvas / Ink Text\n주간 스탠바이 및 주간 설정 UI"]
-        D["🌙 Dark Mode (Default)\nOLED Black / White Text\n기본 StandBy 거치 및 다크 설정 UI"]
-        N["🚨 Night Vision Mode\nPure Black / Monochrome Red\n조도 5lux 이하 취침 특수 모드"]
+    subgraph StandBy_Screens["iOS StandBy 3단 뷰 구조 (수평 스와이프)"]
+        S1["화면 1: 듀얼 위젯 뷰\n(Dual Widget Smart Stack)\n좌/우 2개 스택 + 세로 스와이프"]
+        S2["화면 2: 사진 앨범 뷰\n(Photos Showcase)\n전체화면 사진 + 미니멀 시계"]
+        S3["화면 3: 대형 시계 페이스\n(Full-Screen Clock Faces)\n5종 시계 + 세로 스와이프"]
     end
+    S1 <-->|Horizontal Swipe| S2
+    S2 <-->|Horizontal Swipe| S3
 ```
 
-### 1.1 테마별 사용 맥락 (Context)
-1. **라이트 모드 (Light Mode)**:
-   - 밝은 낮 시간대의 거치 환경, 혹은 사용자가 시스템 라이트 모드를 선호할 때 적용.
-   - 배경: 애플 고유의 따뜻하고 정갈한 오프화이트인 **Parchment (`#F5F5F7`)**와 퓨어 화이트 카드.
-   - 텍스트: 완전한 검정이 아닌 **Near-Black Ink (`#1D1D1F`)**를 사용하여 눈의 피로를 덜고 종이 인쇄물 같은 우아한 대비 형성.
-2. **다크 모드 (Dark Mode - StandBy 기본값)**:
-   - StandBy 거치 시의 표준 모드.
-   - 배경: AMOLED 픽셀을 꺼 배터리 소모를 제로화하는 **트루 블랙 (`#000000`)**.
-   - 카드/텍스트: 딥 차콜 카드(`surface-tile-1` `#1C1C1E`)와 선명한 퓨어 화이트(`#FFFFFF`) 숫자.
-3. **야간 암순응 모드 (Night Vision Red Mode)**:
-   - 침실 소등 후 멜라토닌 분비 억제를 막기 위해 전체 UI를 **적색 모노크롬 (`#FF453A`)** 단색과 블랙으로 전환.
+### 1.1 화면 1: 듀얼 위젯 뷰 (Dual Widget Smart Stack)
+- **화면 분할**: 화면 중앙을 기준으로 **좌측 패널**과 **우측 패널**의 2개 스마트 스택으로 분할.
+- **위젯 규격**: 오직 **`systemSmall` (1:1 정사각형)** 패밀리 위젯 2개를 나란히 배치.
+- **인터랙션**:
+  - 각 스택 위에서 **세로 스와이프(Vertical Flick)**를 하면 스택에 등록된 위젯들이 3D 큐브/카드 롤링 형태로 전환.
+  - 위젯 롱프레스 시: 지글(Jiggle) 편집 모드 진입 (위젯 추가 `+`, 삭제 `-`, 스마트 회전 On/Off 토글).
+  - iOS 17 인터랙티브 위젯: 위젯 내부의 버튼이나 체크박스를 탭하면 앱을 열지 않고 백그라운드 App Intent로 즉시 토글.
 
----
+### 1.2 화면 2: 사진 뷰 (Photos Showcase)
+- 전체 화면을 채우는 엄선된 사진 슬라이드쇼 (인물, 자연, 도시, 반려동물).
+- 우측 상단 또는 좌측 상단에 미니멀한 시간 및 촬영 위치 오버레이.
+- 은은한 줌인/줌아웃(Ken Burns Effect) 모션.
 
-## 2. 시맨틱 컬러 매트릭스 (Color Comparison Table)
+### 1.3 화면 3: 전체화면 시계 5종 (Full-Screen Clock Faces)
+시계 화면에서 **세로 스와이프(Vertical Swipe)**를 하면 5가지 독자적인 시계 페이스가 전환됩니다.
 
-코드를 작성할 때 테마에 따라 컴포넌트 색상이 어떻게 대응하는지 정의한 단일 매트릭스입니다:
-
-| 의미론적 토큰 (Semantic Token) | ☀️ 라이트 모드 (Light) | 🌙 다크 모드 (Dark) | 🚨 야간 적색 (Night Vision) | 용도 |
-| :--- | :--- | :--- | :--- | :--- |
-| **`canvas`** | `#F5F5F7` (Parchment) | `#000000` (True Black) | `#000000` (True Black) | 전체 화면 최하단 배경 |
-| **`surface-card`** | `#FFFFFF` (Pure White) | `#1C1C1E` (Tile Dark 1) | `rgba(255, 69, 58, 0.06)` | 시계/위젯 카드 서피스 |
-| **`surface-card-secondary`** | `#FAFAFC` (Pearl) | `#2C2C2E` (Tile Dark 2) | `rgba(255, 69, 58, 0.12)` | 버튼, 입력창, 선택 칩 |
-| **`text-primary`** | `#1D1D1F` (Ink) | `#FFFFFF` (100% White) | `#FF453A` (Glow Red) | 메인 시·분 숫자, 핵심 타이틀 |
-| **`text-secondary`** | `rgba(29, 29, 31, 0.60)` | `rgba(255, 255, 255, 0.60)` | `#801B17` (Muted Red) | 날짜, 요일, 보조 레이블 |
-| **`text-tertiary`** | `rgba(29, 29, 31, 0.35)` | `rgba(255, 255, 255, 0.30)` | `#4D110E` (Deep Dim Red) | 아날로그 눈금, 초 단위 |
-| **`primary-action`** | `#0066cc` (Action Blue) | `#2997ff` (Sky Link Blue) | `#FF453A` (Red Accent) | 메인 인터랙션 버튼 |
-| **`border-hairline`** | `rgba(0, 0, 0, 0.08)` | `rgba(255, 255, 255, 0.08)` | `rgba(255, 69, 58, 0.20)` | 카드 외곽선 (1px) |
-| **`border-glass-rim`** | `rgba(255, 255, 255, 0.80)` | `rgba(255, 255, 255, 0.12)` | `rgba(255, 69, 58, 0.30)` | 글래스 상단 하이라이트 |
-
----
-
-## 3. 타이포그래피 시스템 (Typography Architecture)
-
-Apple 인터페이스의 핵심은 **SF Pro의 엄격한 자간 공식과 고정폭 숫자 제어**입니다.
-
-### 3.1 폰트 패밀리 및 안드로이드 대체(Fallback) 전략
-- **기본 폰트**: `SF Pro Display`(34px 이상) / `SF Pro Text`(33px 이하)
-- **Android 상용화 대체**:
-  - 1순위: **Pretendard** (Apple SF Pro와 동일한 네오 그로테스크 비율, 뛰어난 한글/영문 가독성)
-  - 2순위: **Inter** (`font-feature-settings: 'ss03'` 적용 시 SF Pro의 라운드 소문자와 일치)
-  - 고정폭/기술 지표: **SF Mono** 또는 **JetBrains Mono**
-
-### 3.2 지터 방지: Tabular Numbers (고정폭 숫자) 필수 규칙
-> [!IMPORTANT]
-> `1`과 `8`의 글자 너비 차이로 인해 1초마다 시계 숫자가 좌우로 덜덜 떨리는 현상은 Apple 디자인에서 절대 용납되지 않습니다.
-> 라이트/다크 모드 불문하고 모든 시계 숫자 텍스트에는 Compose의 `FontFeature` 또는 CSS의 `font-variant-numeric: tabular-nums` (`'tnum' 1`)을 필수로 선언합니다.
-
-```kotlin
-// Jetpack Compose 테마 폰트 예시
-val ClockTextStyle = TextStyle(
-    fontFamily = FontFamily(Font(R.font.pretendard_bold)),
-    fontSize = 140.sp,
-    letterSpacing = (-0.04).em,
-    fontFeatureSettings = "tnum" // Tabular numbers 필수
-)
+```mermaid
+classDiagram
+    class StandByClockFaces {
+        <<iOS 17 Native Faces>>
+    }
+    class Digital {
+        +2열 수직 스택 (HH 위 / MM 아래)
+        +초대형 볼드 Variable Font
+        +듀오톤 컬러 커스터마이징
+    }
+    class Analog {
+        +전체화면 60틱 클래식 다이얼
+        +부드러운 60fps 스윕 초침
+        +컴플리케이션 서브 슬롯
+    }
+    class World {
+        +세계 지도 일조 영역 실시간 렌더링
+        +타임존 오프셋 시차 뱃지
+    }
+    class Solar {
+        +태양 일주 궤적 원호 다이얼
+        +시간대별 여명/정오/황혼 그라디언트
+    }
+    class Float {
+        +3D 팽창 풍선 버블 숫자
+        +생동감 넘치는 팝 컬러
+    }
+    StandByClockFaces <|-- Digital
+    StandByClockFaces <|-- Analog
+    StandByClockFaces <|-- World
+    StandByClockFaces <|-- Solar
+    StandByClockFaces <|-- Float
 ```
 
-### 3.3 타이포그래피 스케일 표
+---
 
-| 토큰 | 크기(pt/sp) | 두께(Weight) | 자간(Tracking) | 용도 |
-| :--- | :--- | :--- | :--- | :--- |
-| `{typography.hero-clock-display}` | `140sp` | 700 (Bold) | `-0.04em` | 2열 수직 스택 시계 메인 시/분 |
-| `{typography.hero-clock-medium}` | `88sp` | 600 (SemiBold) | `-0.03em` | 좌우 2분할 패널 시계 |
-| `{typography.widget-clock}` | `52sp` | 600 (SemiBold) | `-0.02em` | 위젯 내부 듀얼 타임 |
-| `{typography.display-title}` | `34sp` | 600 (SemiBold) | `-0.02em` | 메인 설정 헤더 |
-| `{typography.headline}` | `21sp` | 600 (SemiBold) | `-0.01em` | 위젯 카드 타이틀 |
-| `{typography.body}` | `17sp` | 400 (Regular) | `-0.02em` | 표준 본문 (16sp가 아닌 17sp) |
-| `{typography.caption}` | `14sp` | 400 (Regular) | `0` | 보조 설명, 상태값 |
-| `{typography.footnote}` | `12sp` | 500 (Medium) | `+0.02em` | 하단 탭 레이블, AM/PM |
+## 2. iOS 네이티브 5대 시계 페이스 세부 사양
+
+### 2.1 Digital (디지털 스택)
+- **레이아웃**: 상단에 시(HH), 하단에 분(MM)을 2단 수직으로 적층 배치.
+- **타이포그래피**: `SF Pro Display`, `fontSize: 140sp`, `fontWeight: 700`, `letterSpacing: -0.04em`.
+- **커스터마이징**: 롱프레스 시 컬러 휠(Color Picker) 노출. 단색 화이트, 파스텔, 네온, 듀오톤(상단/하단 서로 다른 색) 변경 가능.
+
+### 2.2 Analog (아날로그 크로노)
+- **레이아웃**: 중앙 대형 원형 다이얼(지름 약 280~320dp).
+- **눈금**: 12개 메인 인덱스(볼드 바) + 48개 서브 인덱스(0.5dp 헤어라인).
+- **핸즈(바늘)**:
+  - 시침: 두껍고 끝이 라운드 처리된 캡슐 형태.
+  - 분침: 시침보다 길고 슬림한 캡슐.
+  - 초침: `system-orange` 또는 유저 선택 액센트 컬러의 초미세 라인, 중심 핀(Pivot)에 1px 하이라이트.
+  - **초침 모션**: 1초마다 툭툭 끊기는 쿼츠 틱이 아니라, `requestAnimationFrame` 기준 **초당 60프레임 매끄러운 스윕(Continuous Sweep)**.
+
+### 2.3 World (월드 클락)
+- **레이아웃**: 중앙에 세계 지도 실시간 낮/밤 셰이딩(Terminator Line) 렌더링.
+- **도시 카드**: 상단과 하단에 설정한 주요 도시(런던, 뉴욕, 도쿄 등)의 현재 시간 및 시차(`+14HRS`) 표기.
+
+### 2.4 Solar (솔라 다이얼)
+- **레이아웃**: 하늘의 지평선 원호를 따라 태양 심볼이 회전하는 천문학적 인터페이스.
+- **배경 전환**:
+  - 일출 전(Night): 딥 네이비 / 퍼플
+  - 여명(Dawn): 소프트 핑크 / 오렌지 그라디언트
+  - 정오(Noon): 화사한 스카이 블루
+  - 일몰(Dusk): 앰버 / 딥 레드
+
+### 2.5 Float (플로트 버블)
+- **레이아웃**: 통통하게 부풀어 오른 3D 풍선 형태의 독특한 숫자 폰트.
+- **감성**: 캐주얼하고 경쾌한 침실 감성, 높은 채도의 비비드 컬러 팔레트 지원.
 
 ---
 
-## 4. 공간 및 기하학 (Spatial System & Geometry)
+## 3. iOS 네이티브 디자인 엔지니어링 기술 (SwiftUI & UIKit)
 
-### 4.1 8pt 그리드 시스템
-모든 뷰의 여백, 패딩, 높이는 **8px 배수**를 철저히 지킵니다:
-- **마이크로 간격**: `4dp`, `8dp` (아이콘과 텍스트 사이)
-- **컴포넌트 내부 여백**: `16dp`, `24dp` (위젯 카드 패딩)
-- **그리드 거터(Gutter)**: `16dp`, `24dp` (좌우 위젯 패널 간격)
-- **화면 외곽 세이프 에어리어**: `32dp` (가로 거치 시 베젤과의 시각적 안정 거리)
+### 3.1 스퀴클과 G2 곡률 연속성 (`style: .continuous`)
+Apple은 일반적인 원호 둥글기(`border-radius`)를 사용하지 않습니다. 원호와 직선이 만나는 지점에서 곡률이 $0$에서 $1/r$로 급격히 튀는 시각적 단절을 막기 위해 **G2 곡률 연속성(Superellipse)**을 사용합니다.
 
-### 4.2 스퀴클(Squircle)과 동심 곡률 공식 (Concentric Radii)
+```swift
+// SwiftUI 네이티브 스퀴클 선언
+RoundedRectangle(cornerRadius: 22, style: .continuous)
+    .fill(Color(uiColor: .secondarySystemBackground))
+```
 
-Apple의 모든 모서리는 단순한 `border-radius` 원호가 아니라, 곡률이 점진적으로 변화하는 **슈퍼타원(Superellipse / G2 연속성)**입니다.
+- **안드로이드(Compose) 대응**:
+  일반 `RoundedCornerShape` 대신 3차 베지에 곡선(Cubic Bézier)으로 60% 코너 스무딩(Corner Smoothing)이 적용된 **`SquircleShape`**를 생성하여 클립합니다.
 
-- **동심 곡률 공식**:
-  $$\mathbf{Radius_{inner} = Radius_{outer} - Padding}$$
-- **적용 예시**:
-  - 위젯 카드 외곽 코너: `24dp`
-  - 카드 내부 여백(Padding): `8dp`
-  - 내부 강조 박스/이미지 코너: `16dp` ($24 - 8$)
+### 3.2 동심 곡률 원칙 (Concentric Radii in iOS)
+SwiftUI에서는 하위 뷰가 상위 컨테이너의 곡률을 자동으로 감지하여 완벽한 동심원을 이루도록 **`ContainerRelativeShape()`**를 제공합니다.
+
+$$\mathbf{R_{child} = \max(0, R_{parent} - Padding)}$$
+
+- 위젯 카드 외곽 곡률: `22dp`
+- 내부 패딩: `8dp`
+- 내부 컴포넌트 곡률: `14dp` ($22 - 8$)
+
+### 3.3 시스템 머티리얼 & 바이브런시 (Materials & Vibrancy)
+iOS의 글래스모피즘은 단순 투명도가 아닙니다. 배경 이미지를 실시간으로 가우시안 블러 처리하고 채도를 180% 증폭한 뒤, 그 위에 텍스트의 광도(Luminance)를 합성합니다.
+
+- **SwiftUI Material 토큰**:
+  - `.ultraThinMaterial`: 가장 얇은 유리 (배경이 가장 선명히 비침)
+  - `.thinMaterial`: 위젯 카드 보조 서피스
+  - `.regularMaterial`: 표준 시스템 머티리얼
+  - `.thickMaterial`: 팝업 시트 및 모달 배경
+- **Compose 구현 공식**:
+  ```kotlin
+  // Jetpack Compose 글래스모피즘 에뮬레이션
+  Modifier
+      .background(Color(0x1C1C1E).copy(alpha = 0.70f))
+      .blur(radius = 25.dp)
+      .border(
+          width = 1.dp,
+          brush = Brush.verticalGradient(
+              colors = listOf(Color.White.copy(alpha = 0.15f), Color.Transparent)
+          ),
+          shape = SquircleShape(22.dp)
+      )
+  ```
+
+### 3.4 지터 없는 타이포그래피 (`.monospacedDigit()`)
+iOS에서 시계나 카운터를 렌더링할 때 필수적으로 사용하는 수정자입니다:
+
+```swift
+Text(timeString)
+    .font(.system(size: 140, weight: .bold, design: .default))
+    .monospacedDigit() // OpenType 'tnum' 1 강제 활성화
+```
+
+- 숫자의 글자폭이 고정되므로 초나 분이 넘어갈 때 전체 텍스트 박스가 흔들리는 지터(Jitter)가 100% 방지됩니다.
 
 ---
 
-## 5. 시계 페이스 6종 아키텍처 (Clock Face Archetypes)
+## 4. 야간 암순응 모드 (Night Vision Red Mode)
 
-Nightstand 앱이 제공하는 6가지 시계 페이스 디자인 명세입니다 (각 페이스는 라이트/다크/야간 3가지 모드를 모두 지원):
+### 4.1 생리학적 배경 및 하드웨어 연동
+- **조도 센서 트리거**: 주변 조도가 5~10 lux 이하로 떨어지면 활성화.
+- **원리**: 붉은색 파장($\sim 650\text{ nm}$)은 인간 망막의 감수체 세포(ipRGCs)를 자극하지 않아 수면 유도 호르몬인 **멜라토닌 분비를 방해하지 않으며**, 어둠에 적응된 시력(암순응, Scotopic Vision)을 깨뜨리지 않습니다.
 
-1. **디지털 스택 (Digital Stack)**:
-   - 상단 2자리 시(HH), 하단 2자리 분(MM)의 2열 초대형 타이포그래피.
-   - 라이트 모드: 세련된 차콜 잉크(`#1D1D1F`) / 다크 모드: 듀오톤 앰버-화이트 / 야간 모드: 레드.
-2. **아날로그 크로노그래프 (Analog Chronograph)**:
-   - 60틱 정밀 인덱스 눈금, 1초당 60fps로 매끄럽게 회전하는 부드러운 스윕(Continuous Sweep) 초침.
-   - 4개 코너 컴플리케이션 슬롯 (배터리, 날짜, 다음 알람, 날씨).
-3. **솔라 다이얼 (Solar Dial)**:
-   - 태양의 일출/일몰 궤적을 둥근 원호로 시각화하며 주간에는 밝은 스카이 톤, 야간에는 딥 오렌지/네이비 톤으로 전환.
-4. **미니멀 플로트 (Minimal Float)**:
-   - 극도로 얇은 `Weight 300 / Ultralight` 폰트를 사용한 미니멀리즘 시계.
-5. **월드 클락 듀얼 (World Clock)**:
-   - 홈 타임과 해외 출장/지정 도시 시간을 나란히 표시하는 카드형 레이아웃.
-6. **테크니컬 스톱워치 (Technical Stopwatch)**:
-   - SF Mono 고정폭 기반 밀리초(1/100s) 카운팅과 랩 타임 인터페이스.
+### 4.2 렌더링 파이프라인
+```mermaid
+flowchart LR
+    Sensor["조도 센서 (< 5 lux)"] --> Pipeline["시스템 틴트 파이프라인"]
+    Pipeline --> Target["전체 UI ColorMultiply"]
+    Target --> Color1["메인 텍스트: #FF453A (고대비 레드)"]
+    Target --> Color2["보조 텍스트: #801B17 (뮤트 레드)"]
+    Target --> Color3["배경: #000000 (OLED 픽셀 소등)"]
+```
 
----
-
-## 6. 모션 및 인터랙션 피직스 (Motion & Physics)
-
-- **감쇠 진동 스프링**:
-  - `stiffness = Spring.StiffnessMediumLow`, `dampingRatio = Spring.DampingRatioLowBouncy`
-- **마이크로 인터랙션 (Press State)**:
-  - 모든 카드와 버튼은 터치 시 **`transform: scale(0.96)`로 부드럽게 수축**하는 물리적 반응 제공.
-- **번인 방지 픽셀 시프트 (Pixel Shift)**:
-  - 10분마다 시계 전체 컨테이너를 상하좌우로 1~2px 미세 이동시켜 동일 소자의 영구 열화를 방지합니다.
+- 모든 UI 요소의 RGB 중 Blue와 Green 채널을 $0$으로 강제 클램핑하고 오직 Red 채널만 투과시킵니다.
 
 ---
 
-## 7. Do's & Don'ts 체크리스트
+## 5. Live Activities & 미디어 플레이어 오버레이
 
-### Do
-- [x] 라이트 모드와 다크 모드 모두 시맨틱 토큰 매트릭스를 따르고 있는가?
-- [x] 라이트 모드 배경으로 촌스러운 순수 백색만 쓰지 않고 **Parchment (`#F5F5F7`)** 캔버스를 활용했는가?
-- [x] 모든 시계 숫자에 고정폭 속성(`tnum`)을 설정하여 텍스트 흔들림을 방지했는가?
-- [x] 위젯 카드 코너 곡률에 동심 공식($R_{in} = R_{out} - Padding$)을 적용했는가?
-- [x] 본문 텍스트 기본 크기를 16px이 아닌 **17px**로 설정했는가?
-- [x] 버튼 터치 피드백에 `scale(0.96)` 수축 모션을 적용했는가?
+iOS StandBy 화면 상단 중앙에는 타이머나 음악 재생 시 **동적 알약(Pill) 형태의 컴팩트 뱃지**가 뜨며, 탭 시 전체 화면 미디어 플레이어로 확장됩니다:
+- **컴팩트 모드**: 지름 36dp 앨범 아트 + 실시간 사운드 웨이브폼 애니메이션.
+- **확장 모드**: 좌측 대형 앨범 아트(곡률 16dp) + 우측 트랙명/아티스트/재생 컨트롤 바(에어플레이, 이전/재생/다음).
 
-### Don't
-- [ ] 라이트 모드 텍스트에 강렬한 순수 블랙(`#000000`)을 직타하지 않는다 (`#1D1D1F` Ink 사용).
-- [ ] 정체불명의 화려한 배경 그라디언트를 임의로 삽입하지 않는다.
-- [ ] 카드나 버튼에 강하고 인위적인 검은 그림자(Drop Shadow)를 남발하지 않는다.
-- [ ] 초 단위가 변경될 때 레이아웃 리플로우(Layout Shift)가 발생하도록 방치하지 않는다.
+---
+
+## 6. iOS ➡️ Android (Jetpack Compose) 1:1 완벽 매핑 가이드
+
+iOS의 감성을 안드로이드(Galaxy S25 Ultra)에서 100% 동일하게 구현하기 위한 개발자용 1:1 매핑 표입니다:
+
+| iOS (SwiftUI / HIG) | Android (Jetpack Compose) | 구현 기술 / 코드 |
+| :--- | :--- | :--- |
+| **`style: .continuous`** | `SquircleShape(cornerRadius)` | 3차 베지에 커브 기반 커스텀 Shape |
+| **`ContainerRelativeShape()`** | `SubcomposeLayout` / 동심 공식 | $R_{in} = R_{out} - Padding$ 수식 적용 |
+| **`.monospacedDigit()`** | `fontFeatureSettings = "tnum"` | Compose `TextStyle` 내 OpenType 플래그 |
+| **`.ultraThinMaterial`** | `RenderEffect.createBlurEffect` | Android 12+ (API 31+) 하드웨어 가속 블러 |
+| **`Color(uiColor: .systemBackground)`** | `MaterialTheme.colorScheme.background` | OLED 트루 블랙 `#000000` 강제 |
+| **`Animation.spring(response:damping:)`** | `spring(dampingRatio, stiffness)` | `StiffnessMediumLow`, `DampingRatioLowBouncy` |
+| **`Vertical Pager (Smart Stack)`** | `HorizontalPager` / `VerticalPager` | Foundation Pager + 3D 회전 그래픽 레이어 |
+| **`scaleEffect(isPressed ? 0.96 : 1)`** | `animateFloatAsState` on press | 터치 시 `Modifier.scale(0.96f)` 수축 |
