@@ -62,8 +62,8 @@
 
 | | | |
 |:--:|:--:|:--:|
-| **Digital**<br>초대형 숫자 | **Analog**<br>애플워치 스타일 | **Flip**<br>플립 카드 |
-| **World**<br>세계 시간 | **Solar**<br>시간대별 그라데이션 | **Float**<br>떠다니는 아웃라인 |
+| **Digital**<br>초대형 숫자 | **Analog**<br>눈금 다이얼 | **World**<br>실시간 낮/밤 |
+| **Solar**<br>태양 일주 궤적 | **Float**<br>부푼 입체 숫자 | **Minimal Mono**<br>모노크롬 |
 
 ### 밤에도 눈이 편하게
 
