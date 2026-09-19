@@ -9,38 +9,49 @@
 
 | | |
 |---|---|
-| **진행 중 Phase** | Phase 0 착수 전 (기획 검토 중) |
+| **진행 중 Phase** | Phase 0 착수 대기 (기획 확정 완료) |
 | **마지막 갱신** | 2026-09-19 |
-| **마지막 커밋** | (없음 — 문서만 작성됨) |
+| **마지막 커밋** | `f1ed15b` docs: 프로젝트 기획 문서 작성 (로컬, 미푸시) |
 | **빌드 상태** | 프로젝트 미생성 |
-| **다음 마일스톤** | v0.1 MVP = Phase 0~5 |
+| **다음 마일스톤** | **v0.1 MVP = Phase 0~5** (약 3주) |
+
+### 확정된 설정
+
+| | |
+|---|---|
+| 앱 이름 | **Nightstand** |
+| 패키지명 | `com.lsk0522.nightstand` |
+| minSdk / targetSdk | **29** / 36 |
+| 테스트 기기 | Galaxy S25 Ultra (One UI 7) |
 
 ---
 
 ## ✅ 완료
 
 - [x] 프로젝트 기획 및 기술 조사
-- [x] `plan.md` 작성 (v0.2)
+- [x] `plan.md` 작성 (v0.3 — 결정 사항 반영)
 - [x] `README.md` 작성
 - [x] `PROGRESS.md` / `CLAUDE.md` 작성
+- [x] 주요 결정 확정 (앱 이름 · minSdk · MVP 범위)
+- [x] GitHub 원격 연결 (`origin` → `lsk0522/Apple_style_Clock`, 원격은 아직 비어 있음)
 
 ---
 
 ## 🚧 진행 중
 
-없음 — 사용자 계획 승인 대기.
+없음 — 최종 승인 및 문서 푸시 대기.
 
 ---
 
 ## 📋 다음 할 일 (우선순위 순)
 
-1. **[사용자]** `plan.md` §10 결정 사항(Q1~Q6) 답변
-2. **[사용자]** JDK 17 + Android Studio 설치
-3. **[사용자]** GitHub 원격 저장소 연결 확인 (`lsk0522/Apple_style_Clock`)
-4. **Phase 0** — Gradle 멀티 모듈 프로젝트 생성
-5. **Phase 0** — GitHub Actions 빌드 워크플로 추가 (APK 아티팩트)
-6. **Phase 1** — 디자인 시스템 (스퀘어클 Shape, 컬러 토큰, 타이포)
-7. **Phase 1** — 하단 5섹션 탭바 + 5개 탭 껍데기
+1. **[사용자]** 계획 최종 승인 → 문서 4개 푸시
+2. **[사용자]** JDK 17 + Android Studio 설치 🔴 **Phase 0 블로커**
+3. **Phase 0** — Gradle 멀티 모듈 프로젝트 생성 (`com.lsk0522.nightstand`, minSdk 29)
+4. **Phase 0** — `.gitignore`, Version Catalog, Hilt/Compose 세팅
+5. **Phase 0** — **GitHub Actions 빌드 워크플로** (푸시마다 디버그 APK 아티팩트)
+6. **Phase 1** — 디자인 시스템 (스퀘어클 Shape, 컬러 토큰, Pretendard/Inter)
+7. **Phase 1** — 하단 5섹션 탭바 + 5개 탭 껍데기 + 네비게이션
 
 ---
 
@@ -48,13 +59,11 @@
 
 | # | 항목 | 상태 |
 |---|---|---|
-| Q1 | 배포용 앱 이름 (상표 안전) | ⏳ 사용자 확인 대기 |
-| Q2 | minSdk — API 29 vs 26 | ⏳ (추천: 29) |
-| Q3 | 자체 날씨 위젯 포함 여부 | ⏳ (추천: v1.1로 연기) |
-| Q4 | 후원 = Play 인앱결제 | ⏳ (추천: Play 결제) |
-| Q5 | 개발자 모드 상시 노출 | ⏳ (추천: 상시 노출) |
-| Q6 | v0.1 MVP 범위 = Phase 0~5 | ⏳ 사용자 확인 대기 |
-| B1 | 로컬에 JDK / Android SDK 없음 | 🔴 Phase 0 블로커 |
+| **B1** | **로컬에 JDK / Android SDK 없음** | 🔴 Phase 0 블로커 — 설치 필요.<br>단, GitHub Actions CI를 먼저 깔면 빌드 확인은 가능 |
+| O1 | 앱 아이콘 / 브랜딩 비주얼 | Phase 11에서 결정 |
+| O2 | 다국어 범위 (한 / 영 / 일) | Phase 10에서 결정 |
+| O3 | 크래시 리포팅 — Crashlytics vs ACRA | Phase 10에서 결정 |
+| O4 | 후원 상품 금액대 | Phase 9에서 결정 |
 
 ---
 

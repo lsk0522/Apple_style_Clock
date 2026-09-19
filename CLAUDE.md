@@ -6,7 +6,14 @@
 ## 프로젝트 한 줄 요약
 
 **무선/유선 충전을 감지해 2초 뒤 애플 StandBy 스타일 시계·위젯 화면을 띄우는 안드로이드 앱.**
-저장소: https://github.com/lsk0522/Apple_style_Clock · 테스트 기기: **Galaxy S25 Ultra (One UI 7)**
+
+| | |
+|---|---|
+| 앱 이름 | **Nightstand** |
+| 패키지명 | `com.lsk0522.nightstand` (변경 금지) |
+| 저장소 | https://github.com/lsk0522/Apple_style_Clock (저장소명은 앱 이름과 다름 — 정상) |
+| 테스트 기기 | **Galaxy S25 Ultra** (One UI 7 / Android 15) |
+| v0.1 MVP | **Phase 0 ~ 5** |
 
 ## 핵심 제약 (매번 기억할 것)
 
