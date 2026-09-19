@@ -14,6 +14,10 @@
 | **개발 브랜치** | `main_code` → 기능 브랜치 → `main` 병합 |
 | **테스트 기기** | **Galaxy S25 Ultra** (One UI 7 / Android 15) |
 | **v0.1 MVP 범위** | **Phase 0 ~ 5** (약 3주) |
+| **이 문서의 역할** | **언제 무엇을 만드는가** — 단계·일정·기술 결정 |
+
+> 디자인 수치는 `Design.md`, StandBy 화면 구조는 `iOS_Design.md`,
+> 구현 규칙은 `CLAUDE.md`. 같은 내용을 여기에 중복해 적지 않는다.
 
 ---
 
@@ -179,35 +183,55 @@ hostView.updateAppWidgetSize(Bundle(), listOf(SizeF(tileW, tileH)))   // API 31+
 |---|---|
 | 화면 켜둠 | `FLAG_KEEP_SCREEN_ON` (WakeLock 대신 — 배터리 안전) |
 | 밝기 제어 | `window.attributes.screenBrightness` (시스템 설정 미변경) |
-| 야간 모드 | `Sensor.TYPE_LIGHT` 조도 5 lux 미만 → 붉은 색조 + 최저 밝기 |
-| 번인 방지 | 60초마다 ±4dp 픽셀 시프트, 3초 이징 애니메이션 |
+| 야간 모드 | `Sensor.TYPE_LIGHT` 저조도 시 붉은 색조 + 최저 밝기 (임계값은 실기기 튜닝) |
+| 번인 방지 | 10분마다 ±2dp 픽셀 시프트 (수치는 `Design.md` `motion.pixel-shift-*`) |
 | 화면 깨우기 | 가속도 센서(흔들기) / 근접 센서(손 흔들기) |
 | 주사율 절감 | **S25 Ultra는 LTPO 1~120Hz** → `preferredRefreshRate = 1f`로 저전력 유지 |
 | 화면 방향 | 가로 고정(`SENSOR_LANDSCAPE`), 세로용 별도 레이아웃 제공 |
 
-### 2-5. 디자인 시스템 — "애플다움"의 정체
+### 2-5. 디자인 시스템
 
-| 요소 | 원본(Apple) | 우리 구현 |
+> **수치는 이 문서에 두지 않는다.** 색·타이포·곡률·여백·모션은 전부
+> **`Design.md`** 가 원장이고, 화면 구조는 **`iOS_Design.md`**, 구현 규칙은
+> **`CLAUDE.md`** 를 본다. 여기서는 원칙만 적는다.
+
+성격이 다른 두 표면이 있고, 섞으면 안 된다.
+
+| | 앱 UI (5개 탭) | StandBy 시계 화면 |
 |---|---|---|
-| 서체 | SF Pro Display | **SF Pro는 Apple 플랫폼 전용 라이선스라 번들 불가**<br>→ 영문 `Inter`, 한글 `Pretendard`(SF 메트릭 호환, OFL) |
-| 모서리 | Continuous Corner (스퀘어클) | Compose 커스텀 `Shape` 직접 구현 (`RoundedCornerShape`로는 재현 불가) |
-| 색 | 순수 블랙 `#000000` | 동일 (OLED 절전). 텍스트 화이트 90% opacity |
-| 모션 | spring, cubic-bezier(0.25, 0.1, 0.25, 1) | `spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow)` |
-| 블러 | UIBlurEffect | API 31+ `RenderEffect.createBlurEffect` |
-| 햅틱 | Taptic Engine | `HapticFeedbackConstants.CONFIRM` / 커스텀 `VibrationEffect` |
+| 디자인 언어 | iOS 설정 앱 (인셋 그룹 목록 · 라지 타이틀) | 전체화면 시계·위젯 |
+| 테마 | 시스템 라이트/다크 추종 | 항상 어둡다 (+ 야간 적색) |
+| 표면 | **Liquid Glass** (iOS 26 도입 / 27 개정) | 트루 블랙 + 타일 |
 
-> **법적 메모**: Apple UI를 *참고한 디자인*은 문제없지만, Apple의 **폰트 파일 · 아이콘 에셋 · 로고를 그대로 복사해 배포하면 안 됩니다.** 아이콘은 직접 제작하거나 오픈소스(Lucide, Phosphor)를 사용하고, 스토어 등록명에 "Apple / iPhone / iOS"를 제품명처럼 쓰지 않습니다. → 배포용 이름은 §10 Q1 참조.
+**대체재 결정 (Apple 자산은 쓸 수 없음)**
+
+| 요소 | 원본 | 우리 |
+|---|---|---|
+| 서체 | SF Pro (Apple 플랫폼 전용 라이선스) | **Pretendard** 가변 폰트 (OFL) |
+| 아이콘 | SF Symbols | **직접 제작한 벡터** |
+| 모서리 | Continuous Corner | 커스텀 `SquircleShape` (`RoundedCornerShape` 불가) |
+| 유리 | Liquid Glass | `liquidGlass` — 배경 블러(Haze) + 틴트 + 스페큘러 + 림 |
+| 햅틱 | Taptic Engine | `HapticFeedbackConstants` / 커스텀 `VibrationEffect` |
+
+> **법적 메모**: Apple UI를 *참고한 디자인*은 문제없지만, Apple의 **폰트 파일 ·
+> 아이콘 에셋 · 로고를 그대로 복사해 배포하면 안 됩니다.** 스토어 등록명에
+> "Apple / iPhone / iOS"를 제품명처럼 쓰지 않습니다.
 
 ### 2-6. 시계 페이스 (6종)
 
+iOS StandBy 와 동일한 구성. 상세 스펙은 `iOS_Design.md` §2.3.
+
 | # | 이름 | 설명 |
 |---|---|---|
-| 1 | **Digital** | 초대형 숫자, 컬러 커스텀 |
-| 2 | **Analog** | Apple Watch 스타일 원형, 부드러운 초침(sweep) |
-| 3 | **Flip** | 플립 카드 애니메이션 |
-| 4 | **World** | 다중 시간대 + 지구본 |
-| 5 | **Solar** | 태양 그라데이션 (시간대별 색 변화) |
-| 6 | **Float** | 떠다니는 아웃라인 숫자 |
+| 1 | **Digital** | 시(HH)/분(MM) 2열 수직 적층, 초대형 숫자 |
+| 2 | **Analog** | 60틱 눈금 다이얼 + 스윕 초침 |
+| 3 | **World** | 세계 지도 + 실시간 낮/밤 일조선 |
+| 4 | **Solar** | 지평선 원호를 따라 도는 태양 + 시간대별 그라데이션 |
+| 5 | **Float** | 통통하게 부푼 입체 숫자 |
+| 6 | **Minimal Mono** | 최소한의 모노크롬 디지털 (외형 실기기 확인 필요) |
+
+> 이전 판에 있던 **"Flip"(플립 카드)은 iOS StandBy 에 없는 항목**이라 제거했다.
+> 착오로 들어갔던 것이며, 대신 실제로 존재하는 `Minimal Mono` 를 넣었다.
 
 ---
 
@@ -299,7 +323,7 @@ Apple_style_Clock/
 
 ### Phase 4 — 시계 페이스 6종 · 5~7일
 
-- [ ] Digital / Analog / Flip / World / Solar / Float
+- [ ] Digital / Analog / World / Solar / Float / Minimal Mono
 - [ ] 컬러 커스터마이즈, 12·24시간, 초 표시, 날짜 표시
 - [ ] 메인 메뉴에서 미리보기 + 선택
 - **결과물**: 시계만으로도 쓸 만한 앱

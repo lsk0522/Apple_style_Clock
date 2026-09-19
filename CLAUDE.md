@@ -1,24 +1,3 @@
-| | |
-|---|---|
-| Gradle | 9.7.1 |
-| AGP | 9.4.1 |
-| Kotlin | 2.4.20 (AGP 내장) · KSP 2.3.12 |
-| Hilt | 2.60.1 |
-| Compose BOM | 2026.09.00 |
-| SDK | compileSdk 37 / targetSdk 36 / minSdk 29 |
-| JDK | 17 (Temurin) |
-
-### AGP 9 에서 반드시 지킬 것 (Phase 0 에서 실제로 깨졌던 것들)
-
-1. **`org.jetbrains.kotlin.android` 플러그인을 적용하지 않는다.** AGP 9 는 Kotlin 을
-   내장하고 있어서, 함께 적용하면 빌드가 거부된다.
-2. **`build-logic` 클래스패스에는 AGP jar 만 둔다.** KSP·Compose·Kotlin 플러그인 jar 를
-   올리면 Gradle 내장 Kotlin 이 그 최신 메타데이터를 못 읽어 컴파일이 깨진다.
-   (이 플러그인들은 전부 id 로만 적용하므로 타입이 필요 없다.)
-3. **Hilt 는 2.59 부터 AGP 9 필수.** AGP 를 내리려면 Hilt 2.58 이하로 같이 내려야 한다.
-4. **`enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")`** 는 Gradle 9 에서도 필요하다.
-   빼면 `projects.core.design` 이 해석되지 않는다.
-5. **compileSdk 는 37.** 최신 AndroidX 가 요구한다. targetSdk 는 Play 기준 36 유지.
 # CLAUDE.md — AI 세션용 프로젝트 컨텍스트
 
 > 새 세션이 코드베이스를 다시 훑지 않고 바로 작업할 수 있도록 하는 요약본.
@@ -36,11 +15,24 @@
 | 테스트 기기 | **Galaxy S25 Ultra** (One UI 7 / Android 15) |
 | v0.1 MVP | **Phase 0 ~ 5** |
 
+## 문서 지도 — 어디를 고칠지
+
+| 문서 | 역할 | 대표 내용 |
+|---|---|---|
+| **Design.md** | **어떻게 보이는가** | 색·타이포·곡률·여백·모션 **수치 원장** |
+| **iOS_Design.md** | **무엇을 만드는가** | StandBy 3단 화면 구조, 시계 6종, iOS→Compose 매핑 |
+| **CLAUDE.md** (이 문서) | **어떻게 구현하는가** | 컴포넌트 규칙, 빌드 함정, 작업 규칙 |
+| **plan.md** | **언제 만드는가** | Phase 0~11 일정 |
+| **PROGRESS.md** | **지금 어디인가** | 진행 상황·인수인계 |
+
+규칙: **수치는 `Design.md` 에만** 둔다. 다른 문서는 참조만 한다.
+두 문서가 어긋나면 `Design.md` 가 맞다.
+
 ## 핵심 제약 (매번 기억할 것)
 
 1. **백그라운드 액티비티 실행 제한** — `SYSTEM_ALERT_WINDOW` 권한이 주력 경로, `DreamService`가 보조. 둘 다 구현한다.
 2. **위젯은 자체 제작이 아니라 `AppWidgetHost` 기반 실제 시스템 위젯 호스팅**이 핵심 요구사항. 갤럭시 기본 위젯이 들어가야 한다.
-3. **SF Pro 폰트는 번들 불가** (Apple 플랫폼 전용 라이선스). `Pretendard`(한글) + `Inter`(영문) 사용.
+3. **SF Pro 폰트는 번들 불가** (Apple 플랫폼 전용 라이선스). 실제 번들은 `Pretendard` 가변 폰트 하나(OFL).
 4. **Apple 상표/에셋 사용 금지** — 아이콘은 직접 제작 또는 오픈소스.
 5. **삼성 절전 정책**이 서비스를 죽인다 — 배터리 최적화 예외 온보딩이 필수.
 6. **One UI Daily Board**와 충돌 — 끄도록 안내해야 한다.
@@ -100,7 +92,8 @@ feature/donate/       후원 (Play Billing)
 - 목록은 `ListSection` + `ListRow` / `SwitchRow` / `SelectionRow`
 - 구분선은 카드 끝이 아니라 **라벨 시작 위치**에서, 마지막 행은 없음
 - 스위치는 `IosSwitch` (51×31) — Material `Switch` 금지
-- 탭바 49pt · 라벨 11sp · 선택색 systemBlue — Material `NavigationBar` 금지
+- 탭바는 바닥에 붙이지 않는다 — **떠 있는 캡슐형 유리 바**. Material `NavigationBar` 금지
+  (콘텐츠가 그 아래로 스크롤되도록 화면은 `Column` 이 아니라 `Box` 로 쌓는다)
 - 타이포는 `NightstandType` 만 사용. SF Pro 트래킹은 **사이즈별로 부호가 바뀐다**
   (34pt는 +0.37, 17pt는 -0.41). 전부 음수로 깔면 "비슷하지만 아닌" 느낌이 난다.
 
@@ -109,7 +102,11 @@ feature/donate/       후원 (Play Billing)
 - 모서리는 스퀘어클(continuous corner) — `RoundedCornerShape` 대신 `SquircleShape`
 - 누름 피드백은 리플이 아니라 scale 0.96
 - StandBy 페이드인: **2초 지연 → 800ms 페이드인**
-- 블러: API 31+ `RenderEffect.createBlurEffect`
+- 유리 표면은 `Modifier.liquidGlass(shape, hazeState)` — 직접 반투명 배경 쌓지 말 것
+- **배경 블러는 `RenderEffect` 로 안 된다.** Compose 는 자기 레이어만 블러한다.
+  `dev.chrisbanes.haze` 를 쓰며, 블러 대상에 `hazeSource`, 유리 면에 `hazeEffect`.
+  **효과가 자기 소스 안에 들어가면 자기 출력을 먹으므로** 내비게이션 바와 탭바는
+  각각 별도 `HazeState` 를 쓴다
 
 ## 작업 규칙 (세션 연속성)
 
@@ -195,13 +192,18 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core/*
 
 | 파일 | 내용 |
 |---|---|
-| `theme/Color.kt` | 트루 블랙 캔버스, 서피스 계층, 야간 적색 |
+| `theme/Color.kt` | `Ios`(앱 UI) / `Standby`(시계) 두 체계 + 유리 토큰 |
 | `theme/Type.kt` | tnum 고정폭 필수, body는 17sp (16sp 아님) |
 | `theme/Font.kt` | Pretendard 가변 폰트 (SF Pro 대체) |
 | `theme/Dimen.kt` | 8pt 그리드, `Radius.concentric(outer, padding)` |
 | `theme/Squircle.kt` | 애플 연속 곡률 — **`RoundedCornerShape` 쓰지 말 것** |
 | `theme/Motion.kt` | 스프링 스펙, StandBy 2초 지연 + 800ms 페이드인 |
-| `theme/Theme.kt` | `NightstandTheme` · `LocalNightstandPalette` |
+| `theme/Theme.kt` | `NightstandTheme`(앱 UI) · `StandbyTheme`(시계 화면) |
+| `component/LiquidGlass.kt` | Liquid Glass 머티리얼 (Haze 배경 블러 포함) |
+| `component/IosScreen.kt` | 라지 타이틀 화면 + `listSection` 헬퍼 |
+| `component/IosList.kt` | 인셋 그룹 목록 · 행 · 선택행 |
+| `component/IosSwitch.kt` | 51x31 iOS 스위치 |
+| `component/NightstandTabBar.kt` | 떠 있는 캡슐 탭바 |
 
 상세 근거는 `Design.md` 참조.
 
