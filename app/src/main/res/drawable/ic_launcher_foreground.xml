@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nightstand launcher icon: a minimal clock face. 108dp canvas, 72dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- dial -->
+    <path
+        android:pathData="M54,28 a26,26 0 1,1 -0.01,0"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round" />
+
+    <!-- hour hand (pointing to 12) -->
+    <path
+        android:pathData="M54,54 L54,38"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round" />
+
+    <!-- minute hand (pointing to 4) -->
+    <path
+        android:pathData="M54,54 L67,62"
+        android:strokeColor="#FF9F0A"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round" />
+</vector>
