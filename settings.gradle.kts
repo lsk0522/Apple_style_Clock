@@ -25,6 +25,11 @@ dependencyResolutionManagement {
 
 rootProject.name = "Nightstand"
 
+// Lets modules refer to each other as `projects.core.design` instead of a
+// stringly-typed path. Still an incubating feature in Gradle 9, so it has to
+// be opted into here.
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 include(":app")
 
 // Core — shared foundations
