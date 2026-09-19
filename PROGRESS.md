@@ -9,9 +9,9 @@
 
 | | |
 |---|---|
-| **진행 중 Phase** | **Phase 0 (기초 공사) 완료 ✅** — 다음은 Phase 1 |
+| **진행 중 Phase** | **Phase 1 (디자인 시스템 · 메인 화면)** — 탭바 완료 |
 | **마지막 갱신** | 2026-09-20 |
-| **마지막 커밋** | `v0.1.0-phase0` 태그 (Phase 0 마감) |
+| **마지막 커밋** | feat(ui): 하단 5섹션 탭바 + 고정 디버그 서명키 |
 | **빌드 상태** | 🟢 **CI 그린** — 빌드·단위테스트·린트 통과, 디버그 APK 14MB 생성 |
 | **다음 마일스톤** | **v0.1 MVP = Phase 0~5** (약 3주) |
 
@@ -82,6 +82,9 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 - [x] **Phase 0** — Pretendard 가변 폰트 번들 (OFL, 6.7MB)
 - [x] **Phase 0** — GitHub Actions CI (빌드·테스트·린트 + APK 아티팩트)
 - [x] **Phase 0** — **AGP 9 마이그레이션 및 CI 그린 달성** 🟢
+- [x] **Phase 0** — 고정 디버그 서명키 + versionCode 자동 증가 → **업데이트 설치 동작**
+- [x] **Phase 1** — 탭 아이콘 5종 직접 제작 (24dp 모노라인 벡터)
+- [x] **Phase 1** — NightstandTabBar + 5개 탭 골격 (feature:main)
 
 ---
 
@@ -93,14 +96,13 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 
 ## 📋 다음 할 일 (우선순위 순)
 
-1. **[사용자]** CI 아티팩트에서 APK 받아 S25 Ultra 설치 확인
-   → Actions 탭 → 최신 성공 run → `nightstand-debug-apk`
-2. **[사용자]** (선택) Android Studio 설치 — CI만으로도 계속 진행 가능
-3. **Phase 1** — 탭바 아이콘 이미지 에셋 5종 제작
-4. **Phase 1** — iOS풍 공통 컴포넌트 (리스트 셀, 토글, 세그먼트, 모달 시트)
-5. **Phase 1** — 하단 5섹션 탭바 (글래스 블러 배경 · 선택 애니메이션)
-6. **Phase 1** — 5개 탭 화면 골격 + 네비게이션 그래프
-7. **Phase 2** — 충전 감지 엔진 (`core:common` / `feature:charging`)
+1. **[사용자]** 새 APK 설치 — **이번 한 번만 기존 앱 삭제 후 설치**.
+   서명키가 바뀌었기 때문이며, 이후로는 덮어쓰기(업데이트)로 설치된다.
+2. **[사용자]** 아이콘 디자인 확인 후 수정 의견
+3. **Phase 1** — iOS풍 공통 컴포넌트 (리스트 셀, 토글, 세그먼트, 모달 시트)
+4. **Phase 1** — 각 탭 실제 화면 골격 + 네비게이션 그래프
+5. **Phase 1** — 탭바 배경 실제 블러 (API 31+ RenderEffect)
+6. **Phase 2** — 충전 감지 엔진 (`core:common` / `feature:charging`)
 
 ---
 
