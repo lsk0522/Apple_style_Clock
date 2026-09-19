@@ -25,8 +25,8 @@ fun WidgetsTab(modifier: Modifier = Modifier) {
     ) {
         listSection(
             key = "added",
-            header = stringResource(R.string.widgets_added_header),
-            footer = stringResource(R.string.widgets_add_footer),
+            header = R.string.widgets_added_header,
+            footer = R.string.widgets_add_footer,
         ) {
             ListRow(
                 title = stringResource(R.string.widgets_empty),
@@ -44,8 +44,8 @@ fun WidgetsTab(modifier: Modifier = Modifier) {
 
         listSection(
             key = "rotate",
-            header = stringResource(R.string.widgets_rotate_header),
-            footer = stringResource(R.string.widgets_rotate_footer),
+            header = R.string.widgets_rotate_header,
+            footer = R.string.widgets_rotate_footer,
         ) {
             SwitchRow(
                 title = stringResource(R.string.widgets_rotate_enabled),

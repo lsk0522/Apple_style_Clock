@@ -29,8 +29,8 @@ fun SettingsTab(modifier: Modifier = Modifier) {
     ) {
         listSection(
             key = "clock",
-            header = stringResource(R.string.settings_clock_header),
-            footer = stringResource(R.string.settings_clock_footer),
+            header = R.string.settings_clock_header,
+            footer = R.string.settings_clock_footer,
         ) {
             ListRow(
                 title = stringResource(R.string.settings_clock_face),
@@ -54,7 +54,7 @@ fun SettingsTab(modifier: Modifier = Modifier) {
 
         listSection(
             key = "display",
-            header = stringResource(R.string.settings_display_header),
+            header = R.string.settings_display_header,
         ) {
             SwitchRow(
                 title = stringResource(R.string.settings_display_night),
@@ -80,8 +80,8 @@ fun SettingsTab(modifier: Modifier = Modifier) {
 
         listSection(
             key = "permissions",
-            header = stringResource(R.string.settings_permission_header),
-            footer = stringResource(R.string.settings_permission_footer),
+            header = R.string.settings_permission_header,
+            footer = R.string.settings_permission_footer,
         ) {
             // TODO(next): Phase 3 — read the real grant state and deep-link to
             // the system screens instead of showing a static value.
@@ -104,7 +104,7 @@ fun SettingsTab(modifier: Modifier = Modifier) {
 
         listSection(
             key = "about",
-            header = stringResource(R.string.settings_about_header),
+            header = R.string.settings_about_header,
         ) {
             ListRow(
                 title = stringResource(R.string.settings_about_version),

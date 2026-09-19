@@ -17,8 +17,8 @@ fun DeveloperTab(modifier: Modifier = Modifier) {
         // TODO(next): Phase 8 — wire these to the real diagnostics.
         listSection(
             key = "tools",
-            header = stringResource(R.string.developer_tools_header),
-            footer = stringResource(R.string.developer_footer),
+            header = R.string.developer_tools_header,
+            footer = R.string.developer_footer,
         ) {
             ListRow(
                 title = stringResource(R.string.developer_force_standby),
@@ -49,7 +49,7 @@ fun DeveloperTab(modifier: Modifier = Modifier) {
 
         listSection(
             key = "diagnostics",
-            header = stringResource(R.string.developer_diagnostics_header),
+            header = R.string.developer_diagnostics_header,
         ) {
             ListRow(
                 title = stringResource(R.string.developer_widget_host),
@@ -68,7 +68,7 @@ fun DeveloperTab(modifier: Modifier = Modifier) {
 
         listSection(
             key = "build",
-            header = stringResource(R.string.developer_build_header),
+            header = R.string.developer_build_header,
         ) {
             ListRow(
                 title = stringResource(R.string.developer_build_type),

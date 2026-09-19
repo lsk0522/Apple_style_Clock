@@ -28,8 +28,8 @@ fun ChargingTab(modifier: Modifier = Modifier) {
     ) {
         listSection(
             key = "mode",
-            header = stringResource(R.string.charging_mode_header),
-            footer = stringResource(R.string.charging_mode_footer),
+            header = R.string.charging_mode_header,
+            footer = R.string.charging_mode_footer,
         ) {
             SelectionRow(
                 title = stringResource(R.string.charging_mode_wireless),
@@ -56,8 +56,8 @@ fun ChargingTab(modifier: Modifier = Modifier) {
 
         listSection(
             key = "status",
-            header = stringResource(R.string.charging_status_header),
-            footer = stringResource(R.string.charging_status_footer),
+            header = R.string.charging_status_header,
+            footer = R.string.charging_status_footer,
         ) {
             ListRow(
                 title = stringResource(R.string.charging_status_method),

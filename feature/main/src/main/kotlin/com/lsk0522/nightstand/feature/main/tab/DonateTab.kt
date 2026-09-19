@@ -34,8 +34,8 @@ fun DonateTab(modifier: Modifier = Modifier) {
         // Play Billing product list; the amounts here are placeholders.
         listSection(
             key = "items",
-            header = stringResource(R.string.donate_items_header),
-            footer = stringResource(R.string.donate_footer),
+            header = R.string.donate_items_header,
+            footer = R.string.donate_footer,
         ) {
             ListRow(
                 title = stringResource(R.string.donate_coffee),

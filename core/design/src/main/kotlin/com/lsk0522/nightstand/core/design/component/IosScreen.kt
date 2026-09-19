@@ -1,11 +1,13 @@
 package com.lsk0522.nightstand.core.design.component
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -28,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
@@ -124,16 +127,23 @@ fun IosScreen(
 /**
  * Adds a [ListSection] as a list item, with the gap iOS leaves between
  * grouped sections.
+ *
+ * Takes string *resources* rather than strings: this runs in `LazyListScope`,
+ * which is not a composable context, so the caller could not resolve them.
  */
 fun LazyListScope.listSection(
     key: String,
-    header: String? = null,
-    footer: String? = null,
-    content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit,
+    @StringRes header: Int? = null,
+    @StringRes footer: Int? = null,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     item(key = key) {
         Column(verticalArrangement = Arrangement.Top) {
-            ListSection(header = header, footer = footer, content = content)
+            ListSection(
+                header = header?.let { stringResource(it) },
+                footer = footer?.let { stringResource(it) },
+                content = content,
+            )
             Box(Modifier.height(SECTION_GAP))
         }
     }
