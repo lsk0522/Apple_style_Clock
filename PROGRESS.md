@@ -33,7 +33,8 @@
 - [x] `README.md` 작성
 - [x] `PROGRESS.md` / `CLAUDE.md` 작성
 - [x] 주요 결정 확정 (앱 이름 · minSdk · MVP 범위)
-- [x] GitHub 원격 연결 (`origin` → `lsk0522/Apple_style_Clock`, 원격은 아직 비어 있음)
+- [x] `Design.md` 작성 완료 (Apple HIG 및 getdesign.md 기반 디자인 시스템 & 시계 토큰 확정)
+- [x] GitHub 원격 연결 (`origin` → `lsk0522/Apple_Style_Clock`, 원격은 아직 비어 있음)
 
 ---
 
