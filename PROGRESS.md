@@ -9,9 +9,9 @@
 
 | | |
 |---|---|
-| **진행 중 Phase** | **Phase 1 (디자인 시스템 · 메인 화면)** — 탭바 완료 |
+| **진행 중 Phase** | **Phase 1** — 앱 UI 를 iOS 디자인 언어로 재구축 완료 |
 | **마지막 갱신** | 2026-09-20 |
-| **마지막 커밋** | feat(ui): 하단 5섹션 탭바 + 고정 디버그 서명키 |
+| **마지막 커밋** | design(ui): 앱 UI를 실제 iOS 디자인 언어로 다시 구축 |
 | **빌드 상태** | 🟢 **CI 그린** — 빌드·단위테스트·린트 통과, 디버그 APK 14MB 생성 |
 | **다음 마일스톤** | **v0.1 MVP = Phase 0~5** (약 3주) |
 
@@ -115,6 +115,27 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 | AGP 9 가 `kotlin.android` 플러그인 적용을 거부 | AGP 9 는 **Kotlin 내장** — 플러그인 적용하지 않는다 |
 | `projects.core.design` 해석 실패 | `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")` 는 Gradle 9 에서도 필요 |
 | AAR 메타데이터 검사 실패 (18건) | 최신 AndroidX 가 **compileSdk 37** 요구 |
+
+---
+
+## ⚠️ Design.md 와 코드가 어긋나는 값 (확인 필요)
+
+`Design.md` 의 라이트 모드 값은 **apple.com(웹)** 팔레트이고,
+코드는 **UIKit(iOS 앱)** 시맨틱 값을 씁니다. 둘 다 "애플"이지만 맥락이 다릅니다.
+
+| 토큰 | Design.md (웹) | 코드 (UIKit) | 비고 |
+|---|---|---|---|
+| 라이트 바탕 | `#F5F5F7` Parchment | `#F2F2F7` systemGroupedBackground | iOS 설정 앱 바탕 |
+| 라이트 본문 | `#1D1D1F` Ink | `#000000` label | iOS는 순검정 |
+| 보조 텍스트 | `rgba(29,29,31,.60)` | `rgba(60,60,67,.60)` | iOS는 바탕 쪽으로 틴트 |
+| 액션 블루 | `#0066cc` | `#007AFF` systemBlue | iOS 표준 틴트 |
+
+**현재 판단**: 이건 웹페이지가 아니라 앱이므로 UIKit 값을 채택.
+→ Design.md 값으로 맞추길 원하시면 `core/design/theme/Color.kt` 한 파일만 바꾸면 됩니다.
+
+**또 하나**: 개정된 Design.md §1.1 은 StandBy 시계 화면에도 라이트 모드를
+두고 있습니다(낮 시간 거치). 현재 코드의 `StandbyTheme` 은 항상 블랙입니다.
+StandBy 화면 자체가 Phase 3 이므로 그때 결정하면 됩니다.
 
 ---
 

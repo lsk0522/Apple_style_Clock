@@ -85,9 +85,29 @@ feature/donate/       후원 (Play Billing)
 
 ## 디자인 규칙
 
-- 배경 순수 블랙 `#000000`, 텍스트 화이트 90% opacity
-- 모서리는 스퀘어클(continuous corner) — `RoundedCornerShape` 금지, 커스텀 `Shape` 사용
-- 모션: `spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow)`
+**두 체계를 절대 섞지 말 것** — 이걸 섞어서 앱 UI를 한 번 다시 만들었다.
+
+| | 앱 UI (설정·탭바·내비) | StandBy 시계 화면 |
+|---|---|---|
+| 토큰 | `NightstandColor.Ios` | `NightstandColor.Standby` |
+| 테마 | `NightstandTheme` (라이트/다크 추종) | `StandbyTheme` (항상 블랙) |
+| 바탕 | 라이트 `#F2F2F7` / 다크 `#000000` | 항상 `#000000` |
+| 카드 | 라이트 `#FFFFFF` / 다크 `#1C1C1E` | `#1C1C1E` 타일 |
+
+앱 UI 필수 규칙 — 직접 쌓지 말고 컴포넌트를 쓸 것:
+
+- 화면은 `IosScreen` (라지 타이틀 → 스크롤 시 중앙 타이틀로 접힘)
+- 목록은 `ListSection` + `ListRow` / `SwitchRow` / `SelectionRow`
+- 구분선은 카드 끝이 아니라 **라벨 시작 위치**에서, 마지막 행은 없음
+- 스위치는 `IosSwitch` (51×31) — Material `Switch` 금지
+- 탭바 49pt · 라벨 11sp · 선택색 systemBlue — Material `NavigationBar` 금지
+- 타이포는 `NightstandType` 만 사용. SF Pro 트래킹은 **사이즈별로 부호가 바뀐다**
+  (34pt는 +0.37, 17pt는 -0.41). 전부 음수로 깔면 "비슷하지만 아닌" 느낌이 난다.
+
+공통:
+
+- 모서리는 스퀘어클(continuous corner) — `RoundedCornerShape` 대신 `SquircleShape`
+- 누름 피드백은 리플이 아니라 scale 0.96
 - StandBy 페이드인: **2초 지연 → 800ms 페이드인**
 - 블러: API 31+ `RenderEffect.createBlurEffect`
 
