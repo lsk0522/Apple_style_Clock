@@ -1,0 +1,84 @@
+package com.lsk0522.nightstand.feature.main.tab
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.lsk0522.nightstand.core.design.component.IosScreen
+import com.lsk0522.nightstand.core.design.component.ListRow
+import com.lsk0522.nightstand.core.design.component.listSection
+import com.lsk0522.nightstand.feature.main.R
+
+@Composable
+fun DeveloperTab(modifier: Modifier = Modifier) {
+    IosScreen(
+        title = stringResource(R.string.developer_title),
+        modifier = modifier,
+    ) {
+        // TODO(next): Phase 8 — wire these to the real diagnostics.
+        listSection(
+            key = "tools",
+            header = stringResource(R.string.developer_tools_header),
+            footer = stringResource(R.string.developer_footer),
+        ) {
+            ListRow(
+                title = stringResource(R.string.developer_force_standby),
+                showChevron = true,
+                enabled = false,
+                onClick = null,
+            )
+            ListRow(
+                title = stringResource(R.string.developer_simulate),
+                showChevron = true,
+                enabled = false,
+                onClick = null,
+            )
+            ListRow(
+                title = stringResource(R.string.developer_logs),
+                showChevron = true,
+                enabled = false,
+                onClick = null,
+            )
+            ListRow(
+                title = stringResource(R.string.developer_sensors),
+                showChevron = true,
+                enabled = false,
+                showSeparator = false,
+                onClick = null,
+            )
+        }
+
+        listSection(
+            key = "diagnostics",
+            header = stringResource(R.string.developer_diagnostics_header),
+        ) {
+            ListRow(
+                title = stringResource(R.string.developer_widget_host),
+                showChevron = true,
+                enabled = false,
+                onClick = null,
+            )
+            ListRow(
+                title = stringResource(R.string.developer_export),
+                showChevron = true,
+                enabled = false,
+                showSeparator = false,
+                onClick = null,
+            )
+        }
+
+        listSection(
+            key = "build",
+            header = stringResource(R.string.developer_build_header),
+        ) {
+            ListRow(
+                title = stringResource(R.string.developer_build_type),
+                value = "debug",
+            )
+            ListRow(
+                title = stringResource(R.string.developer_min_sdk),
+                value = "Android 10 (API 29)",
+                showSeparator = false,
+            )
+        }
+    }
+}

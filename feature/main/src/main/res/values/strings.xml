@@ -1,16 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 하단 탭바 (순서 고정: 위젯 · 충전 판별 · 메인 · 개발자 · 후원) -->
+    <!-- 하단 탭바 (순서 고정: 위젯 · 충전 · 메인 · 개발자 · 후원) -->
     <string name="tab_widgets">위젯</string>
     <string name="tab_charging">충전</string>
     <string name="tab_main">메인</string>
     <string name="tab_developer">개발자</string>
     <string name="tab_donate">후원</string>
 
-    <!-- Phase 1 임시 안내문 — 각 기능 구현 시 실제 화면으로 교체 -->
-    <string name="placeholder_widgets">폰에 설치된 위젯을 StandBy 화면에 올리고\n순서와 자동 넘김을 설정합니다.\n\nPhase 5에서 구현됩니다.</string>
-    <string name="placeholder_charging">무선·유선·도크 중 어떤 충전에서\n시계를 띄울지 고릅니다.\n\nPhase 2에서 구현됩니다.</string>
-    <string name="placeholder_main">시계 스타일, 테마, 미리보기 등\n전체 설정이 들어갑니다.\n\nPhase 3~4에서 구현됩니다.</string>
-    <string name="placeholder_developer">로그, 센서 실시간 값,\n충전 이벤트 시뮬레이션.\n\nPhase 8에서 구현됩니다.</string>
-    <string name="placeholder_donate">개발자에게 커피 한 잔.\n\nPhase 9에서 구현됩니다.</string>
+    <!-- 위젯 탭 -->
+    <string name="widgets_title">위젯</string>
+    <string name="widgets_added_header">추가된 위젯</string>
+    <string name="widgets_empty">아직 추가된 위젯이 없습니다</string>
+    <string name="widgets_add">위젯 추가</string>
+    <string name="widgets_add_footer">폰에 설치된 위젯을 StandBy 화면에 올릴 수 있습니다. 갤럭시 기본 위젯도 그대로 들어갑니다.</string>
+    <string name="widgets_rotate_header">자동 넘기기</string>
+    <string name="widgets_rotate_enabled">자동으로 넘기기</string>
+    <string name="widgets_rotate_interval">전환 간격</string>
+    <string name="widgets_rotate_interval_value">10초</string>
+    <string name="widgets_rotate_footer">손으로 넘기면 10초 동안 자동 전환이 멈춥니다.</string>
+
+    <!-- 충전 탭 -->
+    <string name="charging_title">충전</string>
+    <string name="charging_mode_header">언제 시계를 켤까요</string>
+    <string name="charging_mode_wireless">무선 충전일 때만</string>
+    <string name="charging_mode_wired">유선 충전일 때만</string>
+    <string name="charging_mode_both">충전 중이면 언제나</string>
+    <string name="charging_mode_dock">도크에 거치했을 때만</string>
+    <string name="charging_mode_footer">선택한 방식으로 충전이 시작되면 2초 뒤 시계가 서서히 나타납니다.</string>
+    <string name="charging_status_header">현재 상태</string>
+    <string name="charging_status_method">충전 방식</string>
+    <string name="charging_status_pending">감지 대기 중</string>
+    <string name="charging_status_battery">배터리</string>
+    <string name="charging_status_unknown">—</string>
+    <string name="charging_status_footer">실시간 감지는 Phase 2에서 연결됩니다.</string>
+
+    <!-- 메인 탭 -->
+    <string name="settings_title">Nightstand</string>
+    <string name="settings_clock_header">시계</string>
+    <string name="settings_clock_face">시계 스타일</string>
+    <string name="settings_clock_face_value">디지털</string>
+    <string name="settings_clock_24h">24시간 표시</string>
+    <string name="settings_clock_seconds">초 표시</string>
+    <string name="settings_clock_footer">시계 스타일 6종은 Phase 4에서 추가됩니다.</string>
+
+    <string name="settings_display_header">화면</string>
+    <string name="settings_display_night">야간 모드</string>
+    <string name="settings_display_night_sub">어두우면 붉은 색조로 전환</string>
+    <string name="settings_display_burnin">번인 방지</string>
+    <string name="settings_display_burnin_sub">10분마다 화면을 미세하게 이동</string>
+    <string name="settings_display_brightness">밝기</string>
+    <string name="settings_display_brightness_value">자동</string>
+
+    <string name="settings_permission_header">동작에 필요한 설정</string>
+    <string name="settings_permission_overlay">다른 앱 위에 표시</string>
+    <string name="settings_permission_battery">배터리 최적화 제외</string>
+    <string name="settings_permission_pending">확인 필요</string>
+    <string name="settings_permission_footer">두 가지를 허용해야 충전할 때 시계가 자동으로 켜집니다.</string>
+
+    <string name="settings_about_header">정보</string>
+    <string name="settings_about_version">버전</string>
+    <string name="settings_about_licenses">오픈소스 라이선스</string>
+    <string name="settings_about_github">GitHub 저장소</string>
+
+    <!-- 개발자 탭 -->
+    <string name="developer_title">개발자</string>
+    <string name="developer_tools_header">도구</string>
+    <string name="developer_force_standby">StandBy 강제 실행</string>
+    <string name="developer_simulate">충전 이벤트 시뮬레이션</string>
+    <string name="developer_logs">실시간 로그</string>
+    <string name="developer_sensors">센서 값 보기</string>
+    <string name="developer_diagnostics_header">진단</string>
+    <string name="developer_widget_host">위젯 호스트 상태</string>
+    <string name="developer_export">설정 내보내기</string>
+    <string name="developer_footer">Phase 8에서 구현됩니다.</string>
+    <string name="developer_build_header">빌드</string>
+    <string name="developer_build_type">빌드 종류</string>
+    <string name="developer_min_sdk">최소 지원</string>
+
+    <!-- 후원 탭 -->
+    <string name="donate_title">후원</string>
+    <string name="donate_intro_header">고맙습니다</string>
+    <string name="donate_intro">이 앱은 광고도 구독도 없습니다.\n마음이 동하실 때만 후원해 주세요.</string>
+    <string name="donate_items_header">후원하기</string>
+    <string name="donate_coffee">커피 한 잔</string>
+    <string name="donate_meal">밥 한 끼</string>
+    <string name="donate_generous">든든한 후원</string>
+    <string name="donate_preparing">준비 중</string>
+    <string name="donate_footer">Google Play 결제로 진행되며 Phase 9에서 연결됩니다.</string>
+
+    <!-- 공통 -->
+    <string name="common_coming_soon">준비 중</string>
 </resources>

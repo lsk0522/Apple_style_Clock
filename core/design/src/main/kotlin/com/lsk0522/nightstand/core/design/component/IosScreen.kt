@@ -1,0 +1,143 @@
+package com.lsk0522.nightstand.core.design.component
+
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
+import com.lsk0522.nightstand.core.design.theme.NightstandTheme
+import com.lsk0522.nightstand.core.design.theme.NightstandType
+
+/**
+ * A screen with an iOS navigation bar: the title starts large and
+ * left-aligned, then collapses into a small centred title with a hairline
+ * once the list scrolls under it.
+ *
+ * That collapse is doing a lot of the work — a static header reads as a
+ * generic mobile app no matter how the type is set.
+ */
+@Composable
+fun IosScreen(
+    title: String,
+    modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState(),
+    content: LazyListScope.() -> Unit,
+) {
+    val palette = NightstandTheme.palette
+    val density = LocalDensity.current
+    val collapseAfter = remember(density) { with(density) { 36.dp.toPx() } }
+
+    val collapsed by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 ||
+                listState.firstVisibleItemScrollOffset > collapseAfter
+        }
+    }
+    val barAlpha by animateFloatAsState(
+        targetValue = if (collapsed) 1f else 0f,
+        animationSpec = tween(durationMillis = 160),
+        label = "navBarAlpha",
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(palette.groupedBackground),
+    ) {
+        LazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(
+                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + NAV_BAR_HEIGHT,
+                bottom = 24.dp,
+            ),
+        ) {
+            item(key = "largeTitle") {
+                Text(
+                    text = title,
+                    style = NightstandType.LargeTitle,
+                    color = palette.label,
+                    modifier = Modifier.padding(
+                        start = SECTION_INSET,
+                        end = SECTION_INSET,
+                        bottom = 18.dp,
+                    ),
+                )
+            }
+            content()
+        }
+
+        // The collapsed bar, faded in over the scrolling content.
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopStart)
+                .alpha(barAlpha)
+                .background(palette.bar),
+        ) {
+            Box(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(NAV_BAR_HEIGHT),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = title,
+                    style = NightstandType.Headline,
+                    color = palette.label,
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+                    .background(palette.separator),
+            )
+        }
+    }
+}
+
+/**
+ * Adds a [ListSection] as a list item, with the gap iOS leaves between
+ * grouped sections.
+ */
+fun LazyListScope.listSection(
+    key: String,
+    header: String? = null,
+    footer: String? = null,
+    content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit,
+) {
+    item(key = key) {
+        Column(verticalArrangement = Arrangement.Top) {
+            ListSection(header = header, footer = footer, content = content)
+            Box(Modifier.height(SECTION_GAP))
+        }
+    }
+}
+
+private val NAV_BAR_HEIGHT = 44.dp
+private val SECTION_GAP = 35.dp

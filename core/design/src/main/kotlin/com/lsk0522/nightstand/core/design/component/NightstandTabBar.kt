@@ -7,13 +7,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
@@ -25,16 +25,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lsk0522.nightstand.core.design.theme.NightstandMotion
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
-import com.lsk0522.nightstand.core.design.theme.Spacing
 
 /** One entry in the bottom bar. */
 @Immutable
@@ -44,12 +41,13 @@ data class TabItem(
 )
 
 /**
- * The bottom tab bar — Design.md `components.tab-bar-container`.
+ * The bottom tab bar, at UIKit's metrics: a 49pt row of 25pt glyphs over
+ * 11pt labels, separated from the content by a hairline.
  *
- * Deliberately not Material's `NavigationBar`: that one draws a pill-shaped
- * selection indicator and uses Material's own spacing, neither of which belongs
- * in an Apple-style bar. Selection here reads only through colour and a small
- * scale change, the way a UITabBar does.
+ * Material's `NavigationBar` is deliberately not used — it is 80dp tall, draws
+ * a pill behind the selected icon and uses 12sp labels, none of which belongs
+ * in an Apple-shaped app. Selection here reads through the tint colour alone,
+ * the way the Clock app's bar does.
  */
 @Composable
 fun NightstandTabBar(
@@ -60,31 +58,29 @@ fun NightstandTabBar(
 ) {
     val palette = NightstandTheme.palette
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(palette.tabBar)
-            // 1px hairline along the top edge, the way iOS separates the bar
-            // from the content behind it.
-            .drawBehind {
-                drawLine(
-                    color = palette.glassRim,
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, 0f),
-                    strokeWidth = 1f,
+    Column(modifier = modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(palette.separator),
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(palette.bar)
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .height(TAB_BAR_HEIGHT),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            items.forEachIndexed { index, item ->
+                TabBarItem(
+                    item = item,
+                    selected = index == selectedIndex,
+                    onClick = { onSelect(index) },
+                    modifier = Modifier.weight(1f),
                 )
             }
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .height(TAB_BAR_HEIGHT),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        items.forEachIndexed { index, item ->
-            TabBarItem(
-                item = item,
-                selected = index == selectedIndex,
-                onClick = { onSelect(index) },
-                modifier = Modifier.weight(1f),
-            )
         }
     }
 }
@@ -101,7 +97,7 @@ private fun TabBarItem(
     val pressed by interactionSource.collectIsPressedAsState()
 
     val tint by animateColorAsState(
-        targetValue = if (selected) palette.accent else palette.textTertiary,
+        targetValue = if (selected) palette.tint else palette.secondaryLabel,
         animationSpec = NightstandMotion.press(),
         label = "tabTint",
     )
@@ -121,8 +117,7 @@ private fun TabBarItem(
                 role = Role.Tab,
                 onClick = onClick,
             )
-            .scale(scale)
-            .padding(vertical = Spacing.xs),
+            .scale(scale),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
     ) {
@@ -134,11 +129,11 @@ private fun TabBarItem(
         )
         Text(
             text = item.label,
-            style = NightstandType.Footnote,
+            style = NightstandType.Caption2,
             color = tint,
         )
     }
 }
 
-private val TAB_BAR_HEIGHT = 64.dp
+private val TAB_BAR_HEIGHT = 49.dp
 private val ICON_SIZE = 25.dp
