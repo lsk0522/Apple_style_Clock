@@ -1,34 +1,84 @@
 package com.lsk0522.nightstand.feature.main.tab
 
+import android.content.Intent
 import android.text.format.DateUtils
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lsk0522.nightstand.core.common.model.ChargeType
 import com.lsk0522.nightstand.core.common.model.ChargingTrigger
+import com.lsk0522.nightstand.core.common.model.StandbyPersistence
 import com.lsk0522.nightstand.core.data.standby.StandbyAttemptOutcome
-import com.lsk0522.nightstand.core.data.system.SystemRequirementId
+import com.lsk0522.nightstand.core.design.component.IosButton
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.listSection
+import com.lsk0522.nightstand.feature.main.DeveloperBlocker
+import com.lsk0522.nightstand.feature.main.DeveloperHostHolder
+import com.lsk0522.nightstand.feature.main.DeveloperUiState
+import com.lsk0522.nightstand.feature.main.DeveloperViewModel
 import com.lsk0522.nightstand.feature.main.R
-import com.lsk0522.nightstand.feature.main.setup.SetupViewModel
+import com.lsk0522.nightstand.feature.widgets.StandbyWidgetHost
 
+/** Which of the tab's pages is showing. */
+private enum class DevPage { Root, Simulate, Logs, Sensors, WidgetHost }
+
+/**
+ * Diagnostics for the parts of the app that run with nothing on screen.
+ *
+ * There is no navigation graph in the app yet, so the pages are swapped in
+ * place — the same thing the widget picker does. A back row stands in for the
+ * navigation bar's chevron.
+ */
 @Composable
 fun DeveloperTab(
     modifier: Modifier = Modifier,
-    setupViewModel: SetupViewModel = hiltViewModel(),
+    viewModel: DeveloperViewModel = hiltViewModel(),
 ) {
-    val state by setupViewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var page by remember { mutableStateOf(DevPage.Root) }
 
-    IosScreen(
-        title = stringResource(R.string.developer_title),
-        modifier = modifier,
-    ) {
-        // TODO(next): Phase 8 — wire these to the real diagnostics.
+    // Permission states change behind the app's back, in system settings.
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refresh() }
+
+    when (page) {
+        DevPage.Root -> RootPage(
+            state = state,
+            viewModel = viewModel,
+            onOpen = { page = it },
+            modifier = modifier,
+        )
+
+        DevPage.Simulate -> SimulatePage(state, onBack = { page = DevPage.Root }, modifier)
+        DevPage.Logs -> LogsPage(state, viewModel, onBack = { page = DevPage.Root }, modifier)
+        DevPage.Sensors -> SensorsPage(state, onBack = { page = DevPage.Root }, modifier)
+        DevPage.WidgetHost -> WidgetHostPage(state, onBack = { page = DevPage.Root }, modifier)
+    }
+}
+
+@Composable
+private fun RootPage(
+    state: DeveloperUiState,
+    viewModel: DeveloperViewModel,
+    onOpen: (DevPage) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+
+    IosScreen(title = stringResource(R.string.developer_title), modifier = modifier) {
         listSection(
             key = "tools",
             header = R.string.developer_tools_header,
@@ -38,26 +88,39 @@ fun DeveloperTab(
                 title = stringResource(R.string.developer_force_standby),
                 subtitle = stringResource(R.string.developer_force_standby_why),
                 showChevron = true,
-                onClick = setupViewModel::launchStandby,
+                onClick = viewModel::launchStandby,
             )
             ListRow(
                 title = stringResource(R.string.developer_simulate),
+                subtitle = stringResource(R.string.developer_simulate_why),
                 showChevron = true,
-                enabled = false,
-                onClick = null,
+                onClick = { onOpen(DevPage.Simulate) },
             )
             ListRow(
                 title = stringResource(R.string.developer_logs),
+                value = state.history.size.toString(),
                 showChevron = true,
-                enabled = false,
-                onClick = null,
+                onClick = { onOpen(DevPage.Logs) },
             )
             ListRow(
                 title = stringResource(R.string.developer_sensors),
                 showChevron = true,
-                enabled = false,
                 showSeparator = false,
-                onClick = null,
+                onClick = { onOpen(DevPage.Sensors) },
+            )
+        }
+
+        // The single most useful line in the tab: of the four conditions the
+        // service checks in order, which one is currently false.
+        listSection(
+            key = "verdict",
+            header = R.string.developer_verdict_header,
+            footer = R.string.developer_verdict_footer,
+        ) {
+            ListRow(
+                title = stringResource(R.string.developer_verdict_now),
+                value = stringResource(state.blockedBy.labelRes()),
+                showSeparator = false,
             )
         }
 
@@ -66,14 +129,11 @@ fun DeveloperTab(
             header = R.string.developer_attempt_header,
             footer = R.string.developer_attempt_footer,
         ) {
-            val attempt = state.lastAttempt
+            val attempt = state.history.firstOrNull()
             ListRow(
                 title = stringResource(R.string.developer_attempt_result),
-                value = if (attempt == null) {
-                    stringResource(R.string.developer_attempt_none)
-                } else {
-                    stringResource(attempt.outcome.labelRes())
-                },
+                value = attempt?.let { stringResource(it.outcome.labelRes()) }
+                    ?: stringResource(R.string.developer_attempt_none),
             )
             ListRow(
                 title = stringResource(R.string.developer_attempt_detected),
@@ -87,23 +147,21 @@ fun DeveloperTab(
             )
             ListRow(
                 title = stringResource(R.string.developer_attempt_when),
-                value = attempt?.let {
-                    DateUtils.getRelativeTimeSpanString(
-                        it.atEpochMillis,
-                        System.currentTimeMillis(),
-                        DateUtils.MINUTE_IN_MILLIS,
-                    ).toString()
-                } ?: stringResource(R.string.charging_status_unknown),
+                value = attempt?.let { relativeTime(it.atEpochMillis) }
+                    ?: stringResource(R.string.charging_status_unknown),
+                showSeparator = false,
             )
-            ListRow(
-                title = stringResource(R.string.settings_permission_overlay),
-                value = stringResource(
-                    if (state.isSatisfied(SystemRequirementId.OVERLAY)) {
-                        R.string.settings_permission_on
-                    } else {
-                        R.string.settings_permission_needed
-                    },
-                ),
+        }
+
+        listSection(
+            key = "permissions",
+            header = R.string.settings_permission_header,
+        ) {
+            PermissionRow(R.string.settings_permission_overlay, state.overlayGranted)
+            PermissionRow(R.string.settings_permission_battery, state.batteryUnrestricted)
+            PermissionRow(
+                label = R.string.setup_notifications,
+                granted = state.notificationsGranted,
                 showSeparator = false,
             )
         }
@@ -111,34 +169,39 @@ fun DeveloperTab(
         listSection(
             key = "diagnostics",
             header = R.string.developer_diagnostics_header,
+            footer = R.string.developer_export_footer,
         ) {
             ListRow(
                 title = stringResource(R.string.developer_widget_host),
+                value = state.widgets.size.toString(),
                 showChevron = true,
-                enabled = false,
-                onClick = null,
+                onClick = { onOpen(DevPage.WidgetHost) },
             )
             ListRow(
                 title = stringResource(R.string.developer_export),
                 showChevron = true,
-                enabled = false,
                 showSeparator = false,
-                onClick = null,
+                onClick = {
+                    val share = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, viewModel.diagnosticsText())
+                    }
+                    runCatching {
+                        context.startActivity(
+                            Intent.createChooser(share, null)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        )
+                    }
+                },
             )
         }
 
-        listSection(
-            key = "build",
-            header = R.string.developer_build_header,
-        ) {
+        listSection(key = "build", header = R.string.developer_build_header) {
             ListRow(
                 title = stringResource(R.string.developer_version),
                 value = state.appVersion,
             )
-            ListRow(
-                title = stringResource(R.string.developer_build_type),
-                value = "debug",
-            )
+            ListRow(title = stringResource(R.string.developer_build_type), value = "debug")
             ListRow(
                 title = stringResource(R.string.developer_min_sdk),
                 value = "Android 10 (API 29)",
@@ -146,6 +209,274 @@ fun DeveloperTab(
             )
         }
     }
+}
+
+/**
+ * What each kind of charger would do under the rule in force.
+ *
+ * A dry run rather than a fake power event: the app cannot make the system
+ * believe a charger was connected, and pretending otherwise would produce a
+ * result that proves nothing about the real path.
+ */
+@Composable
+private fun SimulatePage(
+    state: DeveloperUiState,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IosScreen(title = stringResource(R.string.developer_simulate), modifier = modifier) {
+        backRow(onBack)
+
+        listSection(
+            key = "matrix",
+            header = R.string.developer_simulate_header,
+            footer = R.string.developer_simulate_footer,
+        ) {
+            val types = ChargeType.entries.filter { it != ChargeType.NONE }
+            types.forEachIndexed { index, type ->
+                ListRow(
+                    title = stringResource(type.labelRes()),
+                    value = stringResource(
+                        if (state.wouldTrigger(type)) {
+                            R.string.charging_status_would_trigger_yes
+                        } else {
+                            R.string.charging_status_would_trigger_no
+                        },
+                    ),
+                    showSeparator = index != types.lastIndex,
+                )
+            }
+        }
+
+        listSection(key = "rule", header = R.string.developer_simulate_rule) {
+            ListRow(
+                title = stringResource(R.string.charging_mode_header),
+                value = stringResource(state.trigger.labelRes()),
+            )
+            ListRow(
+                title = stringResource(R.string.charging_persistence_header),
+                value = stringResource(state.persistence.labelRes()),
+                showSeparator = false,
+            )
+        }
+    }
+}
+
+/** Every recorded outcome, newest first. */
+@Composable
+private fun LogsPage(
+    state: DeveloperUiState,
+    viewModel: DeveloperViewModel,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IosScreen(title = stringResource(R.string.developer_logs), modifier = modifier) {
+        backRow(onBack)
+
+        listSection(
+            key = "history",
+            header = R.string.developer_logs_header,
+            footer = R.string.developer_logs_footer,
+        ) {
+            if (state.history.isEmpty()) {
+                ListRow(
+                    title = stringResource(R.string.developer_attempt_none),
+                    enabled = false,
+                    showSeparator = false,
+                    onClick = null,
+                )
+            } else {
+                state.history.forEachIndexed { index, attempt ->
+                    ListRow(
+                        title = stringResource(attempt.outcome.labelRes()),
+                        subtitle = stringResource(
+                            R.string.developer_logs_detail,
+                            stringResource(attempt.detectedType.labelRes()),
+                            stringResource(attempt.trigger.labelRes()),
+                        ),
+                        value = relativeTime(attempt.atEpochMillis),
+                        showSeparator = index != state.history.lastIndex,
+                    )
+                }
+            }
+        }
+
+        if (state.history.isNotEmpty()) {
+            item(key = "clear") {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    IosButton(
+                        label = stringResource(R.string.developer_logs_clear),
+                        prominent = false,
+                        onClick = viewModel::clearHistory,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** Live readings, so a threshold can be checked against the actual room. */
+@Composable
+private fun SensorsPage(
+    state: DeveloperUiState,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IosScreen(title = stringResource(R.string.developer_sensors), modifier = modifier) {
+        backRow(onBack)
+
+        listSection(
+            key = "light",
+            header = R.string.developer_sensors_light,
+            footer = R.string.developer_sensors_light_footer,
+        ) {
+            ListRow(
+                title = stringResource(R.string.developer_sensors_lux),
+                value = state.lux?.let { stringResource(R.string.developer_sensors_lux_value, it) }
+                    ?: stringResource(R.string.settings_display_night_no_sensor),
+            )
+            ListRow(
+                title = stringResource(R.string.developer_sensors_dark),
+                value = stringResource(state.isDark.yesNoRes()),
+                showSeparator = false,
+            )
+        }
+
+        listSection(key = "screen", header = R.string.developer_sensors_screen) {
+            ListRow(
+                title = stringResource(R.string.developer_sensors_interactive),
+                value = stringResource(state.screen.isInteractive.yesNoRes()),
+            )
+            ListRow(
+                title = stringResource(R.string.developer_sensors_locked),
+                value = stringResource(state.screen.isLocked.yesNoRes()),
+            )
+            ListRow(
+                title = stringResource(R.string.developer_sensors_idle),
+                value = stringResource(state.screen.isIdle.yesNoRes()),
+                showSeparator = false,
+            )
+        }
+
+        listSection(key = "power", header = R.string.charging_status_header) {
+            ListRow(
+                title = stringResource(R.string.charging_status_method),
+                value = stringResource(state.charging.type.labelRes()),
+            )
+            ListRow(
+                title = stringResource(R.string.charging_status_battery),
+                value = state.charging.levelPercent
+                    ?.let { stringResource(R.string.charging_status_percent, it) }
+                    ?: stringResource(R.string.charging_status_unknown),
+            )
+            ListRow(
+                title = stringResource(R.string.charging_status_voltage),
+                value = state.charging.voltageMilliVolts
+                    ?.let { stringResource(R.string.charging_status_millivolts, it) }
+                    ?: stringResource(R.string.charging_status_unknown),
+            )
+            ListRow(
+                title = stringResource(R.string.charging_status_temperature),
+                value = state.charging.temperatureCelsius
+                    ?.let { stringResource(R.string.charging_status_celsius, it) }
+                    ?: stringResource(R.string.charging_status_unknown),
+                showSeparator = false,
+            )
+        }
+    }
+}
+
+/**
+ * What the widget host is actually holding.
+ *
+ * A widget whose provider has been uninstalled still has a stored id, and the
+ * only symptom on the clock is a blank tile — this is where that becomes
+ * legible.
+ */
+@Composable
+private fun WidgetHostPage(
+    state: DeveloperUiState,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    host: StandbyWidgetHost = hiltViewModel<DeveloperHostHolder>().host,
+) {
+    val context = LocalContext.current
+
+    IosScreen(title = stringResource(R.string.developer_widget_host), modifier = modifier) {
+        backRow(onBack)
+
+        listSection(
+            key = "hosted",
+            header = R.string.developer_host_header,
+            footer = R.string.developer_host_footer,
+        ) {
+            if (state.widgets.isEmpty()) {
+                ListRow(
+                    title = stringResource(R.string.developer_host_empty),
+                    enabled = false,
+                    showSeparator = false,
+                    onClick = null,
+                )
+            } else {
+                state.widgets.forEachIndexed { index, widget ->
+                    val info = host.providerInfo(widget.appWidgetId)
+                    ListRow(
+                        title = info?.loadLabel(context.packageManager)
+                            ?: stringResource(R.string.developer_host_unresolved),
+                        subtitle = stringResource(
+                            R.string.developer_host_detail,
+                            widget.appWidgetId,
+                            widget.providerFlattened,
+                        ),
+                        showSeparator = index != state.widgets.lastIndex,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PermissionRow(label: Int, granted: Boolean, showSeparator: Boolean = true) {
+    ListRow(
+        title = stringResource(label),
+        value = stringResource(
+            if (granted) R.string.settings_permission_on else R.string.settings_permission_needed,
+        ),
+        showSeparator = showSeparator,
+    )
+}
+
+/** Stands in for the navigation chevron until there is a real back stack. */
+private fun LazyListScope.backRow(onBack: () -> Unit) {
+    item(key = "back") {
+        val context = LocalContext.current
+        Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+            IosButton(
+                label = context.getString(R.string.developer_back),
+                prominent = false,
+                onClick = onBack,
+            )
+        }
+    }
+}
+
+@Composable
+private fun relativeTime(epochMillis: Long): String = DateUtils.getRelativeTimeSpanString(
+    epochMillis,
+    System.currentTimeMillis(),
+    DateUtils.MINUTE_IN_MILLIS,
+).toString()
+
+private fun Boolean.yesNoRes(): Int =
+    if (this) R.string.developer_yes else R.string.developer_no
+
+private fun DeveloperBlocker.labelRes(): Int = when (this) {
+    DeveloperBlocker.NOTHING -> R.string.developer_verdict_ready
+    DeveloperBlocker.NOT_CHARGING -> R.string.developer_verdict_not_charging
+    DeveloperBlocker.TRIGGER_MISMATCH -> R.string.attempt_trigger_mismatch
+    DeveloperBlocker.SCREEN_IN_USE -> R.string.attempt_screen_in_use
+    DeveloperBlocker.NO_OVERLAY -> R.string.attempt_no_overlay
 }
 
 private fun StandbyAttemptOutcome.labelRes(): Int = when (this) {
@@ -171,4 +502,9 @@ private fun ChargingTrigger.labelRes(): Int = when (this) {
     ChargingTrigger.WIRED_ONLY -> R.string.charging_mode_wired
     ChargingTrigger.ANY -> R.string.charging_mode_both
     ChargingTrigger.DOCK_ONLY -> R.string.charging_mode_dock
+}
+
+private fun StandbyPersistence.labelRes(): Int = when (this) {
+    StandbyPersistence.ONCE_PER_CHARGE -> R.string.charging_persistence_once
+    StandbyPersistence.WHILE_CHARGING -> R.string.charging_persistence_always
 }

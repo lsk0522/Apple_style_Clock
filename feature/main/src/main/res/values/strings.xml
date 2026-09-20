@@ -130,7 +130,7 @@
     <string name="developer_diagnostics_header">진단</string>
     <string name="developer_widget_host">위젯 호스트 상태</string>
     <string name="developer_export">설정 내보내기</string>
-    <string name="developer_footer">Phase 8에서 구현됩니다.</string>
+    <string name="developer_footer">앞의 두 항목은 실제로 동작하고, 로그와 센서는 지금 값을 보여 줍니다.</string>
     <!-- 충전 시 시계가 왜 떴는지 / 안 떴는지 -->
     <string name="developer_attempt_header">마지막 실행 시도</string>
     <string name="developer_attempt_result">결과</string>
@@ -147,6 +147,44 @@
     <string name="attempt_cancelled_early">2초 안에 충전이 끊김</string>
     <string name="attempt_screen_in_use">폰 사용 중 — 화면이 꺼지면 띄웁니다</string>
     <string name="attempt_disconnected">충전 해제됨</string>
+
+    <string name="developer_back">← 뒤로</string>
+    <string name="developer_yes">예</string>
+    <string name="developer_no">아니오</string>
+
+    <string name="developer_simulate_why">지금 설정으로 각 충전 방식이 어떻게 판정되는지 봅니다</string>
+    <string name="developer_simulate_header">충전 방식별 판정</string>
+    <string name="developer_simulate_footer">실제 충전 이벤트를 만들어 내는 것이 아니라, 지금 규칙으로 판정만 돌려 본 결과입니다. 시스템에 충전을 흉내 낼 방법은 없고, 흉내 낸 결과는 실제 경로를 증명하지 못합니다.</string>
+    <string name="developer_simulate_rule">적용 중인 규칙</string>
+
+    <string name="developer_verdict_header">지금 꽂으면</string>
+    <string name="developer_verdict_footer">서비스가 확인하는 네 가지 조건 중 지금 걸리는 첫 번째입니다.</string>
+    <string name="developer_verdict_now">판정</string>
+    <string name="developer_verdict_ready">바로 뜸</string>
+    <string name="developer_verdict_not_charging">충전 중이 아님</string>
+
+    <string name="developer_logs_header">최근 기록</string>
+    <string name="developer_logs_footer">최근 30건까지 남습니다. 책상 충전기에서는 되는데 머리맡에서는 안 된다면, 답은 마지막 한 건이 아니라 여기 있습니다.</string>
+    <string name="developer_logs_detail">감지 %1$s · 규칙 %2$s</string>
+    <string name="developer_logs_clear">기록 지우기</string>
+
+    <string name="developer_sensors_light">조도</string>
+    <string name="developer_sensors_light_footer">10 lux 이하에서 어두움으로, 40 lux 이상에서 밝음으로 바뀝니다. 사이 구간에서는 직전 상태를 유지해 깜빡임을 막습니다.</string>
+    <string name="developer_sensors_lux">현재 조도</string>
+    <string name="developer_sensors_lux_value">%1$.1f lux</string>
+    <string name="developer_sensors_dark">어두움 판정</string>
+    <string name="developer_sensors_screen">화면</string>
+    <string name="developer_sensors_interactive">켜져 있음</string>
+    <string name="developer_sensors_locked">잠겨 있음</string>
+    <string name="developer_sensors_idle">시계를 띄워도 되는 상태</string>
+
+    <string name="developer_host_header">호스팅 중인 위젯</string>
+    <string name="developer_host_footer">제공 앱이 지워진 위젯은 저장된 id 만 남고 시계에서는 빈 타일로만 보입니다. 여기서는 그 사실이 드러납니다.</string>
+    <string name="developer_host_detail">id %1$d · %2$s</string>
+    <string name="developer_host_unresolved">제공 앱을 찾을 수 없음</string>
+    <string name="developer_host_empty">추가한 위젯이 없습니다</string>
+
+    <string name="developer_export_footer">지금 설정·상태·최근 기록을 글로 만들어 공유합니다. 식별 정보는 넣지 않습니다.</string>
 
     <string name="developer_build_header">빌드</string>
     <string name="developer_version">설치된 빌드</string>

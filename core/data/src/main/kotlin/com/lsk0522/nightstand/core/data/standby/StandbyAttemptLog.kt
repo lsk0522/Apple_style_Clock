@@ -72,17 +72,72 @@ class StandbyAttemptLog @Inject constructor(
         )
     }
 
+    /**
+     * The recent attempts, newest first.
+     *
+     * One entry was enough to find a dead receiver, but not to see a pattern —
+     * "it works on the charger at my desk and not the one by the bed" is a
+     * question about the last ten events, not the last one.
+     */
+    val history: Flow<List<StandbyAttempt>> = context.nightstandDataStore.data.map { prefs ->
+        prefs[Keys.HISTORY]
+            ?.split(RECORD_SEPARATOR)
+            ?.filter { it.isNotBlank() }
+            ?.mapNotNull(::decode)
+            .orEmpty()
+            .asReversed()
+    }
+
     suspend fun record(
         outcome: StandbyAttemptOutcome,
         detectedType: ChargeType,
         trigger: ChargingTrigger,
     ) {
+        val attempt = StandbyAttempt(
+            outcome = outcome,
+            detectedType = detectedType,
+            trigger = trigger,
+            atEpochMillis = System.currentTimeMillis(),
+        )
         context.nightstandDataStore.edit { prefs ->
-            prefs[Keys.OUTCOME] = outcome.name
-            prefs[Keys.TYPE] = detectedType.name
-            prefs[Keys.TRIGGER] = trigger.name
-            prefs[Keys.AT] = System.currentTimeMillis()
+            prefs[Keys.OUTCOME] = attempt.outcome.name
+            prefs[Keys.TYPE] = attempt.detectedType.name
+            prefs[Keys.TRIGGER] = attempt.trigger.name
+            prefs[Keys.AT] = attempt.atEpochMillis
+
+            // Oldest last in storage so appending is a string concat; the read
+            // reverses it. Trimmed here rather than on read so the value
+            // cannot grow without bound while the app is never opened.
+            val kept = (prefs[Keys.HISTORY]?.split(RECORD_SEPARATOR)?.filter { it.isNotBlank() }
+                .orEmpty() + encode(attempt))
+                .takeLast(HISTORY_LIMIT)
+            prefs[Keys.HISTORY] = kept.joinToString(RECORD_SEPARATOR)
         }
+    }
+
+    suspend fun clearHistory() {
+        context.nightstandDataStore.edit { it.remove(Keys.HISTORY) }
+    }
+
+    private fun encode(attempt: StandbyAttempt): String = listOf(
+        attempt.outcome.name,
+        attempt.detectedType.name,
+        attempt.trigger.name,
+        attempt.atEpochMillis.toString(),
+    ).joinToString(FIELD_SEPARATOR)
+
+    private fun decode(record: String): StandbyAttempt? {
+        val fields = record.split(FIELD_SEPARATOR)
+        if (fields.size != 4) return null
+        return StandbyAttempt(
+            outcome = runCatching { StandbyAttemptOutcome.valueOf(fields[0]) }
+                .getOrNull() ?: return null,
+            detectedType = runCatching { ChargeType.valueOf(fields[1]) }
+                .getOrNull() ?: return null,
+            trigger = runCatching { ChargingTrigger.valueOf(fields[2]) }
+                .getOrNull() ?: return null,
+            atEpochMillis = fields[3].toLongOrNull() ?: return null,
+        )
     }
 
     private object Keys {
@@ -90,5 +145,13 @@ class StandbyAttemptLog @Inject constructor(
         val TYPE = stringPreferencesKey("last_attempt_type")
         val TRIGGER = stringPreferencesKey("last_attempt_trigger")
         val AT = longPreferencesKey("last_attempt_at")
+        val HISTORY = stringPreferencesKey("attempt_history")
+    }
+
+    private companion object {
+        /** Enough to see a pattern; short enough to stay a preference value. */
+        const val HISTORY_LIMIT = 30
+        const val RECORD_SEPARATOR = "|"
+        const val FIELD_SEPARATOR = ";"
     }
 }
