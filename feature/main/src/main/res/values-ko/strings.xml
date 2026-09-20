@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 하단 탭바 (순서 고정: 위젯 · 충전 · 메인 · 개발자 · 후원) -->
+    <string name="tab_widgets">위젯</string>
+    <string name="tab_charging">충전</string>
+    <string name="tab_main">메인</string>
+    <string name="tab_developer">개발자</string>
+    <string name="tab_donate">후원</string>
+
+    <!-- 위젯 탭 -->
+
+    <!-- 충전 탭 -->
+    <string name="charging_title">충전</string>
+    <string name="charging_mode_header">언제 시계를 켤까요</string>
+    <string name="charging_mode_wireless">무선 충전일 때만</string>
+    <string name="charging_mode_wired">유선 충전일 때만</string>
+    <string name="charging_mode_both">충전 중이면 언제나</string>
+    <string name="charging_mode_dock">도크에 거치했을 때만</string>
+    <string name="charging_mode_footer">선택한 방식으로 충전이 시작되면 2초 뒤 시계가 서서히 나타납니다.</string>
+    <string name="charging_persistence_header">표시 방식</string>
+    <string name="charging_persistence_footer">계속 표시를 고르면 충전 중에 화면이 꺼질 때마다 시계가 다시 올라옵니다. 폰을 쓰는 동안에는 올라오지 않습니다.</string>
+    <string name="charging_persistence_once">충전을 시작할 때 한 번</string>
+    <string name="charging_persistence_once_why">한 번 닫으면 충전기를 다시 꽂을 때까지 올라오지 않습니다</string>
+    <string name="charging_persistence_always">충전 중에는 계속</string>
+    <string name="charging_persistence_always_why">폰을 다시 내려놓을 때마다 시계가 돌아옵니다</string>
+
+    <string name="charging_status_header">현재 상태</string>
+    <string name="charging_status_method">충전 방식</string>
+    <string name="charging_status_battery">배터리</string>
+    <string name="charging_status_voltage">전압</string>
+    <string name="charging_status_temperature">온도</string>
+    <string name="charging_status_unknown">—</string>
+    <string name="charging_status_percent">%1$d%%</string>
+    <string name="charging_status_millivolts">%1$d mV</string>
+    <string name="charging_status_celsius">%1$.1f°C</string>
+    <string name="charging_status_would_trigger">지금 조건이면</string>
+    <string name="charging_status_would_trigger_yes">켜짐</string>
+    <string name="charging_status_would_trigger_no">안 켜짐</string>
+    <string name="charging_status_footer">무선 충전 시작 직후 잠깐 유선으로 잘못 보고하는 기기가 있어, 1.5초 동안 값이 유지되어야 확정합니다.</string>
+
+    <!-- 충전 방식 라벨 -->
+    <string name="charge_type_none">충전 안 함</string>
+    <string name="charge_type_wired_ac">유선 (충전기)</string>
+    <string name="charge_type_wired_usb">유선 (USB)</string>
+    <string name="charge_type_wireless">무선</string>
+    <string name="charge_type_dock">도크</string>
+
+    <!-- 앱이 꺼져 있을 때도 감지되는지 확인용 기록 -->
+    <string name="charging_event_header">백그라운드 감지</string>
+    <string name="charging_event_last">마지막 감지</string>
+    <string name="charging_event_none">아직 기록 없음</string>
+    <string name="charging_event_value">%1$s · %2$s</string>
+    <string name="charging_event_footer">앱을 완전히 종료한 뒤 충전기를 꽂았다 빼보세요. 여기에 기록되면 앱이 꺼져 있어도 감지가 동작하는 것입니다.</string>
+
+    <!-- 메인 탭 -->
+    <string name="settings_title">Nightstand</string>
+    <!-- 시계 페이스 6종 (iOS StandBy 와 동일 구성) -->
+    <string name="settings_face_header">시계 스타일</string>
+    <string name="settings_face_footer">충전 중 화면에 표시될 시계입니다.</string>
+    <string name="face_digital">디지털</string>
+    <string name="face_digital_why">시·분을 세로로 쌓고 옆에 날짜</string>
+    <string name="face_analog">아날로그</string>
+    <string name="face_analog_why">눈금 다이얼과 바늘</string>
+    <string name="face_world">월드</string>
+    <string name="face_world_why">현지 시각과 다른 도시들</string>
+    <string name="face_solar">솔라</string>
+    <string name="face_solar_why">하루 동안의 태양 궤적</string>
+    <string name="face_float">플로트</string>
+    <string name="face_float_why">화면을 채우는 컬러 숫자</string>
+    <string name="face_minimal_mono">미니멀 모노</string>
+    <string name="face_minimal_mono_why">가는 획, 단색, 넉넉한 여백</string>
+
+    <string name="settings_cities_header">도시</string>
+    <string name="settings_cities_footer">최대 3곳까지 고를 수 있습니다. 고른 순서대로 시계 옆에 표시됩니다.</string>
+
+    <string name="settings_appearance_header">시계 꾸미기</string>
+    <string name="settings_appearance_footer">색은 시각·시곗바늘·눈금에 적용됩니다. 날짜와 배터리를 모두 끄면 시각만 화면 한가운데에 놓입니다.</string>
+    <string name="settings_appearance_color">색</string>
+    <string name="settings_appearance_date">날짜 표시</string>
+    <string name="settings_appearance_battery">배터리 표시</string>
+
+    <string name="color_white">흰색</string>
+    <string name="color_red">빨강</string>
+    <string name="color_orange">주황</string>
+    <string name="color_yellow">노랑</string>
+    <string name="color_green">초록</string>
+    <string name="color_mint">민트</string>
+    <string name="color_blue">파랑</string>
+    <string name="color_purple">보라</string>
+    <string name="color_pink">분홍</string>
+
+    <string name="settings_clock_header">시계</string>
+    <string name="settings_clock_24h">24시간 표시</string>
+    <string name="settings_clock_seconds">초침 표시</string>
+    <string name="settings_clock_seconds_why">아날로그 시계에 초침이 부드럽게 돕니다. 화면이 계속 갱신되므로 전력을 더 씁니다</string>
+
+    <string name="settings_display_header">화면</string>
+    <string name="settings_display_night">야간 모드</string>
+    <string name="settings_display_night_sub">어두우면 붉은 색조로 전환</string>
+    <string name="settings_display_night_no_sensor">이 기기에는 조도 센서가 없습니다</string>
+    <string name="settings_display_burnin">번인 방지</string>
+    <string name="settings_display_burnin_sub">10분마다 화면을 미세하게 이동</string>
+    <string name="settings_display_brightness">자동 밝기</string>
+    <string name="settings_display_brightness_sub">방의 밝기에 맞춰 시계를 어둡게 합니다. 끄면 항상 같은 밝기로 빛납니다</string>
+
+    <string name="setup_dream_header">권한 없이 쓰는 방법</string>
+    <string name="setup_dream_footer">화면 보호기는 권한이 필요 없습니다. 대신 시계가 언제 뜰지는 안드로이드가 정하기 때문에, 충전을 시작하자마자 바로 뜨지는 않습니다.</string>
+    <string name="setup_dream">화면 보호기로 쓰기</string>
+    <string name="setup_dream_why">화면 보호기 설정에서 Nightstand 시계를 고르세요</string>
+
+    <string name="settings_permission_dream">화면 보호기로도 띄우기</string>
+    <string name="settings_permission_dream_why">오버레이 권한 없이 쓸 수 있는 보조 경로</string>
+
+    <string name="settings_permission_header">동작에 필요한 설정</string>
+    <string name="settings_permission_overlay">다른 앱 위에 표시</string>
+    <string name="settings_permission_battery">배터리 최적화 제외</string>
+    <string name="settings_permission_pending">확인 필요</string>
+    <string name="settings_permission_footer">두 가지를 허용해야 충전할 때 시계가 자동으로 켜집니다.</string>
+
+    <string name="settings_about_header">정보</string>
+    <string name="settings_about_version">버전</string>
+    <string name="settings_about_licenses">오픈소스 라이선스</string>
+    <string name="settings_about_github">GitHub 저장소</string>
+
+    <!-- 개발자 탭 -->
+    <string name="developer_title">개발자</string>
+    <string name="developer_tools_header">도구</string>
+    <string name="developer_force_standby">StandBy 강제 실행</string>
+    <string name="developer_force_standby_why">충전기 없이 시계 화면을 바로 열어봅니다</string>
+    <string name="developer_simulate">충전 이벤트 시뮬레이션</string>
+    <string name="developer_logs">실시간 로그</string>
+    <string name="developer_sensors">센서 값 보기</string>
+    <string name="developer_diagnostics_header">진단</string>
+    <string name="developer_widget_host">위젯 호스트 상태</string>
+    <string name="developer_export">설정 내보내기</string>
+    <string name="developer_footer">앞의 두 항목은 실제로 동작하고, 로그와 센서는 지금 값을 보여 줍니다.</string>
+    <!-- 충전 시 시계가 왜 떴는지 / 안 떴는지 -->
+    <string name="developer_attempt_header">마지막 실행 시도</string>
+    <string name="developer_attempt_result">결과</string>
+    <string name="developer_attempt_detected">감지된 방식</string>
+    <string name="developer_attempt_trigger">설정된 조건</string>
+    <string name="developer_attempt_when">시각</string>
+    <string name="developer_attempt_none">기록 없음</string>
+    <string name="developer_attempt_footer">앱을 닫고 충전기를 꽂았다 뺀 뒤 여기를 확인하세요. 시계가 안 떴다면 이유가 여기 적힙니다.</string>
+
+    <string name="attempt_launched">시계를 띄웠음</string>
+    <string name="attempt_trigger_mismatch">조건 불일치 — 설정한 충전 방식이 아님</string>
+    <string name="attempt_no_overlay">권한 없음 — 다른 앱 위에 표시가 꺼져 있음</string>
+    <string name="attempt_launch_failed">실행 거부됨 — 시스템이 막음</string>
+    <string name="attempt_cancelled_early">2초 안에 충전이 끊김</string>
+    <string name="attempt_screen_in_use">폰 사용 중 — 화면이 꺼지면 띄웁니다</string>
+    <string name="attempt_disconnected">충전 해제됨</string>
+
+    <string name="developer_back">← 뒤로</string>
+    <string name="developer_yes">예</string>
+    <string name="developer_no">아니오</string>
+
+    <string name="developer_simulate_why">지금 설정으로 각 충전 방식이 어떻게 판정되는지 봅니다</string>
+    <string name="developer_simulate_header">충전 방식별 판정</string>
+    <string name="developer_simulate_footer">실제 충전 이벤트를 만들어 내는 것이 아니라, 지금 규칙으로 판정만 돌려 본 결과입니다. 시스템에 충전을 흉내 낼 방법은 없고, 흉내 낸 결과는 실제 경로를 증명하지 못합니다.</string>
+    <string name="developer_simulate_rule">적용 중인 규칙</string>
+
+    <string name="developer_verdict_header">지금 꽂으면</string>
+    <string name="developer_verdict_footer">서비스가 확인하는 네 가지 조건 중 지금 걸리는 첫 번째입니다.</string>
+    <string name="developer_verdict_now">판정</string>
+    <string name="developer_verdict_ready">바로 뜸</string>
+    <string name="developer_verdict_not_charging">충전 중이 아님</string>
+
+    <string name="developer_logs_header">최근 기록</string>
+    <string name="developer_logs_footer">최근 30건까지 남습니다. 책상 충전기에서는 되는데 머리맡에서는 안 된다면, 답은 마지막 한 건이 아니라 여기 있습니다.</string>
+    <string name="developer_logs_detail">감지 %1$s · 규칙 %2$s</string>
+    <string name="developer_logs_clear">기록 지우기</string>
+
+    <string name="developer_sensors_light">조도</string>
+    <string name="developer_sensors_light_footer">10 lux 이하에서 어두움으로, 40 lux 이상에서 밝음으로 바뀝니다. 사이 구간에서는 직전 상태를 유지해 깜빡임을 막습니다.</string>
+    <string name="developer_sensors_lux">현재 조도</string>
+    <string name="developer_sensors_lux_value">%1$.1f lux</string>
+    <string name="developer_sensors_dark">어두움 판정</string>
+    <string name="developer_sensors_screen">화면</string>
+    <string name="developer_sensors_interactive">켜져 있음</string>
+    <string name="developer_sensors_locked">잠겨 있음</string>
+    <string name="developer_sensors_idle">시계를 띄워도 되는 상태</string>
+
+    <string name="developer_host_header">호스팅 중인 위젯</string>
+    <string name="developer_host_footer">제공 앱이 지워진 위젯은 저장된 id 만 남고 시계에서는 빈 타일로만 보입니다. 여기서는 그 사실이 드러납니다.</string>
+    <string name="developer_host_detail">id %1$d · %2$s</string>
+    <string name="developer_host_unresolved">제공 앱을 찾을 수 없음</string>
+    <string name="developer_host_empty">추가한 위젯이 없습니다</string>
+
+    <string name="developer_export_footer">지금 설정·상태·최근 기록을 글로 만들어 공유합니다. 식별 정보는 넣지 않습니다.</string>
+
+    <string name="developer_build_header">빌드</string>
+    <string name="developer_version">설치된 빌드</string>
+    <string name="developer_build_type">빌드 종류</string>
+    <string name="developer_min_sdk">최소 지원</string>
+
+
+    <!-- 공통 -->
+    <!-- 초침을 켤 때 뜨는 경고 -->
+    <string name="seconds_alert_title">초침을 켤까요?</string>
+    <string name="seconds_alert_message">초침이 부드럽게 돌려면 화면을 계속 다시 그려야 합니다. 화면이 1Hz로 쉬지 못해 배터리를 더 쓰고, 밤새 켜두면 화면 수명에도 좋지 않습니다.\n\n시계로만 쓰실 거면 꺼두시는 편이 낫습니다.</string>
+    <string name="seconds_alert_confirm">켜기</string>
+    <string name="common_cancel">취소</string>
+
+    <string name="common_coming_soon">준비 중</string>
+
+    <!-- 첫 실행 안내 -->
+    <string name="setup_title">시작하기 전에</string>
+    <string name="setup_intro">안드로이드는 앱이 스스로 화면을 띄우거나 백그라운드에 머무는 것을 막아둡니다. 아래 설정을 켜야 충전할 때 시계가 자동으로 나타납니다.</string>
+    <string name="setup_intro_hint">각 항목을 누르면 해당 설정 화면으로 바로 이동합니다.</string>
+
+    <string name="setup_required_header">필수</string>
+    <string name="setup_required_footer">두 가지를 모두 켜야 정상 동작합니다. 지금 건너뛰고 나중에 메인 탭에서 설정할 수도 있습니다.</string>
+    <string name="setup_overlay">다른 앱 위에 표시</string>
+    <string name="setup_overlay_why">이 권한이 있어야 충전 감지 후 시계를 띄울 수 있습니다</string>
+    <string name="setup_battery">배터리 최적화 제외</string>
+    <string name="setup_battery_why">제외하지 않으면 시스템이 앱을 재워 충전해도 켜지지 않습니다</string>
+
+    <string name="setup_optional_header">권장</string>
+    <string name="setup_optional_footer">없어도 동작하지만 켜두면 더 안정적입니다.</string>
+    <string name="setup_notifications">알림 허용</string>
+    <string name="setup_notifications_why">충전 감시가 동작 중임을 알리는 데 사용됩니다</string>
+
+    <string name="setup_state_on">켜짐</string>
+    <string name="setup_state_needed">필요함</string>
+    <string name="setup_start">시작하기</string>
+    <string name="setup_continue_anyway">이대로 계속하기</string>
+    <string name="setup_remaining">필수 설정 %1$d개가 아직 꺼져 있습니다</string>
+
+    <!-- 메인 탭에서 다시 열기 -->
+    <string name="settings_permission_reopen">설정 안내 다시 보기</string>
+    <string name="settings_permission_on">켜짐</string>
+    <string name="settings_permission_needed">필요함</string>
+</resources>

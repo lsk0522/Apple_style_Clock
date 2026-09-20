@@ -148,6 +148,9 @@ class DeveloperViewModel @Inject constructor(
     /**
      * The whole diagnostic picture as plain text, for pasting into a report.
      *
+     * Written in English whatever the app's language: this is pasted into a
+     * bug report, not read in the UI.
+     *
      * Carries no identifiers on purpose: this gets shared, and the useful part
      * is the configuration and the outcomes, not whose phone it is.
      */
@@ -157,34 +160,35 @@ class DeveloperViewModel @Inject constructor(
         val unknown = "?"
         return buildString {
             appendLine("Nightstand " + s.appVersion)
-            appendLine("생성 " + stamp.format(Date()))
+            appendLine("generated " + stamp.format(Date()))
             appendLine()
-            appendLine("[설정]")
-            appendLine("충전 판별: " + s.trigger)
-            appendLine("표시 방식: " + s.persistence)
+            appendLine("[settings]")
+            appendLine("trigger: " + s.trigger)
+            appendLine("persistence: " + s.persistence)
             appendLine()
-            appendLine("[지금 상태]")
-            appendLine("충전: " + s.charging.type + " / " + (s.charging.levelPercent ?: unknown) + "%")
-            appendLine("화면: interactive=" + s.screen.isInteractive + " locked=" + s.screen.isLocked)
-            appendLine("조도: " + (s.lux?.toString() ?: "센서 없음") + " (어두움=" + s.isDark + ")")
-            appendLine("막는 것: " + s.blockedBy)
+            appendLine("[now]")
+            appendLine("charging: " + s.charging.type + " / " + (s.charging.levelPercent ?: unknown) + "%")
+            appendLine("screen: interactive=" + s.screen.isInteractive + " locked=" + s.screen.isLocked)
+            appendLine("light: " + (s.lux?.toString() ?: "no sensor") + " (dark=" + s.isDark + ")")
+            appendLine("blocked by: " + s.blockedBy)
             appendLine()
-            appendLine("[권한]")
-            appendLine("오버레이: " + s.overlayGranted)
-            appendLine("배터리 최적화 제외: " + s.batteryUnrestricted)
-            appendLine("알림: " + s.notificationsGranted)
+            appendLine("[permissions]")
+            appendLine("overlay: " + s.overlayGranted)
+            appendLine("battery unrestricted: " + s.batteryUnrestricted)
+            appendLine("notifications: " + s.notificationsGranted)
             appendLine()
-            appendLine("[위젯 " + s.widgets.size + "개]")
+            appendLine("[widgets: " + s.widgets.size + "]")
             s.widgets.forEach { appendLine(it.appWidgetId.toString() + " " + it.providerFlattened) }
             appendLine()
-            appendLine("[최근 시도 " + s.history.size + "건]")
+            appendLine("[recent attempts: " + s.history.size + "]")
             s.history.forEach {
                 appendLine(
                     stamp.format(Date(it.atEpochMillis)) + " " + it.outcome +
-                        " 감지=" + it.detectedType + " 규칙=" + it.trigger,
+                        " detected=" + it.detectedType + " rule=" + it.trigger,
                 )
             }
         }
+
     }
 
     private data class LiveReadings(

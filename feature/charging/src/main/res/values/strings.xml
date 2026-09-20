@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="charging_service_title">충전 중</string>
-    <string name="charging_service_text">화면이 꺼지면 시계를 띄웁니다</string>
-    <string name="charging_service_channel">충전 감시</string>
-    <string name="charging_service_channel_why">충전 중일 때만 동작하며, 시계를 띄울 시점을 판단합니다. 충전기를 빼면 사라집니다.</string>
+    <string name="charging_service_title">Charging</string>
+    <string name="charging_service_text">The clock appears when the screen goes off</string>
+    <string name="charging_service_channel">Charge watcher</string>
+    <string name="charging_service_channel_why">Runs only while charging, and decides when to put the clock up. It goes away when you unplug.</string>
 </resources>

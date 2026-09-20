@@ -2,5 +2,5 @@
 <resources>
     <!-- Shown in the system's screen-saver list, so it has to say which app
          this is without any surrounding context. -->
-    <string name="dream_label">Nightstand Clock</string>
+    <string name="dream_label">Nightstand 시계</string>
 </resources>

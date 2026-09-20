@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="donate_title">후원</string>
-    <string name="donate_intro">Nightstand는 무료이고 광고가 없습니다. 계속 만들어 가는 데 보탬이 되고 싶다면 아래에서 고를 수 있습니다. 후원해도 기능이 더 열리지는 않습니다 — 전부 이미 들어 있습니다.</string>
-    <string name="donate_items_header">후원하기</string>
-    <string name="donate_footer">Google Play를 통해 결제됩니다. 금액은 Play가 알려 주는 실제 가격이며, 나라와 통화에 따라 다릅니다.</string>
+    <string name="donate_title">Tip</string>
+    <string name="donate_intro">Nightstand is free and has no ads. If you would like to help it keep going, you can pick something below. Tipping unlocks nothing — everything is already here.</string>
+    <string name="donate_items_header">Leave a tip</string>
+    <string name="donate_footer">Paid through Google Play. The amounts are the real prices Play reports, so they vary by country and currency.</string>
 
-    <string name="donate_coffee">커피 한 잔</string>
-    <string name="donate_coffee_why">고맙습니다. 이걸로 충분합니다</string>
-    <string name="donate_meal">밥 한 끼</string>
-    <string name="donate_meal_why">주말 하나를 더 쓰게 만드는 금액</string>
-    <string name="donate_generous">크게 한 번</string>
-    <string name="donate_generous_why">과합니다. 그래도 고맙습니다</string>
+    <string name="donate_coffee">A coffee</string>
+    <string name="donate_coffee_why">Thank you. This is plenty</string>
+    <string name="donate_meal">A meal</string>
+    <string name="donate_meal_why">Enough to buy another weekend of work</string>
+    <string name="donate_generous">Something larger</string>
+    <string name="donate_generous_why">Too much. Thank you anyway</string>
 
-    <string name="donate_connecting">Play 스토어에 묻는 중…</string>
+    <string name="donate_connecting">Asking the Play Store…</string>
 
-    <string name="donate_no_play">Play 스토어를 쓸 수 없습니다</string>
-    <string name="donate_no_play_why">이 기기에 Play 스토어가 없거나 너무 오래된 버전입니다</string>
-    <string name="donate_network">Play 스토어에 연결하지 못했습니다</string>
-    <string name="donate_network_why">네트워크를 확인하고 이 탭을 다시 열어 보세요</string>
-    <string name="donate_not_here">이 빌드에서는 후원할 수 없습니다</string>
-    <string name="donate_not_here_why">Play가 설치한 앱에서만 상품이 뜹니다. 직접 설치한 디버그 APK에서는 목록이 비어 있는 것이 정상입니다</string>
+    <string name="donate_no_play">The Play Store is unavailable</string>
+    <string name="donate_no_play_why">This device has no Play Store, or too old a version of it</string>
+    <string name="donate_network">Could not reach the Play Store</string>
+    <string name="donate_network_why">Check the network and open this tab again</string>
+    <string name="donate_not_here">Tipping is not available in this build</string>
+    <string name="donate_not_here_why">Products only appear in an app the Play Store installed. An empty list in a debug APK you installed yourself is normal</string>
 
-    <string name="donate_thanks_title">고맙습니다</string>
-    <string name="donate_thanks_message">정말로 보탬이 됩니다. 계속 만들어 가겠습니다.</string>
-    <string name="donate_thanks_confirm">확인</string>
+    <string name="donate_thanks_title">Thank you</string>
+    <string name="donate_thanks_message">It genuinely helps. I will keep building.</string>
+    <string name="donate_thanks_confirm">OK</string>
 </resources>
