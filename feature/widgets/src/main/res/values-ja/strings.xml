@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widgets_title">ウィジェット</string>
+    <string name="widgets_pick_title">ウィジェットを選ぶ</string>
+    <string name="widgets_added_header">追加済み</string>
+    <string name="widgets_available_header">この端末にあるウィジェット</string>
+    <string name="widgets_available_footer">最初に追加するとき、システムが一度だけ許可を尋ねます。ウィジェットによっては、続けて独自の設定画面が開きます。</string>
+    <string name="widgets_needs_setup">追加時に設定画面が開きます</string>
+    <string name="widgets_empty">まだ追加されていません</string>
+    <string name="widgets_add">ウィジェットを追加</string>
+    <string name="widgets_cancel">キャンセル</string>
+    <string name="widgets_unavailable">使用できないウィジェット</string>
+    <string name="widgets_add_footer">端末に入っているウィジェットをそのまま置けます。Galaxy なら Samsung の時計・天気・カレンダーも含まれます。</string>
+
+    <string name="widgets_reorder">並べ替え</string>
+    <string name="widgets_reorder_done">完了</string>
+    <string name="widgets_move_up">上へ</string>
+    <string name="widgets_move_down">下へ</string>
+
+    <string name="widgets_slot">%1$d 番目の枠</string>
+    <string name="widgets_remove_action">削除</string>
+    <string name="widgets_remove_title">このウィジェットを削除しますか？</string>
+    <string name="widgets_remove_message">StandBy 画面から外れます。いつでも追加し直せます。</string>
+    <string name="widgets_remove_confirm">削除</string>
+    <string name="widgets_remove_cancel">キャンセル</string>
+
+    <string name="widgets_notice_title">お知らせ</string>
+    <string name="widgets_notice_confirm">OK</string>
+    <string name="widgets_notice_no_setup">このウィジェットの設定画面を開けなかったため、未設定のまま追加しました。タイルをタップすると、ウィジェット自身から設定できます。</string>
+    <string name="widgets_notice_denied">ウィジェットの追加が拒否されました。もう一度試すと、システムが再度尋ねます。</string>
+    <string name="widgets_notice_bind_failed">この端末ではウィジェットの追加画面を開けませんでした。</string>
+
+    <string name="widgets_rotate_header">自動切り替え</string>
+    <string name="widgets_rotate_enabled">自動で切り替える</string>
+    <string name="widgets_rotate_interval">切り替え間隔</string>
+    <string name="widgets_rotate_10s">10 秒</string>
+    <string name="widgets_rotate_30s">30 秒</string>
+    <string name="widgets_rotate_1m">1 分</string>
+    <string name="widgets_rotate_5m">5 分</string>
+    <string name="widgets_rotate_footer">ウィジェットは枠に順番に入り、枠ごとに上下にスワイプして切り替えます。スマートフォンは二枠、タブレットや開いた折りたたみ端末は三枠です。自動切り替えを切ると、手で動かしたときだけ変わります。</string>
+</resources>

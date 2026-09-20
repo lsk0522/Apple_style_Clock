@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="charging_service_title">充電中</string>
+    <string name="charging_service_text">画面が消えると時計を表示します</string>
+    <string name="charging_service_channel">充電の監視</string>
+    <string name="charging_service_channel_why">充電中だけ動作し、時計を出すタイミングを判断します。充電器を抜くと消えます。</string>
+</resources>

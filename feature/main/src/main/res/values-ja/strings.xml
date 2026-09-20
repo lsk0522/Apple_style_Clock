@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_widgets">ウィジェット</string>
+    <string name="tab_charging">充電</string>
+    <string name="tab_main">時計</string>
+    <string name="tab_developer">開発者</string>
+    <string name="tab_donate">支援</string>
+
+    <string name="charging_title">充電</string>
+    <string name="charging_mode_header">いつ時計を出すか</string>
+    <string name="charging_mode_wireless">ワイヤレス充電のときだけ</string>
+    <string name="charging_mode_wired">有線充電のときだけ</string>
+    <string name="charging_mode_both">充電中ならいつでも</string>
+    <string name="charging_mode_dock">ドックに置いたときだけ</string>
+    <string name="charging_mode_footer">選んだ方法で充電が始まると、2 秒後に時計がゆっくり現れます。</string>
+    <string name="charging_persistence_header">表示の頻度</string>
+    <string name="charging_persistence_footer">「毎回」を選ぶと、充電中に画面が消えるたび時計が戻ります。使っている間に割り込むことはありません。</string>
+    <string name="charging_persistence_once">充電を始めたとき一度</string>
+    <string name="charging_persistence_once_why">一度閉じると、充電器を挿し直すまで出てきません</string>
+    <string name="charging_persistence_always">充電中は毎回</string>
+    <string name="charging_persistence_always_why">端末を置き直すたびに時計が戻ります</string>
+
+    <string name="charging_status_header">現在の状態</string>
+    <string name="charging_status_method">充電方法</string>
+    <string name="charging_status_battery">バッテリー</string>
+    <string name="charging_status_voltage">電圧</string>
+    <string name="charging_status_temperature">温度</string>
+    <string name="charging_status_unknown">—</string>
+    <string name="charging_status_percent">%1$d%%</string>
+    <string name="charging_status_millivolts">%1$d mV</string>
+    <string name="charging_status_celsius">%1$.1f°C</string>
+    <string name="charging_status_would_trigger">今の条件では</string>
+    <string name="charging_status_would_trigger_yes">表示される</string>
+    <string name="charging_status_would_trigger_no">表示されない</string>
+    <string name="charging_status_footer">ワイヤレス充電の直後に有線と誤って報告する端末があるため、1.5 秒間値が保たれてから確定します。</string>
+
+    <string name="charge_type_none">充電していない</string>
+    <string name="charge_type_wired_ac">有線（充電器）</string>
+    <string name="charge_type_wired_usb">有線（USB）</string>
+    <string name="charge_type_wireless">ワイヤレス</string>
+    <string name="charge_type_dock">ドック</string>
+
+    <string name="charging_event_header">バックグラウンド検出</string>
+    <string name="charging_event_last">最後の検出</string>
+    <string name="charging_event_none">まだ記録がありません</string>
+    <string name="charging_event_value">%1$s · %2$s</string>
+    <string name="charging_event_footer">アプリを完全に終了してから、充電器を挿して抜いてみてください。ここに記録されれば、アプリが閉じていても検出が働いています。</string>
+
+    <string name="settings_title">Nightstand</string>
+    <string name="settings_face_header">時計のスタイル</string>
+    <string name="settings_face_footer">充電中に画面を占める時計です。</string>
+    <string name="face_digital">デジタル</string>
+    <string name="face_digital_why">時と分を縦に重ね、横に日付</string>
+    <string name="face_analog">アナログ</string>
+    <string name="face_analog_why">目盛りのある文字盤と針</string>
+    <string name="face_world">ワールド</string>
+    <string name="face_world_why">現地時刻と他の都市</string>
+    <string name="face_solar">ソーラー</string>
+    <string name="face_solar_why">一日の太陽の軌跡</string>
+    <string name="face_float">フロート</string>
+    <string name="face_float_why">画面を埋める色付きの数字</string>
+    <string name="face_minimal_mono">ミニマル・モノ</string>
+    <string name="face_minimal_mono_why">細い字、一色、ゆったりした余白</string>
+
+    <string name="settings_cities_header">都市</string>
+    <string name="settings_cities_footer">最大 3 か所まで。選んだ順に時計の横に並びます。</string>
+
+    <string name="settings_appearance_header">時計の見た目</string>
+    <string name="settings_appearance_footer">色は数字・針・目盛りに適用されます。日付とバッテリーを両方切ると、時刻だけが画面の中央に置かれます。</string>
+    <string name="settings_appearance_color">色</string>
+    <string name="settings_appearance_date">日付を表示</string>
+    <string name="settings_appearance_battery">バッテリーを表示</string>
+
+    <string name="color_white">白</string>
+    <string name="color_red">赤</string>
+    <string name="color_orange">オレンジ</string>
+    <string name="color_yellow">黄</string>
+    <string name="color_green">緑</string>
+    <string name="color_mint">ミント</string>
+    <string name="color_blue">青</string>
+    <string name="color_purple">紫</string>
+    <string name="color_pink">ピンク</string>
+
+    <string name="settings_clock_header">時計</string>
+    <string name="settings_clock_24h">24 時間表示</string>
+    <string name="settings_clock_seconds">秒針を表示</string>
+    <string name="settings_clock_seconds_why">アナログ時計で秒針がなめらかに回ります。画面を描き続けるため、電力を多く使います</string>
+
+    <string name="settings_display_header">画面</string>
+    <string name="settings_display_night">ナイトモード</string>
+    <string name="settings_display_night_sub">暗い部屋では赤い色調に切り替わります</string>
+    <string name="settings_display_night_no_sensor">この端末には照度センサーがありません</string>
+    <string name="settings_display_burnin">焼き付き防止</string>
+    <string name="settings_display_burnin_sub">10 分ごとに画面をわずかに動かします</string>
+    <string name="settings_display_brightness">自動明るさ</string>
+    <string name="settings_display_brightness_sub">部屋の明るさに合わせて時計を暗くします。切ると常に同じ明るさです</string>
+
+    <string name="setup_dream_header">権限なしで使う方法</string>
+    <string name="setup_dream_footer">スクリーンセーバーに権限は要りません。その代わり、いつ出すかは Android が決めるので、充電を始めてすぐには現れません。</string>
+    <string name="setup_dream">スクリーンセーバーとして使う</string>
+    <string name="setup_dream_why">スクリーンセーバーの設定で「Nightstand 時計」を選んでください</string>
+
+    <string name="settings_permission_dream">スクリーンセーバーでも表示</string>
+    <string name="settings_permission_dream_why">重ねて表示の権限なしで使える経路</string>
+
+    <string name="settings_permission_header">動作に必要な設定</string>
+    <string name="settings_permission_overlay">他のアプリの上に重ねて表示</string>
+    <string name="settings_permission_battery">バッテリー最適化の除外</string>
+    <string name="settings_permission_pending">確認が必要</string>
+    <string name="settings_permission_footer">この二つを許可すると、充電中に時計がひとりでに現れます。</string>
+
+    <string name="settings_about_header">情報</string>
+    <string name="settings_about_version">バージョン</string>
+    <string name="settings_about_licenses">オープンソースライセンス</string>
+    <string name="settings_about_github">GitHub リポジトリ</string>
+
+    <string name="developer_title">開発者</string>
+    <string name="developer_tools_header">ツール</string>
+    <string name="developer_force_standby">StandBy を今すぐ開く</string>
+    <string name="developer_force_standby_why">充電器なしで時計の画面を開きます</string>
+    <string name="developer_simulate">充電イベントの試算</string>
+    <string name="developer_logs">ログ</string>
+    <string name="developer_sensors">センサーの値</string>
+    <string name="developer_diagnostics_header">診断</string>
+    <string name="developer_widget_host">ウィジェットホスト</string>
+    <string name="developer_export">診断を書き出す</string>
+    <string name="developer_footer">上の二つは実際に動き、ログとセンサーは今の値を見せます。</string>
+    <string name="developer_attempt_header">最後の実行</string>
+    <string name="developer_attempt_result">結果</string>
+    <string name="developer_attempt_detected">検出された方法</string>
+    <string name="developer_attempt_trigger">適用された条件</string>
+    <string name="developer_attempt_when">時刻</string>
+    <string name="developer_attempt_none">記録なし</string>
+    <string name="developer_attempt_footer">アプリを閉じ、充電器を挿して抜いてからここを見てください。時計が出なかった理由が書かれます。</string>
+
+    <string name="attempt_launched">時計を表示した</string>
+    <string name="attempt_trigger_mismatch">条件に合わない — 設定した充電方法ではない</string>
+    <string name="attempt_no_overlay">権限なし — 重ねて表示が切れている</string>
+    <string name="attempt_launch_failed">拒否された — システムが止めた</string>
+    <string name="attempt_cancelled_early">待っている間に充電が切れた</string>
+    <string name="attempt_screen_in_use">使用中 — 画面が消えたら表示します</string>
+    <string name="attempt_disconnected">充電が外れた</string>
+
+    <string name="developer_back">← 戻る</string>
+    <string name="developer_yes">はい</string>
+    <string name="developer_no">いいえ</string>
+
+    <string name="developer_simulate_why">今の設定で各充電方法がどう判定されるかを見ます</string>
+    <string name="developer_simulate_header">充電方法ごとの判定</string>
+    <string name="developer_simulate_footer">実際の充電イベントを作るのではなく、今の規則で判定だけ回した結果です。システムに充電を装う方法はなく、装った結果は本当の経路を証明しません。</string>
+    <string name="developer_simulate_rule">適用中の規則</string>
+
+    <string name="developer_verdict_header">今挿したら</string>
+    <string name="developer_verdict_footer">サービスが順に確かめる四つの条件のうち、今引っかかる最初のものです。</string>
+    <string name="developer_verdict_now">判定</string>
+    <string name="developer_verdict_ready">すぐ表示される</string>
+    <string name="developer_verdict_not_charging">充電していない</string>
+
+    <string name="developer_logs_header">最近の記録</string>
+    <string name="developer_logs_footer">直近 30 件まで残ります。机の充電器では動くのに枕元では動かないなら、答えは最後の一件ではなくここにあります。</string>
+    <string name="developer_logs_detail">検出 %1$s · 規則 %2$s</string>
+    <string name="developer_logs_clear">記録を消す</string>
+
+    <string name="developer_sensors_light">照度</string>
+    <string name="developer_sensors_light_footer">10 lux 以下で暗い、40 lux 以上で明るいに変わります。その間は直前の状態を保ち、ちらつきを防ぎます。</string>
+    <string name="developer_sensors_lux">現在の照度</string>
+    <string name="developer_sensors_lux_value">%1$.1f lux</string>
+    <string name="developer_sensors_dark">暗いと判定</string>
+    <string name="developer_sensors_screen">画面</string>
+    <string name="developer_sensors_interactive">点いている</string>
+    <string name="developer_sensors_locked">ロック中</string>
+    <string name="developer_sensors_idle">時計を出してよい状態</string>
+
+    <string name="developer_host_header">ホスト中のウィジェット</string>
+    <string name="developer_host_footer">提供元アプリが消えたウィジェットは保存された id だけが残り、時計では空のタイルにしか見えません。ここではそれが分かります。</string>
+    <string name="developer_host_detail">id %1$d · %2$s</string>
+    <string name="developer_host_unresolved">提供元アプリが見つかりません</string>
+    <string name="developer_host_empty">追加したウィジェットがありません</string>
+
+    <string name="developer_battery">バッテリー消費</string>
+    <string name="developer_battery_unmeasured">まだ測定されていません</string>
+    <string name="developer_battery_rate">1 時間あたり %1$.1f%%</string>
+    <string name="developer_battery_average">平均</string>
+    <string name="developer_battery_per_hour">充電器を抜いた状態、1 時間あたり</string>
+    <string name="developer_battery_target">目標</string>
+    <string name="developer_battery_target_value">1 時間あたり 5%% 以下</string>
+    <string name="developer_battery_footer">問いに答えられるセッションだけを平均に入れます — 5 分以上、充電器を抜いた状態。一度測るには、充電器を抜いたまま上のツールで時計を開き、端末をそのままにしてください。</string>
+    <string name="developer_battery_sessions">セッション</string>
+    <string name="developer_battery_sessions_footer">時計が画面に出ていた直近 30 回、新しい順。</string>
+    <string name="developer_battery_none">まだ記録がありません</string>
+    <string name="developer_battery_span">%1$d%% → %2$d%%</string>
+    <string name="developer_battery_detail">%1$d 分 · %2$s</string>
+    <string name="developer_battery_on_charger">充電中</string>
+    <string name="developer_battery_too_short">短すぎる</string>
+    <string name="developer_battery_clear">セッションの記録を消す</string>
+
+    <string name="developer_crash">最後のクラッシュ</string>
+    <string name="developer_crash_none">なし</string>
+    <string name="developer_crash_present">1 件あり</string>
+    <string name="developer_crash_footer">この端末にだけ残り、どこにも送信されません。このアプリの大半は画面に何もない状態で動くため、そこで起きたクラッシュは見えません — ただ時計が出ないだけです。</string>
+    <string name="developer_crash_share">スタックトレースを共有</string>
+    <string name="developer_crash_clear">消す</string>
+
+    <string name="developer_export_footer">今の設定・状態・最近の記録を文章にして共有します。個人を特定する情報は含みません。</string>
+
+    <string name="developer_build_header">ビルド</string>
+    <string name="developer_version">インストール済みビルド</string>
+    <string name="developer_build_type">ビルド種別</string>
+    <string name="developer_min_sdk">最小サポート</string>
+
+    <string name="seconds_alert_title">秒針を表示しますか？</string>
+    <string name="seconds_alert_message">秒針をなめらかに動かすには、画面を描き続ける必要があります。画面が 1Hz で休めないぶん電力を多く使い、一晩中つけたままにすると画面の寿命にもよくありません。\n\n時計としてだけ使うなら、切っておくほうが無難です。</string>
+    <string name="seconds_alert_confirm">表示する</string>
+    <string name="common_cancel">キャンセル</string>
+
+    <string name="common_coming_soon">準備中</string>
+
+    <string name="setup_title">始める前に</string>
+    <string name="setup_intro">Android は、アプリが自分で画面を出したりバックグラウンドに居座ったりすることを止めています。下の設定を入れると、充電中に時計がひとりでに現れます。</string>
+    <string name="setup_intro_hint">それぞれを押すと、対応する設定画面に直接移動します。</string>
+
+    <string name="setup_required_header">必須</string>
+    <string name="setup_required_footer">両方とも入れないと正しく動きません。今は飛ばして、あとで時計タブから設定することもできます。</string>
+    <string name="setup_overlay">他のアプリの上に重ねて表示</string>
+    <string name="setup_overlay_why">これがないと、充電を検出しても時計を出せません</string>
+    <string name="setup_battery">バッテリー最適化の除外</string>
+    <string name="setup_battery_why">除外しないと、システムがアプリを眠らせて充電しても起きません</string>
+
+    <string name="setup_optional_header">推奨</string>
+    <string name="setup_optional_footer">なくても動きますが、入れるとより安定します。</string>
+    <string name="setup_notifications">通知を許可</string>
+    <string name="setup_notifications_why">充電の監視が動いていることを知らせるために使います</string>
+
+    <string name="setup_state_on">オン</string>
+    <string name="setup_state_needed">必要</string>
+    <string name="setup_start">始める</string>
+    <string name="setup_continue_anyway">このまま続ける</string>
+    <string name="setup_remaining">必須の設定が %1$d 件まだオフです</string>
+
+    <string name="settings_permission_reopen">設定の案内をもう一度見る</string>
+    <string name="settings_permission_on">オン</string>
+    <string name="settings_permission_needed">必要</string>
+</resources>
