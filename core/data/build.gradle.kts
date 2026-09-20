@@ -8,7 +8,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.common)
+    // api: ChargeType/ChargingStatus appear in this module's public signatures.
+    api(projects.core.common)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)

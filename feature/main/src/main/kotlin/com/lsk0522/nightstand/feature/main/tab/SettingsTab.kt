@@ -2,26 +2,24 @@ package com.lsk0522.nightstand.feature.main.tab
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
+import com.lsk0522.nightstand.feature.main.AppSettingsViewModel
 import com.lsk0522.nightstand.feature.main.R
 
 /** The middle tab: the app's own settings. */
 @Composable
-fun SettingsTab(modifier: Modifier = Modifier) {
-    // TODO(next): Phase 2 — back these with DataStore in :core:data instead of
-    // in-memory state, so they survive process death.
-    var use24Hour by rememberSaveable { mutableStateOf(true) }
-    var showSeconds by rememberSaveable { mutableStateOf(false) }
-    var nightMode by rememberSaveable { mutableStateOf(true) }
-    var burnInProtection by rememberSaveable { mutableStateOf(true) }
+fun SettingsTab(
+    modifier: Modifier = Modifier,
+    viewModel: AppSettingsViewModel = hiltViewModel(),
+) {
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
 
     IosScreen(
         title = stringResource(R.string.settings_title),
@@ -41,13 +39,13 @@ fun SettingsTab(modifier: Modifier = Modifier) {
             )
             SwitchRow(
                 title = stringResource(R.string.settings_clock_24h),
-                checked = use24Hour,
-                onCheckedChange = { use24Hour = it },
+                checked = settings.use24Hour,
+                onCheckedChange = viewModel::setUse24Hour,
             )
             SwitchRow(
                 title = stringResource(R.string.settings_clock_seconds),
-                checked = showSeconds,
-                onCheckedChange = { showSeconds = it },
+                checked = settings.showSeconds,
+                onCheckedChange = viewModel::setShowSeconds,
                 showSeparator = false,
             )
         }
@@ -59,14 +57,14 @@ fun SettingsTab(modifier: Modifier = Modifier) {
             SwitchRow(
                 title = stringResource(R.string.settings_display_night),
                 subtitle = stringResource(R.string.settings_display_night_sub),
-                checked = nightMode,
-                onCheckedChange = { nightMode = it },
+                checked = settings.nightMode,
+                onCheckedChange = viewModel::setNightMode,
             )
             SwitchRow(
                 title = stringResource(R.string.settings_display_burnin),
                 subtitle = stringResource(R.string.settings_display_burnin_sub),
-                checked = burnInProtection,
-                onCheckedChange = { burnInProtection = it },
+                checked = settings.burnInProtection,
+                onCheckedChange = viewModel::setBurnInProtection,
             )
             ListRow(
                 title = stringResource(R.string.settings_display_brightness),

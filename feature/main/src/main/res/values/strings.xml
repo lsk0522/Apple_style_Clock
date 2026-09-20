@@ -29,10 +29,31 @@
     <string name="charging_mode_footer">선택한 방식으로 충전이 시작되면 2초 뒤 시계가 서서히 나타납니다.</string>
     <string name="charging_status_header">현재 상태</string>
     <string name="charging_status_method">충전 방식</string>
-    <string name="charging_status_pending">감지 대기 중</string>
     <string name="charging_status_battery">배터리</string>
+    <string name="charging_status_voltage">전압</string>
+    <string name="charging_status_temperature">온도</string>
     <string name="charging_status_unknown">—</string>
-    <string name="charging_status_footer">실시간 감지는 Phase 2에서 연결됩니다.</string>
+    <string name="charging_status_percent">%1$d%%</string>
+    <string name="charging_status_millivolts">%1$d mV</string>
+    <string name="charging_status_celsius">%1$.1f°C</string>
+    <string name="charging_status_would_trigger">지금 조건이면</string>
+    <string name="charging_status_would_trigger_yes">켜짐</string>
+    <string name="charging_status_would_trigger_no">안 켜짐</string>
+    <string name="charging_status_footer">무선 충전 시작 직후 잠깐 유선으로 잘못 보고하는 기기가 있어, 1.5초 동안 값이 유지되어야 확정합니다.</string>
+
+    <!-- 충전 방식 라벨 -->
+    <string name="charge_type_none">충전 안 함</string>
+    <string name="charge_type_wired_ac">유선 (충전기)</string>
+    <string name="charge_type_wired_usb">유선 (USB)</string>
+    <string name="charge_type_wireless">무선</string>
+    <string name="charge_type_dock">도크</string>
+
+    <!-- 앱이 꺼져 있을 때도 감지되는지 확인용 기록 -->
+    <string name="charging_event_header">백그라운드 감지</string>
+    <string name="charging_event_last">마지막 감지</string>
+    <string name="charging_event_none">아직 기록 없음</string>
+    <string name="charging_event_value">%1$s · %2$s</string>
+    <string name="charging_event_footer">앱을 완전히 종료한 뒤 충전기를 꽂았다 빼보세요. 여기에 기록되면 앱이 꺼져 있어도 감지가 동작하는 것입니다.</string>
 
     <!-- 메인 탭 -->
     <string name="settings_title">Nightstand</string>

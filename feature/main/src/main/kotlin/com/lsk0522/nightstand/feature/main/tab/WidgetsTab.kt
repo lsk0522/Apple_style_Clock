@@ -2,22 +2,25 @@ package com.lsk0522.nightstand.feature.main.tab
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
+import com.lsk0522.nightstand.feature.main.AppSettingsViewModel
 import com.lsk0522.nightstand.feature.main.R
 
 @Composable
-fun WidgetsTab(modifier: Modifier = Modifier) {
-    // TODO(next): Phase 5 — replace with the real AppWidgetHost list and the
-    // system widget picker.
-    var autoRotate by rememberSaveable { mutableStateOf(true) }
+fun WidgetsTab(
+    modifier: Modifier = Modifier,
+    viewModel: AppSettingsViewModel = hiltViewModel(),
+) {
+    // TODO(next): Phase 5 — replace the empty state with the real AppWidgetHost
+    // list and the system widget picker.
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
 
     IosScreen(
         title = stringResource(R.string.widgets_title),
@@ -49,14 +52,14 @@ fun WidgetsTab(modifier: Modifier = Modifier) {
         ) {
             SwitchRow(
                 title = stringResource(R.string.widgets_rotate_enabled),
-                checked = autoRotate,
-                onCheckedChange = { autoRotate = it },
+                checked = settings.autoRotateWidgets,
+                onCheckedChange = viewModel::setAutoRotateWidgets,
             )
             ListRow(
                 title = stringResource(R.string.widgets_rotate_interval),
                 value = stringResource(R.string.widgets_rotate_interval_value),
                 showChevron = true,
-                enabled = autoRotate,
+                enabled = settings.autoRotateWidgets,
                 showSeparator = false,
                 onClick = null,
             )
