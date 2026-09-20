@@ -8,11 +8,6 @@
     <string name="tab_donate">후원</string>
 
     <!-- 위젯 탭 -->
-    <string name="widgets_title">위젯</string>
-    <string name="widgets_added_header">추가된 위젯</string>
-    <string name="widgets_empty">아직 추가된 위젯이 없습니다</string>
-    <string name="widgets_add">위젯 추가</string>
-    <string name="widgets_add_footer">폰에 설치된 위젯을 StandBy 화면에 올릴 수 있습니다. 갤럭시 기본 위젯도 그대로 들어갑니다.</string>
     <string name="widgets_rotate_header">자동 넘기기</string>
     <string name="widgets_rotate_enabled">자동으로 넘기기</string>
     <string name="widgets_rotate_interval">전환 간격</string>

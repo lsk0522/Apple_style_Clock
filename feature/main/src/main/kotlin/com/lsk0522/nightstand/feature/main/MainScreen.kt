@@ -24,9 +24,9 @@ import com.lsk0522.nightstand.feature.main.tab.ChargingTab
 import com.lsk0522.nightstand.feature.main.tab.DeveloperTab
 import com.lsk0522.nightstand.feature.main.tab.DonateTab
 import com.lsk0522.nightstand.feature.main.tab.SettingsTab
+import com.lsk0522.nightstand.feature.widgets.WidgetsScreen
 import com.lsk0522.nightstand.feature.main.setup.SetupScreen
 import com.lsk0522.nightstand.feature.main.setup.SetupViewModel
-import com.lsk0522.nightstand.feature.main.tab.WidgetsTab
 import com.lsk0522.nightstand.core.design.R as DesignR
 
 /**
@@ -86,7 +86,7 @@ fun MainScreen(
     ) {
         Box(modifier = Modifier.hazeSource(tabHaze)) {
             when (selectedIndex) {
-                0 -> WidgetsTab()
+                0 -> WidgetsScreen()
                 1 -> ChargingTab()
                 2 -> SettingsTab()
                 3 -> DeveloperTab()
