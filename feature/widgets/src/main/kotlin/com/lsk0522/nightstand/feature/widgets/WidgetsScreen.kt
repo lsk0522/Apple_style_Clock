@@ -8,16 +8,21 @@ import android.content.Intent
 import android.widget.ImageView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -32,6 +37,8 @@ import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.SelectionRow
 import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
+import com.lsk0522.nightstand.core.design.theme.NightstandTheme
+import com.lsk0522.nightstand.core.design.R as DesignR
 
 /**
  * Picks and manages the widgets shown on the StandBy screen.
@@ -62,6 +69,9 @@ fun WidgetsScreen(
 
     /** Something the user has to be told about an add; null most of the time. */
     var notice by remember { mutableStateOf<Int?>(null) }
+
+    /** Reordering is a mode, the way it is in an iOS list. */
+    var editing by remember { mutableStateOf(false) }
 
     /** Queued for removal, so a stray tap cannot delete a widget outright. */
     var removing by remember { mutableStateOf<HostedWidget?>(null) }
@@ -223,10 +233,34 @@ fun WidgetsScreen(
                         // Which slot it lands in, since they are dealt
                         // alternately and that is not obvious from a list.
                         subtitle = stringResource(R.string.widgets_slot, index % 2 + 1),
-                        value = stringResource(R.string.widgets_remove_action),
-                        onClick = { removing = widget },
+                        value = if (editing) {
+                            null
+                        } else {
+                            stringResource(R.string.widgets_remove_action)
+                        },
+                        trailing = if (!editing) {
+                            null
+                        } else {
+                            {
+                                ReorderControls(
+                                    canMoveUp = index > 0,
+                                    canMoveDown = index < added.lastIndex,
+                                    onUp = { viewModel.move(widget, -1) },
+                                    onDown = { viewModel.move(widget, 1) },
+                                )
+                            }
+                        },
+                        onClick = if (editing) null else { { removing = widget } },
                     )
                 }
+            }
+            if (added.size > 1) {
+                ListRow(
+                    title = stringResource(
+                        if (editing) R.string.widgets_reorder_done else R.string.widgets_reorder,
+                    ),
+                    onClick = { editing = !editing },
+                )
             }
             ListRow(
                 title = stringResource(R.string.widgets_add),
@@ -275,7 +309,63 @@ private fun WidgetRotationInterval.labelRes(): Int = when (this) {
     WidgetRotationInterval.FIVE_MINUTES -> R.string.widgets_rotate_5m
 }
 
+/**
+ * Up and down arrows for one row.
+ *
+ * Arrows rather than a drag handle: dragging inside a `LazyColumn` that also
+ * scrolls needs the two gestures told apart, and at three or four widgets the
+ * arrows are fewer taps than a drag anyway.
+ */
+@Composable
+private fun ReorderControls(
+    canMoveUp: Boolean,
+    canMoveDown: Boolean,
+    onUp: () -> Unit,
+    onDown: () -> Unit,
+) {
+    Row {
+        ReorderArrow(
+            icon = DesignR.drawable.ic_chevron_up,
+            description = stringResource(R.string.widgets_move_up),
+            enabled = canMoveUp,
+            onClick = onUp,
+        )
+        ReorderArrow(
+            icon = DesignR.drawable.ic_chevron_down,
+            description = stringResource(R.string.widgets_move_down),
+            enabled = canMoveDown,
+            onClick = onDown,
+        )
+    }
+}
+
+@Composable
+private fun ReorderArrow(
+    icon: Int,
+    description: String,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val palette = NightstandTheme.palette
+    Box(
+        // 44dp is the smallest target iOS ships, and two of them side by side
+        // still fit the row height.
+        modifier = Modifier
+            .size(44.dp)
+            .then(if (enabled) Modifier.clickable(onClick = onClick) else Modifier),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(icon),
+            contentDescription = description,
+            tint = if (enabled) palette.tint else palette.tertiaryLabel,
+            modifier = Modifier.size(width = 16.dp, height = 10.dp),
+        )
+    }
+}
+
 /** A widget partway through being added. */
+
 private data class PendingWidget(
     val id: Int,
     val provider: ComponentName,

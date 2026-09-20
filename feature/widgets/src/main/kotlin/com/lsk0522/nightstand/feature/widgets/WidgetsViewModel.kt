@@ -86,6 +86,24 @@ class WidgetsViewModel @Inject constructor(
 
     fun abandon(appWidgetId: Int) = host.releaseId(appWidgetId)
 
+    /**
+     * Moves one widget [by] places in the list.
+     *
+     * The stored order is what decides which slot a widget lands in on the
+     * clock — they are dealt alternately into the two columns — so this is the
+     * only way to say "put the weather on the right".
+     */
+    fun move(widget: HostedWidget, by: Int) {
+        viewModelScope.launch {
+            val current = store.widgets.first()
+            val from = current.indexOfFirst { it.appWidgetId == widget.appWidgetId }
+            if (from < 0) return@launch
+            val to = (from + by).coerceIn(0, current.lastIndex)
+            if (to == from) return@launch
+            store.save(current.toMutableList().apply { add(to, removeAt(from)) })
+        }
+    }
+
     private companion object {
         const val STOP_TIMEOUT_MILLIS = 5_000L
     }

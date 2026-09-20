@@ -12,6 +12,11 @@
     <string name="widgets_unavailable">사용할 수 없는 위젯</string>
     <string name="widgets_add_footer">폰에 설치된 위젯을 그대로 올릴 수 있습니다. 갤럭시라면 삼성 시계·날씨·캘린더도 포함됩니다.</string>
 
+    <string name="widgets_reorder">순서 바꾸기</string>
+    <string name="widgets_reorder_done">완료</string>
+    <string name="widgets_move_up">위로</string>
+    <string name="widgets_move_down">아래로</string>
+
     <string name="widgets_slot">%1$d번 칸</string>
     <string name="widgets_remove_action">제거</string>
     <string name="widgets_remove_title">이 위젯을 제거할까요?</string>
