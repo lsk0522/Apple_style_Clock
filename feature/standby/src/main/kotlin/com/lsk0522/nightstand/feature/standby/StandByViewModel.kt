@@ -2,6 +2,7 @@ package com.lsk0522.nightstand.feature.standby
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lsk0522.nightstand.core.common.model.ChargeType
 import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,8 @@ data class StandByUiState(
      * default value — that would dismiss itself the moment it opened.
      */
     val stillCharging: Boolean? = null,
+    val batteryPercent: Int? = null,
+    val chargeType: ChargeType = ChargeType.NONE,
 )
 
 @HiltViewModel
@@ -37,6 +40,8 @@ class StandByViewModel @Inject constructor(
                 nightMode = prefs.nightMode,
                 burnInProtection = prefs.burnInProtection,
                 stillCharging = prefs.chargingTrigger.matches(status.type),
+                batteryPercent = status.levelPercent,
+                chargeType = status.type,
             )
         }.stateIn(
             scope = viewModelScope,
