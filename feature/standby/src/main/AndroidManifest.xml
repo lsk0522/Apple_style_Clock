@@ -16,6 +16,24 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.Nightstand.Standby" />
+        <!-- The no-permission fallback. Exported with BIND_DREAM_SERVICE so
+             only the system can start it, which is what makes it safe to
+             export at all. The user switches it on in the system's own
+             screen-saver settings. -->
+        <service
+            android:name=".StandbyDreamService"
+            android:exported="true"
+            android:label="@string/dream_label"
+            android:permission="android.permission.BIND_DREAM_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.dreams.DreamService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.dream"
+                android:resource="@xml/standby_dream" />
+        </service>
     </application>
+
 
 </manifest>

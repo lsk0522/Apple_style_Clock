@@ -107,7 +107,18 @@ class SystemRequirements @Inject constructor(
         SystemRequirementId.NOTIFICATIONS -> null // runtime permission
     }
 
+    /**
+     * The system's screen-saver settings, where the dream is switched on.
+     *
+     * Not modelled as a [SystemRequirement] because whether our dream is the
+     * chosen one is not something an app can read reliably — the setting is
+     * not public API. Claiming it is off when it might be on would be worse
+     * than simply offering the door.
+     */
+    fun screenSaverIntent(): Intent = Intent(Settings.ACTION_DREAM_SETTINGS)
+
     /** Used when [settingsIntent] is refused by the device. */
+
     fun fallbackIntent(id: SystemRequirementId): Intent = when (id) {
         SystemRequirementId.BATTERY_OPTIMIZATION ->
             Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)

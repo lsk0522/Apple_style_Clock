@@ -5,7 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import android.content.Intent
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
@@ -34,6 +36,7 @@ fun SettingsTab(
     viewModel: AppSettingsViewModel = hiltViewModel(),
     setupViewModel: SetupViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val setupState by setupViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -180,6 +183,19 @@ fun SettingsTab(
                         R.string.settings_permission_needed
                     },
                 ),
+            )
+            ListRow(
+                title = stringResource(R.string.settings_permission_dream),
+                subtitle = stringResource(R.string.settings_permission_dream_why),
+                showChevron = true,
+                onClick = {
+                    runCatching {
+                        context.startActivity(
+                            setupViewModel.screenSaverIntent()
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        )
+                    }
+                },
             )
             ListRow(
                 title = stringResource(R.string.settings_permission_reopen),

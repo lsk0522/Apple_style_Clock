@@ -115,6 +115,8 @@ class SetupViewModel @Inject constructor(
     /** Where to send the user when [settingsIntent] is refused by the device. */
     fun fallbackIntent(id: SystemRequirementId): Intent = requirements.fallbackIntent(id)
 
+    fun screenSaverIntent(): Intent = requirements.screenSaverIntent()
+
     private companion object {
         const val STOP_TIMEOUT_MILLIS = 5_000L
     }

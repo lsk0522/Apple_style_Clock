@@ -126,6 +126,24 @@ fun SetupScreen(
             )
         }
 
+        // Only worth raising while the main path is shut. Someone who granted
+        // the overlay permission has no reason to set up a second route.
+        if (state.requirement(SystemRequirementId.OVERLAY)?.isSatisfied == false) {
+            listSection(
+                key = "screensaver",
+                header = R.string.setup_dream_header,
+                footer = R.string.setup_dream_footer,
+            ) {
+                ListRow(
+                    title = stringResource(R.string.setup_dream),
+                    subtitle = stringResource(R.string.setup_dream_why),
+                    showChevron = true,
+                    showSeparator = false,
+                    onClick = { context.startSettings(viewModel.screenSaverIntent()) },
+                )
+            }
+        }
+
         item(key = "continue") {
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),

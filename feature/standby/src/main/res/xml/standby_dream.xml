@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The screen-saver descriptor. No settingsActivity: everything the dream draws
+  is already configured in the app's own tabs, and pointing the system at a
+  second settings surface would mean two places to change the same thing.
+-->
+<dream xmlns:android="http://schemas.android.com/apk/res/android" />

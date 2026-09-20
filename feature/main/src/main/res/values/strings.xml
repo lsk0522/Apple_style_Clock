@@ -100,6 +100,14 @@
     <string name="settings_display_brightness">밝기</string>
     <string name="settings_display_brightness_value">자동</string>
 
+    <string name="setup_dream_header">권한 없이 쓰는 방법</string>
+    <string name="setup_dream_footer">화면 보호기는 권한이 필요 없습니다. 대신 시계가 언제 뜰지는 안드로이드가 정하기 때문에, 충전을 시작하자마자 바로 뜨지는 않습니다.</string>
+    <string name="setup_dream">화면 보호기로 쓰기</string>
+    <string name="setup_dream_why">화면 보호기 설정에서 Nightstand 시계를 고르세요</string>
+
+    <string name="settings_permission_dream">화면 보호기로도 띄우기</string>
+    <string name="settings_permission_dream_why">오버레이 권한 없이 쓸 수 있는 보조 경로</string>
+
     <string name="settings_permission_header">동작에 필요한 설정</string>
     <string name="settings_permission_overlay">다른 앱 위에 표시</string>
     <string name="settings_permission_battery">배터리 최적화 제외</string>
