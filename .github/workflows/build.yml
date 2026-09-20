@@ -52,10 +52,6 @@ jobs:
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest --stacktrace
 
-      - name: Lint
-        run: ./gradlew lintDebug --stacktrace
-        continue-on-error: true
-
       - name: Name the build
         id: name
         run: echo "apk=nightstand-${{ github.run_number }}-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
@@ -93,6 +89,14 @@ jobs:
             --notes-file release-notes.md \
             --prerelease \
             "${APK_NAME}.apk"
+
+      # Runs last, and is allowed to fail the job.
+      #
+      # It used to carry continue-on-error, which meant a real lint error sat
+      # under a green check for days. Putting it after the upload keeps an
+      # installable APK available while still marking the build red.
+      - name: Lint
+        run: ./gradlew lintDebug --stacktrace
 
       - name: Upload reports on failure
         uses: actions/upload-artifact@v4
