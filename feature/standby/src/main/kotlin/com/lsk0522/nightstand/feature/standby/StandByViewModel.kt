@@ -6,6 +6,9 @@ import com.lsk0522.nightstand.core.common.model.ChargeType
 import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
+import com.lsk0522.nightstand.core.data.widget.HostedWidget
+import com.lsk0522.nightstand.core.data.widget.HostedWidgetStore
+import com.lsk0522.nightstand.feature.widgets.StandbyWidgetHost
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,16 +29,19 @@ data class StandByUiState(
     val stillCharging: Boolean? = null,
     val batteryPercent: Int? = null,
     val chargeType: ChargeType = ChargeType.NONE,
+    val widgets: List<HostedWidget> = emptyList(),
 )
 
 @HiltViewModel
 class StandByViewModel @Inject constructor(
     settings: SettingsRepository,
     monitor: ChargingStatusMonitor,
+    widgetStore: HostedWidgetStore,
+    val widgetHost: StandbyWidgetHost,
 ) : ViewModel() {
 
     val uiState: StateFlow<StandByUiState> =
-        combine(settings.settings, monitor.status) { prefs, status ->
+        combine(settings.settings, monitor.status, widgetStore.widgets) { prefs, status, widgets ->
             StandByUiState(
                 clockFace = prefs.clockFace,
                 use24Hour = prefs.use24Hour,
@@ -45,6 +51,7 @@ class StandByViewModel @Inject constructor(
                 stillCharging = prefs.chargingTrigger.matches(status.type),
                 batteryPercent = status.levelPercent,
                 chargeType = status.type,
+                widgets = widgets,
             )
         }.stateIn(
             scope = viewModelScope,

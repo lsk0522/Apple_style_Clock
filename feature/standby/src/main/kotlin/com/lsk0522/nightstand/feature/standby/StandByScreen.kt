@@ -8,6 +8,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +23,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.lsk0522.nightstand.core.design.theme.NightstandMotion
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
+import com.lsk0522.nightstand.feature.widgets.StandbyWidgetHost
 import com.lsk0522.nightstand.feature.standby.face.ClockFaceData
 import com.lsk0522.nightstand.feature.standby.face.ClockFaceHost
 import com.lsk0522.nightstand.feature.standby.face.needsSecondTicks
@@ -40,6 +43,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun StandByScreen(
     state: StandByUiState,
+    host: StandbyWidgetHost,
     onSingleTap: () -> Unit,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
@@ -75,20 +79,35 @@ fun StandByScreen(
                 )
             },
     ) {
-        ClockFaceHost(
-            face = state.clockFace,
-            data = ClockFaceData(
-                now = now,
-                use24Hour = state.use24Hour,
-                showSeconds = state.showSeconds,
-                batteryPercent = state.batteryPercent,
-                charging = state.chargeType.isCharging,
-            ),
+        val pages = remember(state.widgets.isEmpty()) {
+            if (state.widgets.isEmpty()) listOf(Page.Clock) else listOf(Page.Widgets, Page.Clock)
+        }
+        val pagerState = rememberPagerState(
+            initialPage = pages.lastIndex,
+            pageCount = { pages.size },
+        )
+
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
                 .alpha(fade)
                 .offset(x = shift.first, y = shift.second),
-        )
+        ) { index ->
+            when (pages[index]) {
+                Page.Widgets -> WidgetPage(host = host, widgets = state.widgets)
+                Page.Clock -> ClockFaceHost(
+                    face = state.clockFace,
+                    data = ClockFaceData(
+                        now = now,
+                        use24Hour = state.use24Hour,
+                        showSeconds = state.showSeconds,
+                        batteryPercent = state.batteryPercent,
+                        charging = state.chargeType.isCharging,
+                    ),
+                )
+            }
+        }
     }
 }
 
@@ -112,3 +131,6 @@ private fun rememberPixelShift(enabled: Boolean) = produceState(
         delay(NightstandMotion.PIXEL_SHIFT_INTERVAL)
     }
 }.value
+
+/** iOS StandBy pages sideways between its surfaces; this is the same idea. */
+private enum class Page { Widgets, Clock }

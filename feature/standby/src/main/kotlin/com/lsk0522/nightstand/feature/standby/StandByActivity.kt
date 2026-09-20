@@ -63,6 +63,7 @@ class StandByActivity : ComponentActivity() {
             StandbyTheme(nightVision = false) {
                 StandByScreen(
                     state = state,
+                    host = viewModel.widgetHost,
                     onSingleTap = { dimmed = !dimmed },
                     onExit = ::finish,
                 )
