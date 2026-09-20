@@ -450,10 +450,9 @@ private fun PermissionRow(label: Int, granted: Boolean, showSeparator: Boolean =
 /** Stands in for the navigation chevron until there is a real back stack. */
 private fun LazyListScope.backRow(onBack: () -> Unit) {
     item(key = "back") {
-        val context = LocalContext.current
         Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
             IosButton(
-                label = context.getString(R.string.developer_back),
+                label = stringResource(R.string.developer_back),
                 prominent = false,
                 onClick = onBack,
             )
