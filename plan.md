@@ -93,7 +93,7 @@ when (status?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)) {
 
 **이벤트 수신 경로**
 
-- `ACTION_POWER_CONNECTED` / `ACTION_POWER_DISCONNECTED`는 Android 8+ 암시적 브로드캐스트 제한의 **예외 목록**에 포함 → 매니페스트 등록 가능
+- ⚠️ **정정**: `ACTION_POWER_CONNECTED` / `ACTION_POWER_DISCONNECTED` 는 암시적 브로드캐스트 예외 목록에 **없다.** 매니페스트 리시버는 Android 8+ 에서 절대 깨어나지 않는다 (실기기에서 확인). 충전 감지는 `JobScheduler.setRequiresCharging` 으로 한다
 - 수신 즉시 `ChargingMonitorService`(포그라운드 서비스, `specialUse` 타입) 기동
 - 보조 안전망: `BOOT_COMPLETED` 시 현재 충전 상태 재확인
 
@@ -322,12 +322,14 @@ Apple_style_Clock/
 - [x] 오버레이 권한 온보딩 (거부해도 진행 가능)
 - [x] 삼성 절전 예외 안내
 - [x] `StandByActivity` — 잠금화면 위 표시, 화면 켜기, 가로 고정, 전체화면
-- [x] **2초 지연 → 800ms 페이드인**
+- [x] **2초 지연 → 800ms 페이드인** — 실기기 확인됨
+- [x] **JobScheduler + 충전 중 포그라운드 서비스** — 매니페스트 리시버가 동작하지 않아 교체
+- [x] 폰 사용 중에는 화면을 뺏지 않고 화면이 꺼질 때 띄움
 - [x] 충전 해제 / 조건 이탈 시 자동 종료
 - [x] 화면 유지(`FLAG_KEEP_SCREEN_ON`), 최저 주사율 요청
 - [x] 번인 방지 픽셀 시프트
 - [x] 개발자 탭에서 강제 실행 (충전기 없이 확인 가능)
-- [ ] `DreamService` 보조 경로 — 오버레이 권한을 거부한 사용자용
+- [ ] `DreamService` 보조 경로 — 오버레이 권한을 거부한 사용자용 (유일한 미완 항목)
 - [ ] 밝기 제어 · 탭으로 디밍 → **Phase 7(센서)로 이월**, 조도 센서와 함께 다룬다
 
 > **포그라운드 서비스를 넣지 않았다.** 오버레이 권한이 백그라운드 액티비티
