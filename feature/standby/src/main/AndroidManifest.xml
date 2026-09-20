@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!-- singleTask so repeated charge events reuse the one instance rather
+             than stacking copies; excluded from recents because it is a state
+             the phone is in, not a place the user navigated to. -->
+        <activity
+            android:name=".StandByActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:taskAffinity=".standby"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.Nightstand.Standby" />
+    </application>
+
+</manifest>

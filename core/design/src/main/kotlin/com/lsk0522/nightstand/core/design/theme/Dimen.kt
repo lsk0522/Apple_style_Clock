@@ -37,7 +37,7 @@ object Radius {
      * the display curve. 26 also matches what the app looked like before the
      * squircle maths was fixed, which is the roundness that was preferred.
      */
-    val listCard: Dp = 26.dp
+    val listCard: Dp = 32.dp
 
     /** StandBy / home-screen widget tile. */
     val widgetTile: Dp = 22.dp

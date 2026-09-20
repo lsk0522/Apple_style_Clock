@@ -3,6 +3,7 @@ package com.lsk0522.nightstand.feature.main.setup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
+import com.lsk0522.nightstand.core.data.standby.StandbyLauncher
 import com.lsk0522.nightstand.core.data.system.AppVersion
 import com.lsk0522.nightstand.core.data.system.SystemRequirement
 import com.lsk0522.nightstand.core.data.system.SystemRequirementId
@@ -40,6 +41,7 @@ class SetupViewModel @Inject constructor(
     private val repository: SettingsRepository,
     private val requirements: SystemRequirements,
     private val appVersion: AppVersion,
+    private val standbyLauncher: StandbyLauncher,
 ) : ViewModel() {
 
     /**
@@ -96,6 +98,9 @@ class SetupViewModel @Inject constructor(
         viewModelScope.launch { repository.setSetupSeen(false) }
     }
 
+
+    /** Opens the clock straight away, without waiting for a charger. */
+    fun launchStandby() = standbyLauncher.launch()
 
     /** The system screen for [id], or null when it is a runtime permission. */
     fun settingsIntent(id: SystemRequirementId): Intent? = requirements.settingsIntent(id)

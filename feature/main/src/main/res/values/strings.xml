@@ -87,6 +87,7 @@
     <string name="developer_title">개발자</string>
     <string name="developer_tools_header">도구</string>
     <string name="developer_force_standby">StandBy 강제 실행</string>
+    <string name="developer_force_standby_why">충전기 없이 시계 화면을 바로 열어봅니다</string>
     <string name="developer_simulate">충전 이벤트 시뮬레이션</string>
     <string name="developer_logs">실시간 로그</string>
     <string name="developer_sensors">센서 값 보기</string>

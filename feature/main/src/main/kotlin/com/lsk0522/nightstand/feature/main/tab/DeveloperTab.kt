@@ -31,9 +31,9 @@ fun DeveloperTab(
         ) {
             ListRow(
                 title = stringResource(R.string.developer_force_standby),
+                subtitle = stringResource(R.string.developer_force_standby_why),
                 showChevron = true,
-                enabled = false,
-                onClick = null,
+                onClick = setupViewModel::launchStandby,
             )
             ListRow(
                 title = stringResource(R.string.developer_simulate),
