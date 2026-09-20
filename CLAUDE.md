@@ -62,6 +62,7 @@ feature/donate/       후원 (Play Billing)
 ```
 
 ## UI 구조 (사용자 요청 고정 사항)
+**첫 실행은 메뉴가 아니라 설정 안내부터.** 오버레이 권한·배터리 최적화 제외 없이는앱이 동작하지 않으므로, `SetupScreen` 이 먼저 뜨고 각 항목이 해당 시스템 화면으로바로 이동시킨다. 막지는 않는다 — "이대로 계속하기" 가 있다.이 설정들은 변경 알림이 없으므로 **포그라운드 복귀 때마다 재확인**한다.
 
 하단 탭바 5개 — **순서를 바꾸지 말 것**:
 
@@ -99,7 +100,10 @@ feature/donate/       후원 (Play Billing)
 
 공통:
 
-- 모서리는 스퀘어클(continuous corner) — `RoundedCornerShape` 대신 `SquircleShape`
+- 모서리는 연속 곡률 — `SquircleShape`(슈퍼타원 n=4). 반지름을 정확히 지킨다
+- **예외**: 떠 있는 탭바·알약 버튼은 `CapsuleShape`(진짜 반원 끝).
+  여기에 슈퍼타원을 쓰면 끝이 납작해져 애플이 그리지 않는 모양이 된다
+- 중첩 곡률은 `Radius.concentric(outer, padding)` 로 계산
 - 누름 피드백은 리플이 아니라 scale 0.96
 - StandBy 페이드인: **2초 지연 → 800ms 페이드인**
 - 유리 표면은 `Modifier.liquidGlass(shape, hazeState)` — 직접 반투명 배경 쌓지 말 것
