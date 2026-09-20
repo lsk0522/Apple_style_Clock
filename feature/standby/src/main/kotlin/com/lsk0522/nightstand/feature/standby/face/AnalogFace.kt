@@ -1,17 +1,13 @@
 package com.lsk0522.nightstand.feature.standby.face
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.produceState
@@ -26,10 +22,8 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.lsk0522.nightstand.core.design.theme.NightstandFontFamily
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
-import com.lsk0522.nightstand.core.design.theme.NightstandType
 import java.time.LocalDateTime
 import kotlin.math.cos
 import kotlin.math.sin
@@ -62,24 +56,10 @@ fun AnalogFace(data: ClockFaceData, modifier: Modifier = Modifier) {
                 .padding(Margin),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(
-                    text = data.now.format(weekdayFormatter()),
-                    style = NightstandType.Title1,
-                    color = palette.textPrimary,
-                )
-                Text(
-                    text = data.now.format(dateFormatter()),
-                    style = NightstandType.Title3,
-                    color = palette.textSecondary,
-                )
-                if (data.batteryPercent != null) {
-                    Spacer(Modifier.height(10.dp))
-                    BatteryLine(data)
-                }
+            if (data.hasSideColumn) {
+                InfoColumn(data)
+                Spacer(Modifier.width(Gap))
             }
-
-            Spacer(Modifier.width(Gap))
 
             Canvas(modifier = Modifier.size(dial)) {
                 // Read inside the draw lambda on purpose: the frame clock then
@@ -95,7 +75,7 @@ fun AnalogFace(data: ClockFaceData, modifier: Modifier = Modifier) {
                     val outer = radius * 0.97f
                     val inner = radius * if (heavy) 0.90f else 0.94f
                     drawLine(
-                        color = if (heavy) palette.textPrimary else palette.textTertiary,
+                        color = if (heavy) data.tint else palette.textTertiary,
                         start = centre + Offset(
                             (cos(angle) * inner).toFloat(),
                             (sin(angle) * inner).toFloat(),
@@ -114,7 +94,7 @@ fun AnalogFace(data: ClockFaceData, modifier: Modifier = Modifier) {
                     fontFamily = NightstandFontFamily,
                     fontSize = (radius * 0.155f).toSp(),
                     fontWeight = FontWeight.Medium,
-                    color = palette.textPrimary,
+                    color = data.tint,
                 )
                 for (hour in 1..12) {
                     val angle = Math.toRadians(hour * 30.0 - 90.0)
@@ -152,8 +132,8 @@ fun AnalogFace(data: ClockFaceData, modifier: Modifier = Modifier) {
                     )
                 }
 
-                hand(hours / 12f, 0.48f, 0.055f, palette.textPrimary)
-                hand(minutes / 60f, 0.68f, 0.038f, palette.textPrimary)
+                hand(hours / 12f, 0.48f, 0.055f, data.tint)
+                hand(minutes / 60f, 0.68f, 0.038f, data.tint)
                 if (data.showSeconds) {
                     hand(seconds / 60f, 0.78f, 0.014f, palette.accent)
                 }

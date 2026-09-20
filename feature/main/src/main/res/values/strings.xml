@@ -17,6 +17,13 @@
     <string name="charging_mode_both">충전 중이면 언제나</string>
     <string name="charging_mode_dock">도크에 거치했을 때만</string>
     <string name="charging_mode_footer">선택한 방식으로 충전이 시작되면 2초 뒤 시계가 서서히 나타납니다.</string>
+    <string name="charging_persistence_header">표시 방식</string>
+    <string name="charging_persistence_footer">계속 표시를 고르면 충전 중에 화면이 꺼질 때마다 시계가 다시 올라옵니다. 폰을 쓰는 동안에는 올라오지 않습니다.</string>
+    <string name="charging_persistence_once">충전을 시작할 때 한 번</string>
+    <string name="charging_persistence_once_why">한 번 닫으면 충전기를 다시 꽂을 때까지 올라오지 않습니다</string>
+    <string name="charging_persistence_always">충전 중에는 계속</string>
+    <string name="charging_persistence_always_why">폰을 다시 내려놓을 때마다 시계가 돌아옵니다</string>
+
     <string name="charging_status_header">현재 상태</string>
     <string name="charging_status_method">충전 방식</string>
     <string name="charging_status_battery">배터리</string>
@@ -62,6 +69,22 @@
     <string name="face_float_why">화면을 채우는 컬러 숫자</string>
     <string name="face_minimal_mono">미니멀 모노</string>
     <string name="face_minimal_mono_why">가는 획, 단색, 넉넉한 여백</string>
+
+    <string name="settings_appearance_header">시계 꾸미기</string>
+    <string name="settings_appearance_footer">색은 시각·시곗바늘·눈금에 적용됩니다. 날짜와 배터리를 모두 끄면 시각만 화면 한가운데에 놓입니다.</string>
+    <string name="settings_appearance_color">색</string>
+    <string name="settings_appearance_date">날짜 표시</string>
+    <string name="settings_appearance_battery">배터리 표시</string>
+
+    <string name="color_white">흰색</string>
+    <string name="color_red">빨강</string>
+    <string name="color_orange">주황</string>
+    <string name="color_yellow">노랑</string>
+    <string name="color_green">초록</string>
+    <string name="color_mint">민트</string>
+    <string name="color_blue">파랑</string>
+    <string name="color_purple">보라</string>
+    <string name="color_pink">분홍</string>
 
     <string name="settings_clock_header">시계</string>
     <string name="settings_clock_24h">24시간 표시</string>

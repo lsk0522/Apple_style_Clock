@@ -152,6 +152,10 @@ motion:
   standby-enter-delay: 2000ms
   standby-fade-in: 800ms
   standby-fade-out: 400ms
+  standard-ease: "cubic-bezier(0.42, 0, 0.58, 1)"  # UIKit easeInOut
+  face-swap: 450ms             # 시계 모양 교체 크로스페이드
+  tab-swap: 260ms              # 하단 섹션 전환
+  tab-slide-fraction: 0.07     # 전환 시 좌우 이동량
   pixel-shift-interval: 10min  # 번인 방지
   pixel-shift-max: 2px
 ---

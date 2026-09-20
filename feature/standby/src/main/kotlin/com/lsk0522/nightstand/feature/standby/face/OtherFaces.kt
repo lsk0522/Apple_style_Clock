@@ -55,12 +55,12 @@ fun WorldFace(data: ClockFaceData, modifier: Modifier = Modifier) {
                 Text(
                     text = data.now.format(hourFormatter(data.use24Hour)),
                     style = digitStyle(digitSize),
-                    color = palette.textPrimary,
+                    color = data.tint,
                 )
                 Text(
                     text = data.now.format(MinuteFormat),
                     style = digitStyle(digitSize),
-                    color = palette.textPrimary,
+                    color = data.tint,
                 )
             }
 
@@ -141,13 +141,19 @@ fun SolarFace(data: ClockFaceData, modifier: Modifier = Modifier) {
             Text(
                 text = data.now.format(shortTimeFormatter(data.use24Hour)),
                 style = digitStyle(digitSize),
-                color = palette.textPrimary,
+                color = data.tint,
             )
-            Text(
-                text = data.now.format(dateFormatter()),
-                style = NightstandType.Title3,
-                color = palette.textSecondary,
-            )
+            if (data.showDate) {
+                Text(
+                    text = data.now.format(dateFormatter()),
+                    style = NightstandType.Title3,
+                    color = palette.textSecondary,
+                )
+            }
+            if (data.showsBattery) {
+                Spacer(Modifier.height(10.dp))
+                BatteryLine(data)
+            }
         }
     }
 }
@@ -160,8 +166,6 @@ fun SolarFace(data: ClockFaceData, modifier: Modifier = Modifier) {
  */
 @Composable
 fun FloatFace(data: ClockFaceData, modifier: Modifier = Modifier) {
-    val palette = NightstandTheme.standby
-
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val usable = maxHeight - Margin * 2
         val digitSize = with(LocalDensity.current) { (usable * 0.48f).toSp() }
@@ -173,12 +177,12 @@ fun FloatFace(data: ClockFaceData, modifier: Modifier = Modifier) {
             Text(
                 text = data.now.format(hourFormatter(data.use24Hour)),
                 style = digitStyle(digitSize).copy(letterSpacing = (-0.02).em),
-                color = palette.accent,
+                color = data.tint,
             )
             Text(
                 text = data.now.format(MinuteFormat),
                 style = digitStyle(digitSize).copy(letterSpacing = (-0.02).em),
-                color = palette.accent,
+                color = data.tint,
             )
         }
     }
@@ -206,13 +210,15 @@ fun MinimalMonoFace(data: ClockFaceData, modifier: Modifier = Modifier) {
                     text = data.now.format(shortTimeFormatter(data.use24Hour)),
                     style = digitStyle(digitSize, weight = FontWeight.Light)
                         .copy(letterSpacing = 0.em),
-                    color = palette.textPrimary,
+                    color = data.tint,
                 )
-                Text(
-                    text = data.now.format(dateFormatter()),
-                    style = NightstandType.Title3.copy(fontWeight = FontWeight.Light),
-                    color = palette.textTertiary,
-                )
+                if (data.showDate) {
+                    Text(
+                        text = data.now.format(dateFormatter()),
+                        style = NightstandType.Title3.copy(fontWeight = FontWeight.Light),
+                        color = palette.textTertiary,
+                    )
+                }
             }
         }
     }

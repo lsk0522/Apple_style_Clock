@@ -1,8 +1,11 @@
 package com.lsk0522.nightstand.feature.standby
 
-import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -19,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.lsk0522.nightstand.core.design.theme.NightstandMotion
@@ -37,6 +41,12 @@ import kotlinx.coroutines.delay
  * Holds what every face shares — the fade in, the burn-in shift, the tick and
  * the gestures — so each face only has to draw itself.
  *
+ * Nothing is drawn until the stored settings arrive. Painting the defaults
+ * first and correcting them a frame later showed everyone who had chosen
+ * Analog a flash of the Digital face; black is the honest thing to show while
+ * we do not yet know what to draw, and the fade then brings up the right face
+ * rather than a substitution.
+ *
  * @param onSingleTap toggles the dimmed, always-on brightness.
  * @param onExit called on a double tap, the gesture that dismisses StandBy.
  */
@@ -54,14 +64,15 @@ fun StandByScreen(
     )
 
     // Eased up from black rather than cut in, which is what makes it feel like
-    // the phone settled rather than switched.
+    // the phone settled rather than switched. It waits for the settings so the
+    // fade carries the real face, not a corrected one.
     var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
+    LaunchedEffect(state.loaded) { if (state.loaded) visible = true }
     val fade by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
         animationSpec = tween(
             durationMillis = NightstandMotion.STANDBY_FADE_IN_MS,
-            easing = LinearEasing,
+            easing = NightstandMotion.StandardEase,
         ),
         label = "standbyFade",
     )
@@ -79,6 +90,8 @@ fun StandByScreen(
                 )
             },
     ) {
+        if (!state.loaded) return@Box
+
         val pages = remember(state.widgets.isEmpty()) {
             if (state.widgets.isEmpty()) listOf(Page.Clock) else listOf(Page.Widgets, Page.Clock)
         }
@@ -96,16 +109,31 @@ fun StandByScreen(
         ) { index ->
             when (pages[index]) {
                 Page.Widgets -> WidgetPage(host = host, widgets = state.widgets)
-                Page.Clock -> ClockFaceHost(
-                    face = state.clockFace,
-                    data = ClockFaceData(
-                        now = now,
-                        use24Hour = state.use24Hour,
-                        showSeconds = state.showSeconds,
-                        batteryPercent = state.batteryPercent,
-                        charging = state.chargeType.isCharging,
-                    ),
-                )
+                Page.Clock -> {
+                    // Changing face in a dark room should dissolve, not cut.
+                    AnimatedContent(
+                        targetState = state.clockFace,
+                        transitionSpec = {
+                            fadeIn(NightstandMotion.faceSwap()) togetherWith
+                                fadeOut(NightstandMotion.faceSwap())
+                        },
+                        label = "clockFace",
+                    ) { face ->
+                        ClockFaceHost(
+                            face = face,
+                            data = ClockFaceData(
+                                now = now,
+                                use24Hour = state.use24Hour,
+                                showSeconds = state.showSeconds,
+                                batteryPercent = state.batteryPercent,
+                                charging = state.chargeType.isCharging,
+                                tint = Color(state.clockColor.argb),
+                                showDate = state.showDate,
+                                showBattery = state.showBattery,
+                            ),
+                        )
+                    }
+                }
             }
         }
     }

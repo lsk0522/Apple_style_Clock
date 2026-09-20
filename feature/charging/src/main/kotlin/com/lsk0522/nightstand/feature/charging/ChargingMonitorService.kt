@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import com.lsk0522.nightstand.core.common.model.ChargeType
 import com.lsk0522.nightstand.core.common.model.ChargingTrigger
+import com.lsk0522.nightstand.core.common.model.StandbyPersistence
 import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
 import com.lsk0522.nightstand.core.data.charging.ScreenStateMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
@@ -63,8 +64,22 @@ class ChargingMonitorService : Service() {
     private val scope = CoroutineScope(SupervisorJob())
     private var watcher: Job? = null
 
-    /** One launch per charging session; re-arms when the phone is unplugged. */
+    /**
+     * Whether the clock has already been put up for this charging session.
+     *
+     * Re-armed when the phone is unplugged, and — if the user asked for the
+     * clock to keep coming back — every time the screen goes off again.
+     */
     private var alreadyShown = false
+
+    /**
+     * The last screen reading, so a screen-off can be told from a repeat.
+     *
+     * The flow re-emits on every battery tick, so "the screen is off" is not
+     * the same event as "the screen just went off", and only the transition
+     * should bring the clock back.
+     */
+    private var wasInteractive = true
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -86,7 +101,8 @@ class ChargingMonitorService : Service() {
             screenMonitor.state,
         ) { status, screen -> status to screen }
             .collect { (status, screen) ->
-                val trigger = settings.settings.first().chargingTrigger
+                val prefs = settings.settings.first()
+                val trigger = prefs.chargingTrigger
 
                 if (!status.type.isCharging) {
                     // Unplugged. Hand the wake-up duty back to the scheduler
@@ -98,6 +114,17 @@ class ChargingMonitorService : Service() {
                     )
                     standDown()
                     return@collect
+                }
+
+                // The screen going dark means the clock is not up: StandBy
+                // holds it on for as long as it is showing. So this is the
+                // moment the phone was set back down, and the moment to offer
+                // the clock again for anyone who asked to have it every time
+                // rather than once a charge.
+                val wentDark = wasInteractive && !screen.isInteractive
+                wasInteractive = screen.isInteractive
+                if (wentDark && prefs.persistence == StandbyPersistence.WHILE_CHARGING) {
+                    alreadyShown = false
                 }
 
                 if (alreadyShown) return@collect

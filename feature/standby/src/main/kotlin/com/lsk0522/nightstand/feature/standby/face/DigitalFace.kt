@@ -28,11 +28,13 @@ import com.lsk0522.nightstand.core.design.theme.NightstandType
  * The two halves are laid out as one block and centred together. Giving the
  * date column a weight instead pushes them to opposite screen edges, where
  * they stop reading as a single clock.
+ *
+ * With both the date and the battery switched off there is no side column at
+ * all, and the digits centre on their own rather than sitting off to one side
+ * beside an empty gap.
  */
 @Composable
 fun DigitalFace(data: ClockFaceData, modifier: Modifier = Modifier) {
-    val palette = NightstandTheme.standby
-
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val usable = maxHeight - VerticalMargin * 2
         val digitSize = with(LocalDensity.current) { (usable * DigitRatio).toSp() }
@@ -44,37 +46,48 @@ fun DigitalFace(data: ClockFaceData, modifier: Modifier = Modifier) {
                 .padding(horizontal = SideMargin, vertical = VerticalMargin),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(
-                    text = data.now.format(weekdayFormatter()),
-                    style = NightstandType.Title1,
-                    color = palette.textPrimary,
-                )
-                Text(
-                    text = data.now.format(dateFormatter()),
-                    style = NightstandType.Title3,
-                    color = palette.textSecondary,
-                )
-                if (data.batteryPercent != null) {
-                    Spacer(Modifier.height(10.dp))
-                    BatteryLine(data)
-                }
+            if (data.hasSideColumn) {
+                InfoColumn(data)
+                Spacer(Modifier.width(ColumnGap))
             }
-
-            Spacer(Modifier.width(ColumnGap))
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = data.now.format(hourFormatter(data.use24Hour)),
                     style = style,
-                    color = palette.textPrimary,
+                    color = data.tint,
                 )
                 Text(
                     text = data.now.format(MinuteFormat),
                     style = style,
-                    color = palette.textPrimary,
+                    color = data.tint,
                 )
             }
+        }
+    }
+}
+
+/** The date and charge that sit beside the digits, in whatever combination is on. */
+@Composable
+internal fun InfoColumn(data: ClockFaceData, modifier: Modifier = Modifier) {
+    val palette = NightstandTheme.standby
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        if (data.showDate) {
+            Text(
+                text = data.now.format(weekdayFormatter()),
+                style = NightstandType.Title1,
+                color = palette.textPrimary,
+            )
+            Text(
+                text = data.now.format(dateFormatter()),
+                style = NightstandType.Title3,
+                color = palette.textSecondary,
+            )
+        }
+        if (data.showsBattery) {
+            if (data.showDate) Spacer(Modifier.height(10.dp))
+            BatteryLine(data)
         }
     }
 }

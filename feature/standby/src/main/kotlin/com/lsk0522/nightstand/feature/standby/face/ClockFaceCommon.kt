@@ -3,6 +3,7 @@ package com.lsk0522.nightstand.feature.standby.face
 import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -21,7 +22,17 @@ data class ClockFaceData(
     val showSeconds: Boolean,
     val batteryPercent: Int?,
     val charging: Boolean,
-)
+    /** The tint chosen for the digits. */
+    val tint: Color,
+    val showDate: Boolean,
+    val showBattery: Boolean,
+) {
+    /** The charge is only drawn when it is both wanted and known. */
+    val showsBattery: Boolean get() = showBattery && batteryPercent != null
+
+    /** Whether anything at all would go in the column beside the time. */
+    val hasSideColumn: Boolean get() = showDate || showsBattery
+}
 
 /**
  * Ticks the clock, waking only as often as the display actually changes.

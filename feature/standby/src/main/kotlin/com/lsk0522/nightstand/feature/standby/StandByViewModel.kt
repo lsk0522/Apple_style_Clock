@@ -3,6 +3,7 @@ package com.lsk0522.nightstand.feature.standby
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.common.model.ChargeType
+import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
@@ -17,7 +18,18 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 data class StandByUiState(
+    /**
+     * False until the stored settings have actually been read.
+     *
+     * Without this the screen paints its defaults for a frame or two first, so
+     * someone who chose Analog sees a flash of the Digital face before their
+     * own choice arrives. The screen stays black until this turns true.
+     */
+    val loaded: Boolean = false,
     val clockFace: ClockFace = ClockFace.Default,
+    val clockColor: ClockColor = ClockColor.Default,
+    val showDate: Boolean = true,
+    val showBattery: Boolean = true,
     val use24Hour: Boolean = true,
     val showSeconds: Boolean = false,
     val nightMode: Boolean = true,
@@ -43,7 +55,11 @@ class StandByViewModel @Inject constructor(
     val uiState: StateFlow<StandByUiState> =
         combine(settings.settings, monitor.status, widgetStore.widgets) { prefs, status, widgets ->
             StandByUiState(
+                loaded = true,
                 clockFace = prefs.clockFace,
+                clockColor = prefs.clockColor,
+                showDate = prefs.showDateOnClock,
+                showBattery = prefs.showBatteryOnClock,
                 use24Hour = prefs.use24Hour,
                 showSeconds = prefs.showSeconds,
                 nightMode = prefs.nightMode,

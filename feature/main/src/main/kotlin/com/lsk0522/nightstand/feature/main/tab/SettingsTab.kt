@@ -9,7 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
+import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
+import com.lsk0522.nightstand.core.design.component.ColorChoice
+import com.lsk0522.nightstand.core.design.component.ColorSwatchRow
 import com.lsk0522.nightstand.core.design.component.IosAlert
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
@@ -71,6 +75,32 @@ fun SettingsTab(
                     showSeparator = index != ClockFace.entries.lastIndex,
                 )
             }
+        }
+
+        listSection(
+            key = "appearance",
+            header = R.string.settings_appearance_header,
+            footer = R.string.settings_appearance_footer,
+        ) {
+            ColorSwatchRow(
+                choices = ClockColor.entries.map { it.toChoice() },
+                selectedId = settings.clockColor.name,
+                onSelect = { choice ->
+                    viewModel.setClockColor(ClockColor.valueOf(choice.id))
+                },
+                title = stringResource(R.string.settings_appearance_color),
+            )
+            SwitchRow(
+                title = stringResource(R.string.settings_appearance_date),
+                checked = settings.showDateOnClock,
+                onCheckedChange = viewModel::setShowDateOnClock,
+            )
+            SwitchRow(
+                title = stringResource(R.string.settings_appearance_battery),
+                checked = settings.showBatteryOnClock,
+                onCheckedChange = viewModel::setShowBatteryOnClock,
+                showSeparator = false,
+            )
         }
 
         listSection(
@@ -175,6 +205,25 @@ fun SettingsTab(
             )
         }
     }
+}
+
+@Composable
+private fun ClockColor.toChoice() = ColorChoice(
+    id = name,
+    label = stringResource(labelRes()),
+    color = Color(argb),
+)
+
+private fun ClockColor.labelRes(): Int = when (this) {
+    ClockColor.WHITE -> R.string.color_white
+    ClockColor.RED -> R.string.color_red
+    ClockColor.ORANGE -> R.string.color_orange
+    ClockColor.YELLOW -> R.string.color_yellow
+    ClockColor.GREEN -> R.string.color_green
+    ClockColor.MINT -> R.string.color_mint
+    ClockColor.BLUE -> R.string.color_blue
+    ClockColor.PURPLE -> R.string.color_purple
+    ClockColor.PINK -> R.string.color_pink
 }
 
 private fun ClockFace.labelRes(): Int = when (this) {

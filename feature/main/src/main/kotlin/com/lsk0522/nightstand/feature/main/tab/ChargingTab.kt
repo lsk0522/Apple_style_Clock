@@ -9,6 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lsk0522.nightstand.core.common.model.ChargeType
 import com.lsk0522.nightstand.core.common.model.ChargingTrigger
+import com.lsk0522.nightstand.core.common.model.StandbyPersistence
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.SelectionRow
@@ -51,6 +52,26 @@ fun ChargingTab(
                 title = stringResource(R.string.charging_mode_dock),
                 selected = state.trigger == ChargingTrigger.DOCK_ONLY,
                 onSelect = { viewModel.setTrigger(ChargingTrigger.DOCK_ONLY) },
+                showSeparator = false,
+            )
+        }
+
+        listSection(
+            key = "persistence",
+            header = R.string.charging_persistence_header,
+            footer = R.string.charging_persistence_footer,
+        ) {
+            SelectionRow(
+                title = stringResource(R.string.charging_persistence_once),
+                subtitle = stringResource(R.string.charging_persistence_once_why),
+                selected = state.persistence == StandbyPersistence.ONCE_PER_CHARGE,
+                onSelect = { viewModel.setPersistence(StandbyPersistence.ONCE_PER_CHARGE) },
+            )
+            SelectionRow(
+                title = stringResource(R.string.charging_persistence_always),
+                subtitle = stringResource(R.string.charging_persistence_always_why),
+                selected = state.persistence == StandbyPersistence.WHILE_CHARGING,
+                onSelect = { viewModel.setPersistence(StandbyPersistence.WHILE_CHARGING) },
                 showSeparator = false,
             )
         }

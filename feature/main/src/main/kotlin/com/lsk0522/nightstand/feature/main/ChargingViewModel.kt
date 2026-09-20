@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.common.model.ChargingStatus
 import com.lsk0522.nightstand.core.common.model.ChargingTrigger
+import com.lsk0522.nightstand.core.common.model.StandbyPersistence
 import com.lsk0522.nightstand.core.data.charging.ChargingEvent
 import com.lsk0522.nightstand.core.data.charging.ChargingEventStore
 import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
@@ -13,12 +14,12 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class ChargingUiState(
     val trigger: ChargingTrigger = ChargingTrigger.WIRELESS_ONLY,
+    val persistence: StandbyPersistence = StandbyPersistence.ONCE_PER_CHARGE,
     val status: ChargingStatus = ChargingStatus.Unknown,
     /** The last event the receiver caught, possibly while the app was closed. */
     val lastEvent: ChargingEvent? = null,
@@ -36,10 +37,12 @@ class ChargingViewModel @Inject constructor(
 
     val uiState: StateFlow<ChargingUiState> =
         combine(
-            repository.settings.map { it.chargingTrigger },
+            repository.settings,
             monitor.status,
             eventStore.lastEvent,
-        ) { trigger, status, lastEvent -> ChargingUiState(trigger, status, lastEvent) }
+        ) { prefs, status, lastEvent ->
+            ChargingUiState(prefs.chargingTrigger, prefs.persistence, status, lastEvent)
+        }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
@@ -51,6 +54,10 @@ class ChargingViewModel @Inject constructor(
 
     fun setTrigger(trigger: ChargingTrigger) {
         viewModelScope.launch { repository.setChargingTrigger(trigger) }
+    }
+
+    fun setPersistence(value: StandbyPersistence) {
+        viewModelScope.launch { repository.setPersistence(value) }
     }
 
     private companion object {

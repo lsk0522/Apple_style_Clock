@@ -1,5 +1,12 @@
 package com.lsk0522.nightstand.feature.main
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.using
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +26,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import com.lsk0522.nightstand.core.design.component.NightstandTabBar
 import com.lsk0522.nightstand.core.design.component.TabItem
+import com.lsk0522.nightstand.core.design.theme.NightstandMotion
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.feature.main.tab.ChargingTab
 import com.lsk0522.nightstand.feature.main.tab.DeveloperTab
@@ -84,13 +92,36 @@ fun MainScreen(
             .fillMaxSize()
             .background(palette.groupedBackground),
     ) {
-        Box(modifier = Modifier.hazeSource(tabHaze)) {
-            when (selectedIndex) {
-                0 -> WidgetsScreen()
-                1 -> ChargingTab()
-                2 -> SettingsTab()
-                3 -> DeveloperTab()
-                else -> DonateTab()
+        Box(modifier = Modifier.fillMaxSize().hazeSource(tabHaze)) {
+            // Sections cross-dissolve and drift a few percent in the direction
+            // you moved along the bar, so a switch reads as a switch without
+            // pretending to be a push onto a navigation stack.
+            AnimatedContent(
+                targetState = selectedIndex,
+                transitionSpec = {
+                    val forward = targetState > initialState
+                    val travel = { width: Int ->
+                        (width * NightstandMotion.TAB_SLIDE_FRACTION).toInt()
+                    }
+                    (
+                        fadeIn(NightstandMotion.tabSwap()) + slideInHorizontally(
+                            NightstandMotion.tabSwap(),
+                        ) { width -> if (forward) travel(width) else -travel(width) }
+                        ) togetherWith (
+                        fadeOut(NightstandMotion.tabSwap()) + slideOutHorizontally(
+                            NightstandMotion.tabSwap(),
+                        ) { width -> if (forward) -travel(width) else travel(width) }
+                        ) using null
+                },
+                label = "tabPane",
+            ) { index ->
+                when (index) {
+                    0 -> WidgetsScreen()
+                    1 -> ChargingTab()
+                    2 -> SettingsTab()
+                    3 -> DeveloperTab()
+                    else -> DonateTab()
+                }
             }
         }
 

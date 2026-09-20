@@ -2,7 +2,9 @@ package com.lsk0522.nightstand.feature.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
+import com.lsk0522.nightstand.core.common.model.StandbyPersistence
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.settings.UserSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +27,12 @@ class AppSettingsViewModel @Inject constructor(
     )
 
     fun setClockFace(face: ClockFace) = update { repository.setClockFace(face) }
+    fun setClockColor(color: ClockColor) = update { repository.setClockColor(color) }
+    fun setPersistence(value: StandbyPersistence) = update { repository.setPersistence(value) }
+    fun setShowDateOnClock(value: Boolean) = update { repository.setShowDateOnClock(value) }
+
+    fun setShowBatteryOnClock(value: Boolean) =
+        update { repository.setShowBatteryOnClock(value) }
 
     fun setUse24Hour(value: Boolean) = update { repository.setUse24Hour(value) }
     fun setShowSeconds(value: Boolean) = update { repository.setShowSeconds(value) }
