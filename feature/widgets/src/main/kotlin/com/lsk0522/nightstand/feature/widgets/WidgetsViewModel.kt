@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lsk0522.nightstand.core.common.model.WidgetRotationInterval
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.widget.HostedWidget
 import com.lsk0522.nightstand.core.data.widget.HostedWidgetStore
@@ -33,6 +34,18 @@ class WidgetsViewModel @Inject constructor(
 
     fun setAutoRotate(value: Boolean) {
         viewModelScope.launch { settings.setAutoRotateWidgets(value) }
+    }
+
+    val rotationInterval: StateFlow<WidgetRotationInterval> = settings.settings
+        .map { it.widgetRotationInterval }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+            initialValue = WidgetRotationInterval.Default,
+        )
+
+    fun setRotationInterval(value: WidgetRotationInterval) {
+        viewModelScope.launch { settings.setWidgetRotationInterval(value) }
     }
 
     val widgets: StateFlow<List<HostedWidget>> = store.widgets.stateIn(

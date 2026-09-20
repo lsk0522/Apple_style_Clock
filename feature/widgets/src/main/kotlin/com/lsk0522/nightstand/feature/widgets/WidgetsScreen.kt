@@ -26,6 +26,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lsk0522.nightstand.core.design.component.IosButton
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
+import com.lsk0522.nightstand.core.common.model.WidgetRotationInterval
+import com.lsk0522.nightstand.core.design.component.SelectionRow
 import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
 
@@ -48,6 +50,7 @@ fun WidgetsScreen(
     val context = LocalContext.current
     val added by viewModel.widgets.collectAsStateWithLifecycle()
     val autoRotate by viewModel.autoRotate.collectAsStateWithLifecycle()
+    val interval by viewModel.rotationInterval.collectAsStateWithLifecycle()
     val providers = remember { viewModel.installedProviders() }
 
     var picking by remember { mutableStateOf(false) }
@@ -192,17 +195,34 @@ fun WidgetsScreen(
                 title = stringResource(R.string.widgets_rotate_enabled),
                 checked = autoRotate,
                 onCheckedChange = viewModel::setAutoRotate,
-            )
-            ListRow(
-                title = stringResource(R.string.widgets_rotate_interval),
-                value = stringResource(R.string.widgets_rotate_interval_value),
-                showChevron = true,
-                enabled = false,
                 showSeparator = false,
-                onClick = null,
             )
         }
+
+        // Only worth asking how often once it is going to happen at all.
+        if (autoRotate) {
+            listSection(
+                key = "interval",
+                header = R.string.widgets_rotate_interval,
+            ) {
+                WidgetRotationInterval.entries.forEachIndexed { index, option ->
+                    SelectionRow(
+                        title = stringResource(option.labelRes()),
+                        selected = interval == option,
+                        onSelect = { viewModel.setRotationInterval(option) },
+                        showSeparator = index != WidgetRotationInterval.entries.lastIndex,
+                    )
+                }
+            }
+        }
     }
+}
+
+private fun WidgetRotationInterval.labelRes(): Int = when (this) {
+    WidgetRotationInterval.TEN_SECONDS -> R.string.widgets_rotate_10s
+    WidgetRotationInterval.THIRTY_SECONDS -> R.string.widgets_rotate_30s
+    WidgetRotationInterval.ONE_MINUTE -> R.string.widgets_rotate_1m
+    WidgetRotationInterval.FIVE_MINUTES -> R.string.widgets_rotate_5m
 }
 
 /** A widget partway through being added. */

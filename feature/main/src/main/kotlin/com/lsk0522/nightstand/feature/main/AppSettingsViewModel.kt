@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.common.model.StandbyPersistence
+import com.lsk0522.nightstand.core.data.sensor.AmbientLightMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.settings.UserSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,16 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class AppSettingsViewModel @Inject constructor(
     private val repository: SettingsRepository,
+    ambientLight: AmbientLightMonitor,
 ) : ViewModel() {
+
+    /**
+     * Whether this phone can tell a dark room from a lit one.
+     *
+     * Offering the night-mode switch on hardware with no light sensor would
+     * be offering a switch that can never fire.
+     */
+    val lightSensorAvailable: Boolean = ambientLight.isAvailable
 
     val settings: StateFlow<UserSettings> = repository.settings.stateIn(
         scope = viewModelScope,

@@ -94,6 +94,7 @@
     <string name="settings_display_header">화면</string>
     <string name="settings_display_night">야간 모드</string>
     <string name="settings_display_night_sub">어두우면 붉은 색조로 전환</string>
+    <string name="settings_display_night_no_sensor">이 기기에는 조도 센서가 없습니다</string>
     <string name="settings_display_burnin">번인 방지</string>
     <string name="settings_display_burnin_sub">10분마다 화면을 미세하게 이동</string>
     <string name="settings_display_brightness">밝기</string>

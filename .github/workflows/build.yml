@@ -96,3 +96,13 @@ jobs:
             --latest \
             "${APK_NAME}.apk" \
             "nightstand-latest.apk"
+
+      # Last on purpose, and with no `continue-on-error`.
+      #
+      # Both halves of that matter. Lint once ran with the failure suppressed,
+      # and it hid a missing RECEIVE_BOOT_COMPLETED permission for days --- the
+      # job was green while the feature was dead. Running it last means a lint
+      # failure still turns the run red without costing us the APK, which is
+      # already uploaded and released by this point.
+      - name: Lint
+        run: ./gradlew lintDebug --stacktrace

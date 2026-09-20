@@ -1,6 +1,5 @@
 package com.lsk0522.nightstand.feature.standby
 
-import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -60,7 +59,7 @@ class StandByActivity : ComponentActivity() {
                 if (state.stillCharging == false) finish()
             }
 
-            StandbyTheme(nightVision = false) {
+            StandbyTheme(nightVision = state.nightVision) {
                 StandByScreen(
                     state = state,
                     host = viewModel.widgetHost,
@@ -97,11 +96,6 @@ class StandByActivity : ComponentActivity() {
     private fun requestLowRefreshRate() {
         window.attributes = window.attributes.apply {
             preferredRefreshRate = TARGET_REFRESH_HZ
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                // Lets the system drop below the mode's nominal rate when the
-                // content is static, which is the whole point on LTPO.
-                preferredDisplayModeId = 0
-            }
         }
     }
 

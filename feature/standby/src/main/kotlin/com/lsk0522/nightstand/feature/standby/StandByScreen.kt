@@ -108,7 +108,12 @@ fun StandByScreen(
                 .offset(x = shift.first, y = shift.second),
         ) { index ->
             when (pages[index]) {
-                Page.Widgets -> WidgetPage(host = host, widgets = state.widgets)
+                Page.Widgets -> WidgetPage(
+                    host = host,
+                    widgets = state.widgets,
+                    autoRotate = state.autoRotateWidgets,
+                    interval = state.widgetRotationInterval,
+                )
                 Page.Clock -> {
                     // Changing face in a dark room should dissolve, not cut.
                     AnimatedContent(

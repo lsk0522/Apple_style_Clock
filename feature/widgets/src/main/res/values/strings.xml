@@ -16,6 +16,9 @@
     <string name="widgets_rotate_header">자동 넘기기</string>
     <string name="widgets_rotate_enabled">자동으로 넘기기</string>
     <string name="widgets_rotate_interval">전환 간격</string>
-    <string name="widgets_rotate_interval_value">10초</string>
-    <string name="widgets_rotate_footer">여러 개를 올리면 순서대로 전환됩니다. 전환 동작은 Phase 6에서 구현됩니다.</string>
+    <string name="widgets_rotate_10s">10초</string>
+    <string name="widgets_rotate_30s">30초</string>
+    <string name="widgets_rotate_1m">1분</string>
+    <string name="widgets_rotate_5m">5분</string>
+    <string name="widgets_rotate_footer">위젯을 좌·우 두 칸에 번갈아 놓고, 칸마다 위·아래로 쓸어 넘깁니다. 자동 넘기기를 끄면 손으로만 넘어갑니다.</string>
 </resources>

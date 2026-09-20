@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.common.model.ChargeType
 import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
+import com.lsk0522.nightstand.core.common.model.WidgetRotationInterval
 import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
+import com.lsk0522.nightstand.core.data.sensor.AmbientLightMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.widget.HostedWidget
 import com.lsk0522.nightstand.core.data.widget.HostedWidgetStore
@@ -33,6 +35,13 @@ data class StandByUiState(
     val use24Hour: Boolean = true,
     val showSeconds: Boolean = false,
     val nightMode: Boolean = true,
+    /**
+     * Whether the clock should be drawing itself in the dark-adapted red.
+     *
+     * Both halves have to agree: the user allowed it, and the light sensor
+     * says the room is actually dark.
+     */
+    val nightVision: Boolean = false,
     val burnInProtection: Boolean = true,
     /**
      * Null until the first reading lands. The screen must not close on a
@@ -42,6 +51,8 @@ data class StandByUiState(
     val batteryPercent: Int? = null,
     val chargeType: ChargeType = ChargeType.NONE,
     val widgets: List<HostedWidget> = emptyList(),
+    val autoRotateWidgets: Boolean = true,
+    val widgetRotationInterval: WidgetRotationInterval = WidgetRotationInterval.Default,
 )
 
 @HiltViewModel
@@ -49,11 +60,17 @@ class StandByViewModel @Inject constructor(
     settings: SettingsRepository,
     monitor: ChargingStatusMonitor,
     widgetStore: HostedWidgetStore,
+    ambientLight: AmbientLightMonitor,
     val widgetHost: StandbyWidgetHost,
 ) : ViewModel() {
 
     val uiState: StateFlow<StandByUiState> =
-        combine(settings.settings, monitor.status, widgetStore.widgets) { prefs, status, widgets ->
+        combine(
+            settings.settings,
+            monitor.status,
+            widgetStore.widgets,
+            ambientLight.isDark,
+        ) { prefs, status, widgets, dark ->
             StandByUiState(
                 loaded = true,
                 clockFace = prefs.clockFace,
@@ -63,11 +80,14 @@ class StandByViewModel @Inject constructor(
                 use24Hour = prefs.use24Hour,
                 showSeconds = prefs.showSeconds,
                 nightMode = prefs.nightMode,
+                nightVision = prefs.nightMode && dark,
                 burnInProtection = prefs.burnInProtection,
                 stillCharging = prefs.chargingTrigger.matches(status.type),
                 batteryPercent = status.levelPercent,
                 chargeType = status.type,
                 widgets = widgets,
+                autoRotateWidgets = prefs.autoRotateWidgets,
+                widgetRotationInterval = prefs.widgetRotationInterval,
             )
         }.stateIn(
             scope = viewModelScope,

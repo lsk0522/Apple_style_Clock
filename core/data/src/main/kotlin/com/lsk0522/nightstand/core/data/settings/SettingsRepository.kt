@@ -8,6 +8,7 @@ import com.lsk0522.nightstand.core.common.model.ChargingTrigger
 import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.common.model.StandbyPersistence
+import com.lsk0522.nightstand.core.common.model.WidgetRotationInterval
 import com.lsk0522.nightstand.core.data.nightstandDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -28,6 +29,7 @@ data class UserSettings(
     val nightMode: Boolean = true,
     val burnInProtection: Boolean = true,
     val autoRotateWidgets: Boolean = true,
+    val widgetRotationInterval: WidgetRotationInterval = WidgetRotationInterval.Default,
     /** The first-run setup screen has been dismissed. */
     val setupSeen: Boolean = false,
 )
@@ -57,6 +59,9 @@ class SettingsRepository @Inject constructor(
             nightMode = prefs[Keys.NIGHT_MODE] ?: true,
             burnInProtection = prefs[Keys.BURN_IN_PROTECTION] ?: true,
             autoRotateWidgets = prefs[Keys.AUTO_ROTATE_WIDGETS] ?: true,
+            widgetRotationInterval = prefs[Keys.ROTATION_INTERVAL]
+                ?.let { runCatching { WidgetRotationInterval.valueOf(it) }.getOrNull() }
+                ?: WidgetRotationInterval.Default,
             setupSeen = prefs[Keys.SETUP_SEEN] ?: false,
         )
     }
@@ -87,6 +92,9 @@ class SettingsRepository @Inject constructor(
     suspend fun setAutoRotateWidgets(value: Boolean) =
         edit { it[Keys.AUTO_ROTATE_WIDGETS] = value }
 
+    suspend fun setWidgetRotationInterval(value: WidgetRotationInterval) =
+        edit { it[Keys.ROTATION_INTERVAL] = value.name }
+
     suspend fun setSetupSeen(value: Boolean) = edit { it[Keys.SETUP_SEEN] = value }
 
 
@@ -106,6 +114,7 @@ class SettingsRepository @Inject constructor(
         val NIGHT_MODE = booleanPreferencesKey("night_mode")
         val BURN_IN_PROTECTION = booleanPreferencesKey("burn_in_protection")
         val AUTO_ROTATE_WIDGETS = booleanPreferencesKey("auto_rotate_widgets")
+        val ROTATION_INTERVAL = stringPreferencesKey("widget_rotation_interval")
         val SETUP_SEEN = booleanPreferencesKey("setup_seen")
     }
 }

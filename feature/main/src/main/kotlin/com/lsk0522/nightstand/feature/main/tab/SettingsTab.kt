@@ -129,8 +129,15 @@ fun SettingsTab(
         ) {
             SwitchRow(
                 title = stringResource(R.string.settings_display_night),
-                subtitle = stringResource(R.string.settings_display_night_sub),
-                checked = settings.nightMode,
+                subtitle = stringResource(
+                    if (viewModel.lightSensorAvailable) {
+                        R.string.settings_display_night_sub
+                    } else {
+                        R.string.settings_display_night_no_sensor
+                    },
+                ),
+                checked = settings.nightMode && viewModel.lightSensorAvailable,
+                enabled = viewModel.lightSensorAvailable,
                 onCheckedChange = viewModel::setNightMode,
             )
             SwitchRow(
