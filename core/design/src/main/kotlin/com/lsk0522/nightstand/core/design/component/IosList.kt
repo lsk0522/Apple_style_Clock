@@ -246,6 +246,7 @@ fun SelectionRow(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    enabled: Boolean = true,
     showSeparator: Boolean = true,
 ) {
     val palette = NightstandTheme.palette
@@ -254,13 +255,14 @@ fun SelectionRow(
         modifier = modifier,
         subtitle = subtitle,
         showSeparator = showSeparator,
+        enabled = enabled,
         onClick = onSelect,
         trailing = {
             if (selected) {
                 Icon(
                     painter = painterResource(R.drawable.ic_checkmark),
                     contentDescription = null,
-                    tint = palette.tint,
+                    tint = if (enabled) palette.tint else palette.tertiaryLabel,
                     modifier = Modifier.size(16.dp),
                 )
             } else {

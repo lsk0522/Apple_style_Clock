@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.lsk0522.nightstand.core.common.model.displayName
 import com.lsk0522.nightstand.core.design.theme.NightstandColor
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
@@ -34,6 +35,8 @@ import kotlin.math.sin
 
 /**
  * Local time beside a handful of other cities.
+ *
+ * The cities are the user's, chosen in the main tab.
  *
  * No map: drawing a world map at this size would be decoration rather than
  * information, and the thing people actually read off the World face is what
@@ -67,11 +70,11 @@ fun WorldFace(data: ClockFaceData, modifier: Modifier = Modifier) {
             Spacer(Modifier.width(48.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                Cities.forEach { zone ->
-                    val there = ZonedDateTime.now(ZoneId.of(zone))
+                data.worldCities.forEach { city ->
+                    val there = ZonedDateTime.now(ZoneId.of(city.zoneId))
                     Row(verticalAlignment = Alignment.Bottom) {
                         Text(
-                            text = cityLabel(zone),
+                            text = city.displayName(),
                             style = NightstandType.Title3,
                             color = palette.textSecondary,
                             modifier = Modifier.width(96.dp),
@@ -223,18 +226,5 @@ fun MinimalMonoFace(data: ClockFaceData, modifier: Modifier = Modifier) {
         }
     }
 }
-
-/**
- * TODO(next): let the user pick these. Labels are derived from the zone id so
- * no city name is hard-coded in one language.
- */
-private val Cities = listOf(
-    "America/New_York",
-    "Europe/London",
-    "Asia/Tokyo",
-)
-
-private fun cityLabel(zoneId: String) =
-    zoneId.substringAfterLast('/').replace('_', ' ')
 
 private val Margin = 28.dp

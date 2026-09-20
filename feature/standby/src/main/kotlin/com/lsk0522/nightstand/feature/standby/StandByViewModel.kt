@@ -6,6 +6,7 @@ import com.lsk0522.nightstand.core.common.model.ChargeType
 import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.common.model.WidgetRotationInterval
+import com.lsk0522.nightstand.core.common.model.WorldCity
 import com.lsk0522.nightstand.core.data.widget.HostedWidget
 import com.lsk0522.nightstand.feature.widgets.StandbyWidgetHost
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,7 @@ data class StandByUiState(
     val clockColor: ClockColor = ClockColor.Default,
     val showDate: Boolean = true,
     val showBattery: Boolean = true,
+    val worldCities: List<WorldCity> = WorldCity.Default,
     val use24Hour: Boolean = true,
     val showSeconds: Boolean = false,
     val nightMode: Boolean = true,

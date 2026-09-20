@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.common.model.StandbyPersistence
+import com.lsk0522.nightstand.core.common.model.WorldCity
 import com.lsk0522.nightstand.core.data.sensor.AmbientLightMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.settings.UserSettings
@@ -49,6 +50,17 @@ class AppSettingsViewModel @Inject constructor(
     fun setNightMode(value: Boolean) = update { repository.setNightMode(value) }
     fun setBurnInProtection(value: Boolean) = update { repository.setBurnInProtection(value) }
     fun setAutoBrightness(value: Boolean) = update { repository.setAutoBrightness(value) }
+
+    /**
+     * Turns one city on or off.
+     *
+     * Order is preserved as chosen, so the list on the clock reads the way the
+     * user built it rather than in enum order.
+     */
+    fun toggleWorldCity(city: WorldCity, current: List<WorldCity>) = update {
+        val next = if (city in current) current - city else current + city
+        repository.setWorldCities(next)
+    }
     fun setAutoRotateWidgets(value: Boolean) = update { repository.setAutoRotateWidgets(value) }
 
     private fun update(block: suspend () -> Unit) {

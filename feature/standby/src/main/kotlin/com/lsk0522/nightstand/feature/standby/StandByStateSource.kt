@@ -38,6 +38,7 @@ class StandByStateSource @Inject constructor(
             clockColor = prefs.clockColor,
             showDate = prefs.showDateOnClock,
             showBattery = prefs.showBatteryOnClock,
+            worldCities = prefs.worldCities,
             use24Hour = prefs.use24Hour,
             showSeconds = prefs.showSeconds,
             nightMode = prefs.nightMode,

@@ -135,6 +135,7 @@ fun StandByScreen(
                                 tint = Color(state.clockColor.argb),
                                 showDate = state.showDate,
                                 showBattery = state.showBattery,
+                                worldCities = state.worldCities,
                             ),
                         )
                     }

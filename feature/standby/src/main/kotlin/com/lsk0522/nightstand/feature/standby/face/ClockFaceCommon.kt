@@ -9,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
+import com.lsk0522.nightstand.core.common.model.WorldCity
 import com.lsk0522.nightstand.core.design.theme.NightstandType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -26,6 +27,7 @@ data class ClockFaceData(
     val tint: Color,
     val showDate: Boolean,
     val showBattery: Boolean,
+    val worldCities: List<WorldCity>,
 ) {
     /** The charge is only drawn when it is both wanted and known. */
     val showsBattery: Boolean get() = showBattery && batteryPercent != null

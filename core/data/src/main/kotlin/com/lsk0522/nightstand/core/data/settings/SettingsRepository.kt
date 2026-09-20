@@ -9,6 +9,7 @@ import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.common.model.StandbyPersistence
 import com.lsk0522.nightstand.core.common.model.WidgetRotationInterval
+import com.lsk0522.nightstand.core.common.model.WorldCity
 import com.lsk0522.nightstand.core.data.nightstandDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -29,6 +30,7 @@ data class UserSettings(
     val nightMode: Boolean = true,
     val burnInProtection: Boolean = true,
     val autoBrightness: Boolean = true,
+    val worldCities: List<WorldCity> = WorldCity.Default,
     val autoRotateWidgets: Boolean = true,
     val widgetRotationInterval: WidgetRotationInterval = WidgetRotationInterval.Default,
     /** The first-run setup screen has been dismissed. */
@@ -60,6 +62,11 @@ class SettingsRepository @Inject constructor(
             nightMode = prefs[Keys.NIGHT_MODE] ?: true,
             burnInProtection = prefs[Keys.BURN_IN_PROTECTION] ?: true,
             autoBrightness = prefs[Keys.AUTO_BRIGHTNESS] ?: true,
+            worldCities = prefs[Keys.WORLD_CITIES]
+                ?.split(LIST_SEPARATOR)
+                ?.mapNotNull { runCatching { WorldCity.valueOf(it) }.getOrNull() }
+                ?.takeIf { it.isNotEmpty() }
+                ?: WorldCity.Default,
             autoRotateWidgets = prefs[Keys.AUTO_ROTATE_WIDGETS] ?: true,
             widgetRotationInterval = prefs[Keys.ROTATION_INTERVAL]
                 ?.let { runCatching { WidgetRotationInterval.valueOf(it) }.getOrNull() }
@@ -93,6 +100,19 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setAutoBrightness(value: Boolean) = edit { it[Keys.AUTO_BRIGHTNESS] = value }
 
+    /**
+     * Stored even when empty is asked for, so that "none" is a choice the
+     * user can make and not an invitation to fall back to the default.
+     */
+    suspend fun setWorldCities(cities: List<WorldCity>) = edit { prefs ->
+        val kept = cities.distinct().take(WorldCity.MAX_SELECTED)
+        if (kept.isEmpty()) {
+            prefs.remove(Keys.WORLD_CITIES)
+        } else {
+            prefs[Keys.WORLD_CITIES] = kept.joinToString(LIST_SEPARATOR) { it.name }
+        }
+    }
+
     suspend fun setAutoRotateWidgets(value: Boolean) =
         edit { it[Keys.AUTO_ROTATE_WIDGETS] = value }
 
@@ -104,6 +124,10 @@ class SettingsRepository @Inject constructor(
 
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.nightstandDataStore.edit(block)
+    }
+
+    private companion object {
+        const val LIST_SEPARATOR = ","
     }
 
     private object Keys {
@@ -118,6 +142,7 @@ class SettingsRepository @Inject constructor(
         val NIGHT_MODE = booleanPreferencesKey("night_mode")
         val BURN_IN_PROTECTION = booleanPreferencesKey("burn_in_protection")
         val AUTO_BRIGHTNESS = booleanPreferencesKey("auto_brightness")
+        val WORLD_CITIES = stringPreferencesKey("world_cities")
         val AUTO_ROTATE_WIDGETS = booleanPreferencesKey("auto_rotate_widgets")
         val ROTATION_INTERVAL = stringPreferencesKey("widget_rotation_interval")
         val SETUP_SEEN = booleanPreferencesKey("setup_seen")

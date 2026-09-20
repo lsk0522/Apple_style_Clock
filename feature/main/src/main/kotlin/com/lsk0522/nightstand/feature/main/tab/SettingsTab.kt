@@ -14,6 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import com.lsk0522.nightstand.core.common.model.ClockColor
 import com.lsk0522.nightstand.core.common.model.ClockFace
+import com.lsk0522.nightstand.core.common.model.WorldCity
+import com.lsk0522.nightstand.core.common.model.displayName
 import com.lsk0522.nightstand.core.design.component.ColorChoice
 import com.lsk0522.nightstand.core.design.component.ColorSwatchRow
 import com.lsk0522.nightstand.core.design.component.IosAlert
@@ -77,6 +79,34 @@ fun SettingsTab(
                     onSelect = { viewModel.setClockFace(face) },
                     showSeparator = index != ClockFace.entries.lastIndex,
                 )
+            }
+        }
+
+        // Only when that face is the one being shown; a list of cities under a
+        // digital clock is a setting for something the user cannot see.
+        if (settings.clockFace == ClockFace.WORLD) {
+            listSection(
+                key = "cities",
+                header = R.string.settings_cities_header,
+                footer = R.string.settings_cities_footer,
+            ) {
+                val chosen = settings.worldCities
+                val full = chosen.size >= WorldCity.MAX_SELECTED
+                WorldCity.entries.forEachIndexed { index, city ->
+                    val selected = city in chosen
+                    SelectionRow(
+                        title = city.displayName(),
+                        // The offset is the reason to pick a city, so it is
+                        // worth more here than a second line of prose.
+                        subtitle = city.offsetLabel(),
+                        selected = selected,
+                        // At the cap, the untaken rows go quiet rather than
+                        // silently evicting a choice the user already made.
+                        enabled = selected || !full,
+                        onSelect = { viewModel.toggleWorldCity(city, chosen) },
+                        showSeparator = index != WorldCity.entries.lastIndex,
+                    )
+                }
             }
         }
 
@@ -243,7 +273,14 @@ private fun ClockColor.toChoice() = ColorChoice(
     color = Color(argb),
 )
 
+/** "UTC+9" and the like, formatted for whatever the zone is doing today. */
+private fun WorldCity.offsetLabel(): String {
+    val offset = java.time.ZonedDateTime.now(java.time.ZoneId.of(zoneId)).offset
+    return "UTC" + if (offset.totalSeconds == 0) "+00:00" else offset.id
+}
+
 private fun ClockColor.labelRes(): Int = when (this) {
+
     ClockColor.WHITE -> R.string.color_white
     ClockColor.RED -> R.string.color_red
     ClockColor.ORANGE -> R.string.color_orange
