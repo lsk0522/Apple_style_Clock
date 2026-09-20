@@ -3,6 +3,8 @@ package com.lsk0522.nightstand.feature.main.setup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
+import com.lsk0522.nightstand.core.data.standby.StandbyAttempt
+import com.lsk0522.nightstand.core.data.standby.StandbyAttemptLog
 import com.lsk0522.nightstand.core.data.standby.StandbyLauncher
 import com.lsk0522.nightstand.core.data.system.AppVersion
 import com.lsk0522.nightstand.core.data.system.SystemRequirement
@@ -24,6 +26,8 @@ data class SetupUiState(
     val setupSeen: Boolean = true,
     /** The build running on the device, so it can be verified at a glance. */
     val appVersion: String = "",
+    /** Why the last power event did or did not bring up the clock. */
+    val lastAttempt: StandbyAttempt? = null,
 ) {
     val blockingCount: Int get() = requirements.count { it.isRequired && !it.isSatisfied }
 
@@ -42,6 +46,7 @@ class SetupViewModel @Inject constructor(
     private val requirements: SystemRequirements,
     private val appVersion: AppVersion,
     private val standbyLauncher: StandbyLauncher,
+    attemptLog: StandbyAttemptLog,
 ) : ViewModel() {
 
     /**
@@ -55,11 +60,13 @@ class SetupViewModel @Inject constructor(
         combine(
             repository.settings,
             refreshes,
-        ) { settings, _ ->
+            attemptLog.lastAttempt,
+        ) { settings, _, attempt ->
             SetupUiState(
                 requirements = requirements.check(),
                 setupSeen = settings.setupSeen,
                 appVersion = appVersion.display,
+                lastAttempt = attempt,
             )
         }.stateIn(
             scope = viewModelScope,

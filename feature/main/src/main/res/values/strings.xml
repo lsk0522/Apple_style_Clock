@@ -95,6 +95,22 @@
     <string name="developer_widget_host">위젯 호스트 상태</string>
     <string name="developer_export">설정 내보내기</string>
     <string name="developer_footer">Phase 8에서 구현됩니다.</string>
+    <!-- 충전 시 시계가 왜 떴는지 / 안 떴는지 -->
+    <string name="developer_attempt_header">마지막 실행 시도</string>
+    <string name="developer_attempt_result">결과</string>
+    <string name="developer_attempt_detected">감지된 방식</string>
+    <string name="developer_attempt_trigger">설정된 조건</string>
+    <string name="developer_attempt_when">시각</string>
+    <string name="developer_attempt_none">기록 없음</string>
+    <string name="developer_attempt_footer">앱을 닫고 충전기를 꽂았다 뺀 뒤 여기를 확인하세요. 시계가 안 떴다면 이유가 여기 적힙니다.</string>
+
+    <string name="attempt_launched">시계를 띄웠음</string>
+    <string name="attempt_trigger_mismatch">조건 불일치 — 설정한 충전 방식이 아님</string>
+    <string name="attempt_no_overlay">권한 없음 — 다른 앱 위에 표시가 꺼져 있음</string>
+    <string name="attempt_launch_failed">실행 거부됨 — 시스템이 막음</string>
+    <string name="attempt_cancelled_early">2초 안에 충전이 끊김</string>
+    <string name="attempt_disconnected">충전 해제됨</string>
+
     <string name="developer_build_header">빌드</string>
     <string name="developer_version">설치된 빌드</string>
     <string name="developer_build_type">빌드 종류</string>
