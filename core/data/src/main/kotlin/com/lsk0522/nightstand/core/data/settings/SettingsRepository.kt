@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.lsk0522.nightstand.core.common.model.ChargingTrigger
+import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.data.nightstandDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.map
 /** Everything the user has chosen, persisted across process death. */
 data class UserSettings(
     val chargingTrigger: ChargingTrigger = ChargingTrigger.WIRELESS_ONLY,
+    val clockFace: ClockFace = ClockFace.Default,
     val use24Hour: Boolean = true,
     val showSeconds: Boolean = false,
     val nightMode: Boolean = true,
@@ -33,6 +35,9 @@ class SettingsRepository @Inject constructor(
             chargingTrigger = prefs[Keys.CHARGING_TRIGGER]
                 ?.let { runCatching { ChargingTrigger.valueOf(it) }.getOrNull() }
                 ?: ChargingTrigger.WIRELESS_ONLY,
+            clockFace = prefs[Keys.CLOCK_FACE]
+                ?.let { runCatching { ClockFace.valueOf(it) }.getOrNull() }
+                ?: ClockFace.Default,
             use24Hour = prefs[Keys.USE_24_HOUR] ?: true,
             showSeconds = prefs[Keys.SHOW_SECONDS] ?: false,
             nightMode = prefs[Keys.NIGHT_MODE] ?: true,
@@ -44,6 +49,8 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setChargingTrigger(trigger: ChargingTrigger) =
         edit { it[Keys.CHARGING_TRIGGER] = trigger.name }
+
+    suspend fun setClockFace(face: ClockFace) = edit { it[Keys.CLOCK_FACE] = face.name }
 
     suspend fun setUse24Hour(value: Boolean) = edit { it[Keys.USE_24_HOUR] = value }
 
@@ -66,6 +73,7 @@ class SettingsRepository @Inject constructor(
 
     private object Keys {
         val CHARGING_TRIGGER = stringPreferencesKey("charging_trigger")
+        val CLOCK_FACE = stringPreferencesKey("clock_face")
         val USE_24_HOUR = booleanPreferencesKey("use_24_hour")
         val SHOW_SECONDS = booleanPreferencesKey("show_seconds")
         val NIGHT_MODE = booleanPreferencesKey("night_mode")

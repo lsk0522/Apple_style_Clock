@@ -6,8 +6,10 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
+import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
+import com.lsk0522.nightstand.core.design.component.SelectionRow
 import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
 import androidx.lifecycle.Lifecycle
@@ -35,17 +37,25 @@ fun SettingsTab(
         modifier = modifier,
     ) {
         listSection(
+            key = "face",
+            header = R.string.settings_face_header,
+            footer = R.string.settings_face_footer,
+        ) {
+            ClockFace.entries.forEachIndexed { index, face ->
+                SelectionRow(
+                    title = stringResource(face.labelRes()),
+                    subtitle = stringResource(face.captionRes()),
+                    selected = settings.clockFace == face,
+                    onSelect = { viewModel.setClockFace(face) },
+                    showSeparator = index != ClockFace.entries.lastIndex,
+                )
+            }
+        }
+
+        listSection(
             key = "clock",
             header = R.string.settings_clock_header,
-            footer = R.string.settings_clock_footer,
         ) {
-            ListRow(
-                title = stringResource(R.string.settings_clock_face),
-                value = stringResource(R.string.settings_clock_face_value),
-                showChevron = true,
-                enabled = false,
-                onClick = null,
-            )
             SwitchRow(
                 title = stringResource(R.string.settings_clock_24h),
                 checked = settings.use24Hour,
@@ -141,4 +151,22 @@ fun SettingsTab(
             )
         }
     }
+}
+
+private fun ClockFace.labelRes(): Int = when (this) {
+    ClockFace.DIGITAL -> R.string.face_digital
+    ClockFace.ANALOG -> R.string.face_analog
+    ClockFace.WORLD -> R.string.face_world
+    ClockFace.SOLAR -> R.string.face_solar
+    ClockFace.FLOAT -> R.string.face_float
+    ClockFace.MINIMAL_MONO -> R.string.face_minimal_mono
+}
+
+private fun ClockFace.captionRes(): Int = when (this) {
+    ClockFace.DIGITAL -> R.string.face_digital_why
+    ClockFace.ANALOG -> R.string.face_analog_why
+    ClockFace.WORLD -> R.string.face_world_why
+    ClockFace.SOLAR -> R.string.face_solar_why
+    ClockFace.FLOAT -> R.string.face_float_why
+    ClockFace.MINIMAL_MONO -> R.string.face_minimal_mono_why
 }

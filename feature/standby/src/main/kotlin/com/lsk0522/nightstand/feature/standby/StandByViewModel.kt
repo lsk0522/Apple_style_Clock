@@ -3,6 +3,7 @@ package com.lsk0522.nightstand.feature.standby
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.common.model.ChargeType
+import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 data class StandByUiState(
+    val clockFace: ClockFace = ClockFace.Default,
     val use24Hour: Boolean = true,
     val showSeconds: Boolean = false,
     val nightMode: Boolean = true,
@@ -35,6 +37,7 @@ class StandByViewModel @Inject constructor(
     val uiState: StateFlow<StandByUiState> =
         combine(settings.settings, monitor.status) { prefs, status ->
             StandByUiState(
+                clockFace = prefs.clockFace,
                 use24Hour = prefs.use24Hour,
                 showSeconds = prefs.showSeconds,
                 nightMode = prefs.nightMode,

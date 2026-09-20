@@ -2,6 +2,7 @@ package com.lsk0522.nightstand.feature.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lsk0522.nightstand.core.common.model.ClockFace
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.settings.UserSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,8 @@ class AppSettingsViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
         initialValue = UserSettings(),
     )
+
+    fun setClockFace(face: ClockFace) = update { repository.setClockFace(face) }
 
     fun setUse24Hour(value: Boolean) = update { repository.setUse24Hour(value) }
     fun setShowSeconds(value: Boolean) = update { repository.setShowSeconds(value) }
