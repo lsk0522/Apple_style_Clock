@@ -67,16 +67,21 @@ jobs:
         if: github.ref == 'refs/heads/main_code' && github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
+          RUN_NUMBER: ${{ github.run_number }}
+          COMMIT_SHA: ${{ github.sha }}
+          APK_NAME: ${{ steps.name.outputs.apk }}
         run: |
-          cp app/build/outputs/apk/debug/*.apk "${{ steps.name.outputs.apk }}.apk"
+          cp app/build/outputs/apk/debug/*.apk "${APK_NAME}.apk"
+          {
+            printf '빌드 번호 %s · 커밋 %s\n\n' "$RUN_NUMBER" "$COMMIT_SHA"
+            printf '설치 후 **개발자 탭 → 설치된 빌드**에서 지금 돌고 있는 버전을 확인할 수 있습니다.\n'
+          } > release-notes.md
           gh release delete latest-debug --cleanup-tag --yes || true
           gh release create latest-debug \
-            --title "최신 개발 빌드 (#${{ github.run_number }})" \
-            --notes "빌드 번호 ${{ github.run_number }} · 커밋 ${{ github.sha }}
-
-설치 후 **개발자 탭 → 설치된 빌드**에서 지금 돌고 있는 버전을 확인할 수 있습니다." \
+            --title "최신 개발 빌드 (#${RUN_NUMBER})" \
+            --notes-file release-notes.md \
             --prerelease \
-            "${{ steps.name.outputs.apk }}.apk"
+            "${APK_NAME}.apk"
 
       - name: Upload reports on failure
         uses: actions/upload-artifact@v4
