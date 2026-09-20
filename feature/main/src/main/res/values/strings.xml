@@ -109,6 +109,7 @@
     <string name="attempt_no_overlay">권한 없음 — 다른 앱 위에 표시가 꺼져 있음</string>
     <string name="attempt_launch_failed">실행 거부됨 — 시스템이 막음</string>
     <string name="attempt_cancelled_early">2초 안에 충전이 끊김</string>
+    <string name="attempt_screen_in_use">폰 사용 중 — 화면이 꺼지면 띄웁니다</string>
     <string name="attempt_disconnected">충전 해제됨</string>
 
     <string name="developer_build_header">빌드</string>

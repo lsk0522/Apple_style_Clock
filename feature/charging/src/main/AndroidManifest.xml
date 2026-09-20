@@ -2,17 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
-        <!-- POWER_CONNECTED / DISCONNECTED are exempt from the Android 8
-             implicit-broadcast restrictions, so a manifest receiver still
-             reaches a stopped app. -->
+
+        <!-- Woken by JobScheduler the moment charging starts. A manifest
+             receiver for ACTION_POWER_CONNECTED would never fire: that action
+             is not on the implicit-broadcast exemption list. -->
+        <service
+            android:name=".StandbyChargingJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <!-- Runs only while the charger is attached. -->
+        <service
+            android:name=".ChargingMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Shows a full-screen clock while the device charges, and must observe charging and screen state to know when to present and dismiss it." />
+        </service>
+
+        <!-- BOOT_COMPLETED *is* exempt, so this receiver really does run. -->
         <receiver
-            android:name=".PowerConnectionReceiver"
+            android:name=".BootCompletedReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

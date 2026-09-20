@@ -154,6 +154,7 @@ private fun StandbyAttemptOutcome.labelRes(): Int = when (this) {
     StandbyAttemptOutcome.NO_OVERLAY_PERMISSION -> R.string.attempt_no_overlay
     StandbyAttemptOutcome.LAUNCH_FAILED -> R.string.attempt_launch_failed
     StandbyAttemptOutcome.CANCELLED_EARLY -> R.string.attempt_cancelled_early
+    StandbyAttemptOutcome.SCREEN_IN_USE -> R.string.attempt_screen_in_use
     StandbyAttemptOutcome.DISCONNECTED -> R.string.attempt_disconnected
 }
 

@@ -30,6 +30,9 @@ enum class StandbyAttemptOutcome {
     /** Power was pulled during the wait. */
     CANCELLED_EARLY,
 
+    /** Someone is using the phone; the clock waits for the screen to go off. */
+    SCREEN_IN_USE,
+
     /** The charger was unplugged. */
     DISCONNECTED,
 }
