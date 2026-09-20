@@ -157,5 +157,50 @@ fun LazyListScope.listSection(
     }
 }
 
+/**
+ * A section header with nothing under it yet.
+ *
+ * For content that is not a grouped card — a grid, say — but still belongs to
+ * a section and should carry the same label above it. [listSection] cannot be
+ * used there because its content goes inside the card.
+ */
+fun LazyListScope.sectionHeading(key: String, @StringRes text: Int) {
+    item(key = key) {
+        Text(
+            text = stringResource(text),
+            style = NightstandType.Footnote,
+            color = NightstandTheme.palette.secondaryLabel,
+            modifier = Modifier.padding(
+                start = SECTION_INSET + SECTION_LABEL_INSET,
+                end = SECTION_INSET + SECTION_LABEL_INSET,
+                bottom = 7.dp,
+            ),
+        )
+    }
+}
+
+/** The closing half of [sectionHeading], with the gap iOS leaves after a section. */
+fun LazyListScope.sectionFooting(key: String, @StringRes text: Int) {
+    item(key = key) {
+        Column {
+            Text(
+                text = stringResource(text),
+                style = NightstandType.Footnote,
+                color = NightstandTheme.palette.secondaryLabel,
+                modifier = Modifier.padding(
+                    start = SECTION_INSET + SECTION_LABEL_INSET,
+                    end = SECTION_INSET + SECTION_LABEL_INSET,
+                    top = 7.dp,
+                ),
+            )
+            Box(Modifier.height(SECTION_GAP))
+        }
+    }
+}
+
 private val NAV_BAR_HEIGHT = 44.dp
+
+/** Matches the row padding inside a card, so labels line up with row text. */
+private val SECTION_LABEL_INSET = 16.dp
+
 private val SECTION_GAP = 35.dp

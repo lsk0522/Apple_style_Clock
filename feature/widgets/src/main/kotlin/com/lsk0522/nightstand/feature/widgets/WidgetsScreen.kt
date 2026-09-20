@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Intent
-import android.widget.ImageView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -25,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lsk0522.nightstand.core.common.model.WidgetRotationInterval
@@ -37,6 +35,8 @@ import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.SelectionRow
 import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
+import com.lsk0522.nightstand.core.design.component.sectionFooting
+import com.lsk0522.nightstand.core.design.component.sectionHeading
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.R as DesignR
 
@@ -181,26 +181,15 @@ fun WidgetsScreen(
         modifier = modifier,
     ) {
         if (picking) {
-            listSection(
-                key = "available",
-                header = R.string.widgets_available_header,
-                footer = R.string.widgets_available_footer,
-            ) {
-                providers.forEach { info ->
-                    ListRow(
-                        title = info.loadLabel(context.packageManager),
-                        subtitle = if (info.configure != null) {
-                            stringResource(R.string.widgets_needs_setup)
-                        } else {
-                            null
-                        },
-                        leading = { ProviderIcon(info) },
-                        showChevron = true,
-                        showSeparator = info != providers.lastOrNull(),
-                        onClick = { add(info) },
-                    )
-                }
-            }
+            sectionHeading(
+                key = "availableHeader",
+                text = R.string.widgets_available_header,
+            )
+            widgetGallery(providers = providers, onPick = ::add)
+            sectionFooting(
+                key = "availableFooter",
+                text = R.string.widgets_available_footer,
+            )
             item(key = "cancel") {
                 Box(Modifier.padding(horizontal = 16.dp)) {
                     IosButton(
@@ -365,27 +354,8 @@ private fun ReorderArrow(
 }
 
 /** A widget partway through being added. */
-
 private data class PendingWidget(
     val id: Int,
     val provider: ComponentName,
     val configure: ComponentName?,
 )
-
-/** The provider's own icon, loaded as a plain view so no image library is needed. */
-@Composable
-private fun ProviderIcon(info: AppWidgetProviderInfo) {
-    val context = LocalContext.current
-    AndroidView(
-        modifier = Modifier.size(29.dp),
-        factory = {
-            ImageView(it).apply {
-                // Decorative: the row title already names the widget.
-                importantForAccessibility = ImageView.IMPORTANT_FOR_ACCESSIBILITY_NO
-            }
-        },
-        update = { view ->
-            runCatching { view.setImageDrawable(info.loadIcon(context, 0)) }
-        },
-    )
-}
