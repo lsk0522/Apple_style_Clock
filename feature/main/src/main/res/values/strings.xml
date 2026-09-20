@@ -65,7 +65,8 @@
 
     <string name="settings_clock_header">시계</string>
     <string name="settings_clock_24h">24시간 표시</string>
-    <string name="settings_clock_seconds">초 표시</string>
+    <string name="settings_clock_seconds">초침 표시</string>
+    <string name="settings_clock_seconds_why">아날로그 시계에 초침이 부드럽게 돕니다. 화면이 계속 갱신되므로 전력을 더 씁니다</string>
 
     <string name="settings_display_header">화면</string>
     <string name="settings_display_night">야간 모드</string>

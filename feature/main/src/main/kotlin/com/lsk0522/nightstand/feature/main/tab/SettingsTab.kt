@@ -63,6 +63,7 @@ fun SettingsTab(
             )
             SwitchRow(
                 title = stringResource(R.string.settings_clock_seconds),
+                subtitle = stringResource(R.string.settings_clock_seconds_why),
                 checked = settings.showSeconds,
                 onCheckedChange = viewModel::setShowSeconds,
                 showSeparator = false,

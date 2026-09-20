@@ -22,10 +22,11 @@ fun ClockFaceHost(
 }
 
 /**
- * Whether this face needs a tick every second.
+ * No face prints a seconds digit, so the shared clock never needs to wake more
+ * than once a minute.
  *
- * Only the analog sweep second hand does. Waking the others every second would
- * keep the panel from idling for no visible gain.
+ * The analog second hand is the one thing that moves faster, and it drives
+ * itself from the frame clock inside [AnalogFace] — which keeps that cost
+ * confined to the one face that asked for it.
  */
-fun ClockFace.needsSecondTicks(showSeconds: Boolean): Boolean =
-    showSeconds && this == ClockFace.ANALOG
+fun ClockFace.needsSecondTicks(showSeconds: Boolean): Boolean = false
