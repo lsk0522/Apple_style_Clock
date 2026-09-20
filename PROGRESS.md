@@ -89,7 +89,11 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 - [x] **Phase 1** — NightstandTabBar + 5개 탭 골격 (feature:main)
 - [x] **Phase 1** — 앱 UI 를 iOS 디자인 언어로 재구축 (그룹 목록·라지 타이틀·스위치)- [x] **Phase 1** — iOS 27 Liquid Glass + Haze 실제 배경 블러- [x] **Phase 1** — 문서 역할 분리 (Design / iOS_Design / CLAUDE / plan)- [x] **Phase 2** — 충전 감지 엔진 (1.5초 디바운스 + 역무선충전 교차검증)- [x] **Phase 2** — DataStore 설정 영속화- [x] **Phase 2** — PowerConnectionReceiver + 백그라운드 감지 기록- [x] **Phase 2** — 충전 탭 실동작 (조건 선택 · 실시간 상태)
 - [x] **Phase 3** — StandByActivity (잠금화면 위 · 2초 지연 · 800ms 페이드인)- [x] **Phase 3** — 충전 해제 시 자동 종료, 번인 방지 픽셀 시프트, 최저 주사율- [x] **Phase 3** — 개발자 탭에서 강제 실행
-- [x] **Phase 3** — 매니페스트 리시버 폐기 → JobScheduler + 충전 중 서비스 (실기기 확인)- [x] **Phase 3** — 1Hz 요청 · 기본 디밍(탭 토글) — AOD 처럼 사용 가능- [x] **Phase 4** — 시계 페이스 6종 + 메인 탭 선택- [x] **Phase 5** — AppWidgetHost 위젯 호스팅 (피커 · 추가/제거 · 영속화)- [x] **Phase 5** — StandBy 화면에 위젯 면 (좌우 페이지)
+- [x] **Phase 3** — 매니페스트 리시버 폐기 → JobScheduler + 충전 중 서비스 (실기기 확인)
+- [x] **Phase 3** — 1Hz 요청 · 기본 디밍(탭 토글) — AOD 처럼 사용 가능
+- [x] **Phase 4** — 시계 페이스 6종 + 메인 탭 선택
+- [x] **Phase 5** — AppWidgetHost 위젯 호스팅 (피커 · 추가/제거 · 영속화)
+- [x] **Phase 5** — StandBy 화면에 위젯 면 (좌우 페이지)
 
 ---
 
