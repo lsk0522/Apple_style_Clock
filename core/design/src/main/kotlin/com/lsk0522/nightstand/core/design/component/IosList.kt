@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import com.lsk0522.nightstand.core.design.R
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
+import com.lsk0522.nightstand.core.design.theme.ListCardShape
+import com.lsk0522.nightstand.core.design.theme.Radius
 import com.lsk0522.nightstand.core.design.theme.SquircleShape
 
 /**
@@ -73,7 +74,7 @@ fun ListSection(
         Column(
             modifier = Modifier
                 .padding(horizontal = SECTION_INSET)
-                .clip(SquircleShape(CARD_RADIUS))
+                .clip(ListCardShape)
                 .background(palette.groupedCard),
             content = content,
         )
@@ -283,7 +284,8 @@ fun RowIconTile(
     Box(
         modifier = modifier
             .size(LEADING_ICON_SIZE)
-            .clip(RoundedCornerShape(7.dp))
+            // Concentric with the card it sits in: 18 - 11 vertical padding.
+            .clip(SquircleShape(Radius.concentric(Radius.listCard, 11.dp)))
             .background(tint),
         contentAlignment = Alignment.Center,
         content = { content() },
@@ -292,9 +294,6 @@ fun RowIconTile(
 
 /** iOS inset-grouped side margin. */
 val SECTION_INSET: Dp = 16.dp
-// iOS 26 rounded grouped cards noticeably further than the old 10pt so their
-// corners sit concentric with the display curve; 27 kept that.
-private val CARD_RADIUS: Dp = 18.dp
 private val ROW_PADDING: Dp = 16.dp
 private val ROW_MIN_HEIGHT: Dp = 44.dp
 private val LEADING_ICON_SIZE: Dp = 29.dp

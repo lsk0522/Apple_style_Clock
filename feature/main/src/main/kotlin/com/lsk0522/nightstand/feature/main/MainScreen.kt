@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import com.lsk0522.nightstand.core.design.component.NightstandTabBar
@@ -22,6 +24,8 @@ import com.lsk0522.nightstand.feature.main.tab.ChargingTab
 import com.lsk0522.nightstand.feature.main.tab.DeveloperTab
 import com.lsk0522.nightstand.feature.main.tab.DonateTab
 import com.lsk0522.nightstand.feature.main.tab.SettingsTab
+import com.lsk0522.nightstand.feature.main.setup.SetupScreen
+import com.lsk0522.nightstand.feature.main.setup.SetupViewModel
 import com.lsk0522.nightstand.feature.main.tab.WidgetsTab
 import com.lsk0522.nightstand.core.design.R as DesignR
 
@@ -35,8 +39,20 @@ import com.lsk0522.nightstand.core.design.R as DesignR
  * `:feature:main` never has to depend on them.
  */
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    setupViewModel: SetupViewModel = hiltViewModel(),
+) {
     val palette = NightstandTheme.palette
+
+    // The required settings all live outside the app, so the first thing the
+    // user sees is the screen that walks them there -- not a menu whose
+    // options quietly would not work yet.
+    val showSetup by setupViewModel.showSetup.collectAsStateWithLifecycle()
+    if (showSetup) {
+        SetupScreen(onDone = { }, modifier = modifier, viewModel = setupViewModel)
+        return
+    }
     var selectedIndex by rememberSaveable { mutableIntStateOf(MAIN_TAB_INDEX) }
 
     // The tab content is what the floating bar blurs.

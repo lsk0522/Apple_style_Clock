@@ -10,7 +10,11 @@ import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import com.lsk0522.nightstand.core.data.system.SystemRequirementId
 import com.lsk0522.nightstand.feature.main.AppSettingsViewModel
+import com.lsk0522.nightstand.feature.main.setup.SetupViewModel
 import com.lsk0522.nightstand.feature.main.R
 
 /** The middle tab: the app's own settings. */
@@ -18,8 +22,13 @@ import com.lsk0522.nightstand.feature.main.R
 fun SettingsTab(
     modifier: Modifier = Modifier,
     viewModel: AppSettingsViewModel = hiltViewModel(),
+    setupViewModel: SetupViewModel = hiltViewModel(),
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val setupState by setupViewModel.uiState.collectAsStateWithLifecycle()
+
+    // These live in system settings and change behind the app's back.
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { setupViewModel.refresh() }
 
     IosScreen(
         title = stringResource(R.string.settings_title),
@@ -81,22 +90,31 @@ fun SettingsTab(
             header = R.string.settings_permission_header,
             footer = R.string.settings_permission_footer,
         ) {
-            // TODO(next): Phase 3 — read the real grant state and deep-link to
-            // the system screens instead of showing a static value.
             ListRow(
                 title = stringResource(R.string.settings_permission_overlay),
-                value = stringResource(R.string.settings_permission_pending),
-                showChevron = true,
-                enabled = false,
-                onClick = null,
+                value = stringResource(
+                    if (setupState.isSatisfied(SystemRequirementId.OVERLAY)) {
+                        R.string.settings_permission_on
+                    } else {
+                        R.string.settings_permission_needed
+                    },
+                ),
             )
             ListRow(
                 title = stringResource(R.string.settings_permission_battery),
-                value = stringResource(R.string.settings_permission_pending),
+                value = stringResource(
+                    if (setupState.isSatisfied(SystemRequirementId.BATTERY_OPTIMIZATION)) {
+                        R.string.settings_permission_on
+                    } else {
+                        R.string.settings_permission_needed
+                    },
+                ),
+            )
+            ListRow(
+                title = stringResource(R.string.settings_permission_reopen),
                 showChevron = true,
-                enabled = false,
                 showSeparator = false,
-                onClick = null,
+                onClick = setupViewModel::reopenSetup,
             )
         }
 

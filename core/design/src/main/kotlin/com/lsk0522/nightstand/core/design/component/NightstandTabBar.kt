@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lsk0522.nightstand.core.design.theme.CapsuleShape
 import com.lsk0522.nightstand.core.design.theme.NightstandMotion
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
@@ -63,7 +63,7 @@ fun NightstandTabBar(
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(horizontal = BAR_SIDE_INSET, vertical = BAR_BOTTOM_INSET)
-            .liquidGlass(RoundedCornerShape(percent = 50), hazeState)
+            .liquidGlass(CapsuleShape, hazeState)
             .height(BAR_HEIGHT),
         verticalAlignment = Alignment.CenterVertically,
     ) {

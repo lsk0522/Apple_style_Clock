@@ -29,8 +29,15 @@ object Radius {
     val xs: Dp = 6.dp
     val sm: Dp = 10.dp
     val md: Dp = 16.dp
-    val lg: Dp = 24.dp
-    val xl: Dp = 32.dp
+
+    /** App UI grouped list card. iOS 26 grew this from 10. */
+    val listCard: Dp = 18.dp
+
+    /** StandBy / home-screen widget tile. */
+    val widgetTile: Dp = 22.dp
+
+    /** Large panel. */
+    val panel: Dp = 32.dp
 
     fun concentric(outer: Dp, padding: Dp): Dp = (outer - padding).coerceAtLeast(0.dp)
 }

@@ -1,0 +1,97 @@
+package com.lsk0522.nightstand.feature.main.setup
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lsk0522.nightstand.core.data.settings.SettingsRepository
+import com.lsk0522.nightstand.core.data.system.SystemRequirement
+import com.lsk0522.nightstand.core.data.system.SystemRequirementId
+import android.content.Intent
+import com.lsk0522.nightstand.core.data.system.SystemRequirements
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+
+data class SetupUiState(
+    val requirements: List<SystemRequirement> = emptyList(),
+    val setupSeen: Boolean = true,
+) {
+    val blockingCount: Int get() = requirements.count { it.isRequired && !it.isSatisfied }
+
+    /** Nothing required is missing. Optional items may still be off. */
+    val isReady: Boolean get() = blockingCount == 0
+
+    fun isSatisfied(id: SystemRequirementId): Boolean =
+        requirements.firstOrNull { it.id == id }?.isSatisfied == true
+
+    fun has(id: SystemRequirementId): Boolean = requirements.any { it.id == id }
+}
+
+@HiltViewModel
+class SetupViewModel @Inject constructor(
+    private val repository: SettingsRepository,
+    private val requirements: SystemRequirements,
+) : ViewModel() {
+
+    /**
+     * Bumped whenever the app comes back to the foreground. None of these
+     * settings emit a change event, so the only reliable moment to re-read
+     * them is when the user returns from the system screen.
+     */
+    private val refreshes = MutableStateFlow(0)
+
+    val uiState: StateFlow<SetupUiState> =
+        combine(
+            repository.settings,
+            refreshes,
+        ) { settings, _ ->
+            SetupUiState(
+                requirements = requirements.check(settings.dailyBoardHandled),
+                setupSeen = settings.setupSeen,
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+            initialValue = SetupUiState(requirements = requirements.check(false)),
+        )
+
+    /** Whether the first-run screen should stand in front of the app. */
+    val showSetup: StateFlow<Boolean> = repository.settings
+        .map { !it.setupSeen }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+            initialValue = false,
+        )
+
+    fun refresh() {
+        refreshes.value += 1
+    }
+
+    fun dismissSetup() {
+        viewModelScope.launch { repository.setSetupSeen(true) }
+    }
+
+    fun reopenSetup() {
+        viewModelScope.launch { repository.setSetupSeen(false) }
+    }
+
+    fun setDailyBoardHandled(value: Boolean) {
+        viewModelScope.launch { repository.setDailyBoardHandled(value) }
+    }
+
+    /** The system screen for [id], or null when it is a runtime permission. */
+    fun settingsIntent(id: SystemRequirementId): Intent? = requirements.settingsIntent(id)
+
+    /** Where to send the user when [settingsIntent] is refused by the device. */
+    fun fallbackIntent(id: SystemRequirementId): Intent = requirements.fallbackIntent(id)
+
+    private companion object {
+        const val STOP_TIMEOUT_MILLIS = 5_000L
+    }
+}

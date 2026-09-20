@@ -1,5 +1,7 @@
 package com.lsk0522.nightstand.core.design.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
@@ -7,25 +9,37 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sign
+import kotlin.math.sin
 
 /**
- * Apple's continuous corner — a superellipse, not a circular arc.
+ * Apple's continuous corner, drawn as a superellipse quadrant.
  *
- * `RoundedCornerShape` draws a quarter circle, which meets the straight edge
- * with a visible curvature jump. A continuous corner spreads the curvature over
- * a longer stretch of the edge so the transition reads as smooth (G2 continuity).
+ * A circular corner (`RoundedCornerShape`) jumps from zero curvature along the
+ * straight edge to `1/r` the instant the arc begins, and the eye reads that
+ * discontinuity as a faint crease. A superellipse ramps the curvature up
+ * instead, which is what makes Apple's corners look poured rather than cut.
  *
- * Each corner is drawn as two cubic bezier curves: the curve leaves the edge at
- * `radius * (1 + smoothing)` from the corner and is pulled toward the corner
- * point, which is what stretches the curvature out.
+ * Each corner follows `|dx/r|^n + |dy/r|^n = 1` across its quadrant:
  *
- * @param radius nominal corner radius, as in [Radius].
- * @param smoothing how far the curve spreads along the edge. 0f degenerates to a
- *   plain rounded rect; Apple's corners sit around 0.6f, which is the default.
+ *  - `n = 2` is exactly a circle
+ *  - `n ~ 4` is the continuous corner used across iOS chrome -- the default
+ *  - larger `n` squares the corner off
+ *
+ * The curve still meets each edge exactly `r` from the corner, so the shape
+ * honours the radius it was handed.
+ *
+ * An earlier version spread the curve `1.6 x r` along the edge while pulling
+ * its control points only `0.55 x r` inward. That rendered an 18dp corner as a
+ * shallow ~29dp sweep -- visibly too round and too flat, which is why this is
+ * now solved geometrically instead of with hand-tuned Bezier constants.
  */
 class SquircleShape(
     private val radius: Dp,
-    private val smoothing: Float = DEFAULT_SMOOTHING,
+    private val exponent: Float = DEFAULT_EXPONENT,
 ) : Shape {
 
     override fun createOutline(
@@ -33,81 +47,92 @@ class SquircleShape(
         layoutDirection: LayoutDirection,
         density: Density,
     ): Outline {
-        val r = with(density) { radius.toPx() }
-        // A corner can never eat more than half of the shorter side.
-        val maxR = minOf(size.width, size.height) / 2f
-        val cr = r.coerceIn(0f, maxR)
+        // A corner can never take more than half of the shorter side.
+        val maxRadius = minOf(size.width, size.height) / 2f
+        val r = with(density) { radius.toPx() }.coerceIn(0f, maxRadius)
 
-        if (cr == 0f) {
-            return Outline.Rectangle(size.toRect())
-        }
-
-        // How far the curve extends along the straight edge, clamped so that
-        // opposite corners never overlap on a small tile.
-        val spread = (cr * (1f + smoothing))
-            .coerceAtMost(minOf(size.width, size.height) / 2f)
-
-        // Control-point pull toward the corner. 0.5523 is the circular-arc
-        // constant; easing it down as smoothing rises is what flattens the apex.
-        val k = CIRCLE_K / (1f + smoothing)
+        if (r <= 0f) return Outline.Rectangle(Rect(0f, 0f, size.width, size.height))
 
         val w = size.width
         val h = size.height
+        // Enough segments to read smooth at any size, without building a
+        // needlessly long path for a small tile.
+        val segments = (r * 0.9f).toInt().coerceIn(10, 48)
 
         val path = Path().apply {
-            // top edge, left to right
-            moveTo(spread, 0f)
-            lineTo(w - spread, 0f)
-            // top-right corner
-            cubicTo(
-                w - spread + spread * k, 0f,
-                w, spread - spread * k,
-                w, spread,
-            )
-            // right edge
-            lineTo(w, h - spread)
-            // bottom-right corner
-            cubicTo(
-                w, h - spread + spread * k,
-                w - spread + spread * k, h,
-                w - spread, h,
-            )
-            // bottom edge
-            lineTo(spread, h)
-            // bottom-left corner
-            cubicTo(
-                spread - spread * k, h,
-                0f, h - spread + spread * k,
-                0f, h - spread,
-            )
-            // left edge
-            lineTo(0f, spread)
-            // top-left corner
-            cubicTo(
-                0f, spread - spread * k,
-                spread - spread * k, 0f,
-                spread, 0f,
-            )
+            moveTo(r, 0f)
+            lineTo(w - r, 0f)
+            superellipseQuadrant(w - r, r, r, exponent, START_TOP_RIGHT, segments)
+
+            lineTo(w, h - r)
+            superellipseQuadrant(w - r, h - r, r, exponent, START_BOTTOM_RIGHT, segments)
+
+            lineTo(r, h)
+            superellipseQuadrant(r, h - r, r, exponent, START_BOTTOM_LEFT, segments)
+
+            lineTo(0f, r)
+            superellipseQuadrant(r, r, r, exponent, START_TOP_LEFT, segments)
+
             close()
         }
         return Outline.Generic(path)
     }
 
     override fun equals(other: Any?): Boolean =
-        other is SquircleShape && other.radius == radius && other.smoothing == smoothing
+        other is SquircleShape && other.radius == radius && other.exponent == exponent
 
-    override fun hashCode(): Int = 31 * radius.hashCode() + smoothing.hashCode()
+    override fun hashCode(): Int = 31 * radius.hashCode() + exponent.hashCode()
 
     companion object {
-        const val DEFAULT_SMOOTHING = 0.6f
-        private const val CIRCLE_K = 0.5522847f
+        /** The continuous corner iOS uses. 2 would be a plain circle. */
+        const val DEFAULT_EXPONENT = 4f
+
+        private const val START_TOP_RIGHT = -90f
+        private const val START_BOTTOM_RIGHT = 0f
+        private const val START_BOTTOM_LEFT = 90f
+        private const val START_TOP_LEFT = 180f
     }
 }
 
-private fun Size.toRect() = androidx.compose.ui.geometry.Rect(0f, 0f, width, height)
+/**
+ * Walks one 90-degree quadrant of the superellipse centred on ([cx], [cy]),
+ * beginning at [startDegrees].
+ */
+private fun Path.superellipseQuadrant(
+    cx: Float,
+    cy: Float,
+    r: Float,
+    exponent: Float,
+    startDegrees: Float,
+    segments: Int,
+) {
+    val power = 2.0 / exponent
+    for (i in 0..segments) {
+        val angle = Math.toRadians((startDegrees + QUADRANT_DEGREES * i / segments).toDouble())
+        val c = cos(angle)
+        val s = sin(angle)
+        val x = cx + r * (c.sign * c.absoluteValue.pow(power)).toFloat()
+        val y = cy + r * (s.sign * s.absoluteValue.pow(power)).toFloat()
+        lineTo(x, y)
+    }
+}
 
-/** Widget-card corner — Design.md §3.2. */
-val WidgetCardShape = SquircleShape(Radius.lg)
+private const val QUADRANT_DEGREES = 90f
 
-/** Large panel corner. */
-val PanelShape = SquircleShape(Radius.xl)
+/**
+ * A true capsule -- both ends are half circles.
+ *
+ * The one place a circular corner is correct rather than a compromise: a
+ * floating tab bar or a pill button is a stadium, and running a superellipse
+ * through it would flatten the ends into something Apple never draws.
+ */
+val CapsuleShape: Shape = RoundedCornerShape(percent = 50)
+
+/** App UI grouped list card. */
+val ListCardShape = SquircleShape(Radius.listCard)
+
+/** StandBy widget tile. */
+val WidgetTileShape = SquircleShape(Radius.widgetTile)
+
+/** Large panel. */
+val PanelShape = SquircleShape(Radius.panel)
