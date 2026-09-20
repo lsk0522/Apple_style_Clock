@@ -149,13 +149,19 @@ fun SettingsTab(
                 checked = settings.burnInProtection,
                 onCheckedChange = viewModel::setBurnInProtection,
             )
-            ListRow(
+            SwitchRow(
                 title = stringResource(R.string.settings_display_brightness),
-                value = stringResource(R.string.settings_display_brightness_value),
-                showChevron = true,
-                enabled = false,
+                subtitle = stringResource(
+                    if (viewModel.lightSensorAvailable) {
+                        R.string.settings_display_brightness_sub
+                    } else {
+                        R.string.settings_display_night_no_sensor
+                    },
+                ),
+                checked = settings.autoBrightness && viewModel.lightSensorAvailable,
+                enabled = viewModel.lightSensorAvailable,
+                onCheckedChange = viewModel::setAutoBrightness,
                 showSeparator = false,
-                onClick = null,
             )
         }
 

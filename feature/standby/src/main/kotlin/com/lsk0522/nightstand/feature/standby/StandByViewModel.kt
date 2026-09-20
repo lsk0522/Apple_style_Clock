@@ -38,6 +38,9 @@ data class StandByUiState(
      */
     val nightVision: Boolean = false,
     val burnInProtection: Boolean = true,
+    val autoBrightness: Boolean = true,
+    /** The room's light level, or null where it cannot be measured. */
+    val ambientLux: Float? = null,
     /**
      * Null until the first reading lands. The screen must not close on a
      * default value — that would dismiss itself the moment it opened.

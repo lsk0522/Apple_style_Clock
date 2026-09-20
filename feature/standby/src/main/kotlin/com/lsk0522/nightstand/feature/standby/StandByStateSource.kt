@@ -30,7 +30,8 @@ class StandByStateSource @Inject constructor(
         monitor.status,
         widgetStore.widgets,
         ambientLight.isDark,
-    ) { prefs, status, widgets, dark ->
+        ambientLight.lux,
+    ) { prefs, status, widgets, dark, lux ->
         StandByUiState(
             loaded = true,
             clockFace = prefs.clockFace,
@@ -42,6 +43,8 @@ class StandByStateSource @Inject constructor(
             nightMode = prefs.nightMode,
             nightVision = prefs.nightMode && dark,
             burnInProtection = prefs.burnInProtection,
+            autoBrightness = prefs.autoBrightness,
+            ambientLux = lux,
             stillCharging = prefs.chargingTrigger.matches(status.type),
             batteryPercent = status.levelPercent,
             chargeType = status.type,

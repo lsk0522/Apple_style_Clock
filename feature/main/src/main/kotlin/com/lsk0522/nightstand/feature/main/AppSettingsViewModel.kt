@@ -48,6 +48,7 @@ class AppSettingsViewModel @Inject constructor(
     fun setShowSeconds(value: Boolean) = update { repository.setShowSeconds(value) }
     fun setNightMode(value: Boolean) = update { repository.setNightMode(value) }
     fun setBurnInProtection(value: Boolean) = update { repository.setBurnInProtection(value) }
+    fun setAutoBrightness(value: Boolean) = update { repository.setAutoBrightness(value) }
     fun setAutoRotateWidgets(value: Boolean) = update { repository.setAutoRotateWidgets(value) }
 
     private fun update(block: suspend () -> Unit) {

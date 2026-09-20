@@ -21,6 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.ln
+import kotlin.math.roundToInt
 
 /**
  * Hosts the StandBy clock.
@@ -64,8 +66,16 @@ class StandByActivity : ComponentActivity() {
 
             // A sweeping second hand redraws every frame, so the panel must
             // not be parked while one is on screen.
-            LaunchedEffect(dim, state.showSeconds) {
-                applyDim(dim, allowLowRefresh = !state.showSeconds)
+            LaunchedEffect(dim, state.showSeconds, state.autoBrightness, state.ambientLux) {
+                applyDim(
+                    dim = dim,
+                    allowLowRefresh = !state.showSeconds,
+                    dimBrightness = if (state.autoBrightness) {
+                        brightnessFor(state.ambientLux)
+                    } else {
+                        FIXED_DIM_BRIGHTNESS
+                    },
+                )
             }
 
             // Charging stopped, or stopped matching what the user asked for.
@@ -109,12 +119,13 @@ class StandByActivity : ComponentActivity() {
         }
     }
 
-    private fun applyDim(dim: Boolean, allowLowRefresh: Boolean) {
+    private fun applyDim(dim: Boolean, allowLowRefresh: Boolean, dimBrightness: Float) {
         dimmed = dim
         lowRefreshAllowed = allowLowRefresh
 
-        window.attributes = window.attributes.apply {
-            screenBrightness = if (dim) DIM_BRIGHTNESS else BRIGHT_BRIGHTNESS
+        val target = if (dim) dimBrightness else BRIGHT_BRIGHTNESS
+        if (window.attributes.screenBrightness != target) {
+            window.attributes = window.attributes.apply { screenBrightness = target }
         }
 
         if (dim) {
@@ -163,7 +174,26 @@ class StandByActivity : ComponentActivity() {
         window.attributes = window.attributes.apply { preferredRefreshRate = target }
     }
 
+    /**
+     * How bright to sit in a room this bright.
+     *
+     * Logarithmic, because that is how the eye reads it: the step from one lux
+     * to ten matters far more than the step from five hundred to a thousand. A
+     * linear map leaves the clock either invisible in the dark or dim enough
+     * to be useless in daylight.
+     *
+     * Quantised to twentieths so a flickering sensor does not relayout the
+     * window on every reading.
+     */
+    private fun brightnessFor(lux: Float?): Float {
+        if (lux == null) return FIXED_DIM_BRIGHTNESS
+        val scale = ln(1f + lux.coerceIn(0f, BRIGHT_ROOM_LUX)) / ln(1f + BRIGHT_ROOM_LUX)
+        val raw = MIN_AUTO_BRIGHTNESS + scale * (MAX_AUTO_BRIGHTNESS - MIN_AUTO_BRIGHTNESS)
+        return (raw * BRIGHTNESS_STEPS).roundToInt() / BRIGHTNESS_STEPS
+    }
+
     private companion object {
+
         /** What the panel is asked to hold while the clock just sits there. */
         const val IDLE_REFRESH_HZ = 1f
 
@@ -173,8 +203,19 @@ class StandByActivity : ComponentActivity() {
         /** Long enough to outlast a gesture, short enough to still save power. */
         const val IDLE_BEFORE_PARKING_MILLIS = 3_000L
 
-        /** Readable in a dark room without lighting it up. */
-        const val DIM_BRIGHTNESS = 0.25f
+        /** Readable in a dark room without lighting it up, when not measuring. */
+        const val FIXED_DIM_BRIGHTNESS = 0.25f
+
+        /** Floor: still legible across a dark bedroom, and no brighter. */
+        const val MIN_AUTO_BRIGHTNESS = 0.03f
+
+        /** Ceiling: enough for a lit room, short of full daylight glare. */
+        const val MAX_AUTO_BRIGHTNESS = 0.65f
+
+        /** Roughly an office. Past this the clock does not need to keep rising. */
+        const val BRIGHT_ROOM_LUX = 800f
+
+        const val BRIGHTNESS_STEPS = 20f
 
         /** Hand control back to the system's own brightness. */
         const val BRIGHT_BRIGHTNESS = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE

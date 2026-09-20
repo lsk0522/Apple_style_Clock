@@ -97,8 +97,8 @@
     <string name="settings_display_night_no_sensor">이 기기에는 조도 센서가 없습니다</string>
     <string name="settings_display_burnin">번인 방지</string>
     <string name="settings_display_burnin_sub">10분마다 화면을 미세하게 이동</string>
-    <string name="settings_display_brightness">밝기</string>
-    <string name="settings_display_brightness_value">자동</string>
+    <string name="settings_display_brightness">자동 밝기</string>
+    <string name="settings_display_brightness_sub">방의 밝기에 맞춰 시계를 어둡게 합니다. 끄면 항상 같은 밝기로 빛납니다</string>
 
     <string name="setup_dream_header">권한 없이 쓰는 방법</string>
     <string name="setup_dream_footer">화면 보호기는 권한이 필요 없습니다. 대신 시계가 언제 뜰지는 안드로이드가 정하기 때문에, 충전을 시작하자마자 바로 뜨지는 않습니다.</string>

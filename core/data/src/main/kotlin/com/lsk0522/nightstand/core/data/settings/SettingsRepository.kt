@@ -28,6 +28,7 @@ data class UserSettings(
     val showSeconds: Boolean = false,
     val nightMode: Boolean = true,
     val burnInProtection: Boolean = true,
+    val autoBrightness: Boolean = true,
     val autoRotateWidgets: Boolean = true,
     val widgetRotationInterval: WidgetRotationInterval = WidgetRotationInterval.Default,
     /** The first-run setup screen has been dismissed. */
@@ -58,6 +59,7 @@ class SettingsRepository @Inject constructor(
             showSeconds = prefs[Keys.SHOW_SECONDS] ?: false,
             nightMode = prefs[Keys.NIGHT_MODE] ?: true,
             burnInProtection = prefs[Keys.BURN_IN_PROTECTION] ?: true,
+            autoBrightness = prefs[Keys.AUTO_BRIGHTNESS] ?: true,
             autoRotateWidgets = prefs[Keys.AUTO_ROTATE_WIDGETS] ?: true,
             widgetRotationInterval = prefs[Keys.ROTATION_INTERVAL]
                 ?.let { runCatching { WidgetRotationInterval.valueOf(it) }.getOrNull() }
@@ -89,6 +91,8 @@ class SettingsRepository @Inject constructor(
     suspend fun setBurnInProtection(value: Boolean) =
         edit { it[Keys.BURN_IN_PROTECTION] = value }
 
+    suspend fun setAutoBrightness(value: Boolean) = edit { it[Keys.AUTO_BRIGHTNESS] = value }
+
     suspend fun setAutoRotateWidgets(value: Boolean) =
         edit { it[Keys.AUTO_ROTATE_WIDGETS] = value }
 
@@ -113,6 +117,7 @@ class SettingsRepository @Inject constructor(
         val SHOW_SECONDS = booleanPreferencesKey("show_seconds")
         val NIGHT_MODE = booleanPreferencesKey("night_mode")
         val BURN_IN_PROTECTION = booleanPreferencesKey("burn_in_protection")
+        val AUTO_BRIGHTNESS = booleanPreferencesKey("auto_brightness")
         val AUTO_ROTATE_WIDGETS = booleanPreferencesKey("auto_rotate_widgets")
         val ROTATION_INTERVAL = stringPreferencesKey("widget_rotation_interval")
         val SETUP_SEEN = booleanPreferencesKey("setup_seen")
