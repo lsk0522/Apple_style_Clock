@@ -133,6 +133,12 @@
     <string name="donate_footer">Google Play 결제로 진행되며 Phase 9에서 연결됩니다.</string>
 
     <!-- 공통 -->
+    <!-- 초침을 켤 때 뜨는 경고 -->
+    <string name="seconds_alert_title">초침을 켤까요?</string>
+    <string name="seconds_alert_message">초침이 부드럽게 돌려면 화면을 계속 다시 그려야 합니다. 화면이 1Hz로 쉬지 못해 배터리를 더 쓰고, 밤새 켜두면 화면 수명에도 좋지 않습니다.\n\n시계로만 쓰실 거면 꺼두시는 편이 낫습니다.</string>
+    <string name="seconds_alert_confirm">켜기</string>
+    <string name="common_cancel">취소</string>
+
     <string name="common_coming_soon">준비 중</string>
 
     <!-- 첫 실행 안내 -->

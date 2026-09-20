@@ -2,11 +2,15 @@ package com.lsk0522.nightstand.feature.main.tab
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
 import com.lsk0522.nightstand.core.common.model.ClockFace
+import com.lsk0522.nightstand.core.design.component.IosAlert
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.SelectionRow
@@ -29,8 +33,25 @@ fun SettingsTab(
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val setupState by setupViewModel.uiState.collectAsStateWithLifecycle()
 
+    // Only asked when turning it on; switching it back off costs nothing.
+    var confirmingSeconds by remember { mutableStateOf(false) }
+
     // These live in system settings and change behind the app's back.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { setupViewModel.refresh() }
+
+    if (confirmingSeconds) {
+        IosAlert(
+            title = stringResource(R.string.seconds_alert_title),
+            message = stringResource(R.string.seconds_alert_message),
+            confirmLabel = stringResource(R.string.seconds_alert_confirm),
+            cancelLabel = stringResource(R.string.common_cancel),
+            onConfirm = {
+                viewModel.setShowSeconds(true)
+                confirmingSeconds = false
+            },
+            onDismiss = { confirmingSeconds = false },
+        )
+    }
 
     IosScreen(
         title = stringResource(R.string.settings_title),
@@ -65,7 +86,9 @@ fun SettingsTab(
                 title = stringResource(R.string.settings_clock_seconds),
                 subtitle = stringResource(R.string.settings_clock_seconds_why),
                 checked = settings.showSeconds,
-                onCheckedChange = viewModel::setShowSeconds,
+                onCheckedChange = { wanted ->
+                    if (wanted) confirmingSeconds = true else viewModel.setShowSeconds(false)
+                },
                 showSeparator = false,
             )
         }
