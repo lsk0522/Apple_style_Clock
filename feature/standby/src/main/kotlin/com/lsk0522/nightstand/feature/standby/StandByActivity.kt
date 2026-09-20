@@ -16,8 +16,10 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.lsk0522.nightstand.core.data.diagnostics.StandbySessionLog
 import com.lsk0522.nightstand.core.design.theme.StandbyTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,6 +42,9 @@ import kotlin.math.roundToInt
 @AndroidEntryPoint
 class StandByActivity : ComponentActivity() {
 
+    /** Measures what a session of this actually costs the battery. */
+    @Inject lateinit var sessionLog: StandbySessionLog
+
     /** Mirrors the Compose dim state so the touch handler can read it. */
     private var dimmed = true
 
@@ -53,6 +58,7 @@ class StandByActivity : ComponentActivity() {
         setTurnScreenOn(true)
         super.onCreate(savedInstanceState)
 
+        sessionLog.begin()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         goFullscreen()
 
@@ -107,6 +113,11 @@ class StandByActivity : ComponentActivity() {
     override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
         wake()
         return super.dispatchTouchEvent(event)
+    }
+
+    override fun onDestroy() {
+        sessionLog.end()
+        super.onDestroy()
     }
 
     /** Nothing but the clock; the system bars would only add clutter. */

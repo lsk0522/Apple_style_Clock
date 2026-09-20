@@ -10,6 +10,8 @@ import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
 import com.lsk0522.nightstand.core.data.charging.ScreenState
 import com.lsk0522.nightstand.core.data.charging.ScreenStateMonitor
 import com.lsk0522.nightstand.core.data.diagnostics.CrashRecorder
+import com.lsk0522.nightstand.core.data.diagnostics.StandbySession
+import com.lsk0522.nightstand.core.data.diagnostics.StandbySessionLog
 import com.lsk0522.nightstand.core.data.sensor.AmbientLightMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.standby.StandbyAttempt
@@ -48,11 +50,24 @@ data class DeveloperUiState(
     val overlayGranted: Boolean = false,
     val batteryUnrestricted: Boolean = false,
     val notificationsGranted: Boolean = false,
+    val sessions: List<StandbySession> = emptyList(),
+
     /** The last stack trace, or null if nothing has crashed. */
     val lastCrash: String? = null,
 ) {
     /** Whether the current rule would let [type] bring the clock up. */
     fun wouldTrigger(type: ChargeType): Boolean = trigger.matches(type)
+
+    /**
+     * Average battery cost of a StandBy session, in percent per hour.
+     *
+     * Only the sessions that can answer the question: long enough to move a
+     * whole-percent reading, and off the charger. Null when none of them
+     * qualify, which is a more honest answer than averaging noise.
+     */
+    val averageDrainPerHour: Float?
+        get() = sessions.mapNotNull { it.drainPerHour }.takeIf { it.isNotEmpty() }?.average()
+            ?.toFloat()
 
     /**
      * The first thing standing in the way right now, in the order the charging
@@ -86,6 +101,7 @@ class DeveloperViewModel @Inject constructor(
     widgetStore: HostedWidgetStore,
     private val attemptLog: StandbyAttemptLog,
     private val crashRecorder: CrashRecorder,
+    private val sessionLog: StandbySessionLog,
     private val requirements: SystemRequirements,
     appVersion: AppVersion,
     private val standbyLauncher: StandbyLauncher,
@@ -105,8 +121,9 @@ class DeveloperViewModel @Inject constructor(
         settings.settings,
         widgetStore.widgets,
         attemptLog.history,
-    ) { prefs, widgets, history ->
-        StoredReadings(prefs.chargingTrigger, prefs.persistence, widgets, history)
+        sessionLog.sessions,
+    ) { prefs, widgets, history, sessions ->
+        StoredReadings(prefs.chargingTrigger, prefs.persistence, widgets, history, sessions)
     }
 
     val uiState: StateFlow<DeveloperUiState> =
@@ -121,6 +138,7 @@ class DeveloperViewModel @Inject constructor(
                 persistence = saved.persistence,
                 widgets = saved.widgets,
                 history = saved.history,
+                sessions = saved.sessions,
                 appVersion = appVersion.display,
                 overlayGranted = requirements.canDrawOverlays(),
                 batteryUnrestricted = requirements.isIgnoringBatteryOptimizations(),
@@ -152,6 +170,10 @@ class DeveloperViewModel @Inject constructor(
     fun clearCrash() {
         crashRecorder.clear()
         refresh()
+    }
+
+    fun clearSessions() {
+        viewModelScope.launch { sessionLog.clear() }
     }
 
     fun clearHistory() {
@@ -221,6 +243,7 @@ class DeveloperViewModel @Inject constructor(
         val persistence: StandbyPersistence,
         val widgets: List<HostedWidget>,
         val history: List<StandbyAttempt>,
+        val sessions: List<StandbySession>,
     )
 
     private companion object {

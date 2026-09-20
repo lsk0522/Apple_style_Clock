@@ -17,6 +17,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.lsk0522.nightstand.core.data.diagnostics.StandbySessionLog
 import com.lsk0522.nightstand.core.design.theme.StandbyTheme
 import com.lsk0522.nightstand.feature.widgets.StandbyWidgetHost
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,6 +43,8 @@ class StandbyDreamService : DreamService() {
     @Inject lateinit var stateSource: StandByStateSource
 
     @Inject lateinit var widgetHost: StandbyWidgetHost
+
+    @Inject lateinit var sessionLog: StandbySessionLog
 
     private val dreamLifecycle = DreamOwners()
 
@@ -97,10 +100,12 @@ class StandbyDreamService : DreamService() {
     override fun onDreamingStarted() {
 
         super.onDreamingStarted()
+        sessionLog.begin()
         dreamLifecycle.resume()
     }
 
     override fun onDreamingStopped() {
+        sessionLog.end()
         dreamLifecycle.pause()
         super.onDreamingStopped()
     }

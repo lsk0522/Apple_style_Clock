@@ -187,6 +187,23 @@
     <string name="developer_host_unresolved">제공 앱을 찾을 수 없음</string>
     <string name="developer_host_empty">추가한 위젯이 없습니다</string>
 
+    <string name="developer_battery">배터리 소모</string>
+    <string name="developer_battery_unmeasured">아직 측정 안 됨</string>
+    <string name="developer_battery_rate">시간당 %1$.1f%%</string>
+    <string name="developer_battery_average">평균</string>
+    <string name="developer_battery_per_hour">충전기를 뺀 상태, 시간당</string>
+    <string name="developer_battery_target">목표</string>
+    <string name="developer_battery_target_value">시간당 5%% 이하</string>
+    <string name="developer_battery_footer">질문에 답할 수 있는 세션만 평균에 넣습니다 — 5분 이상, 충전기를 뺀 상태. 한 번 재보시려면 충전기를 뺀 채 위의 도구로 시계를 열고 폰을 그냥 두세요.</string>
+    <string name="developer_battery_sessions">세션</string>
+    <string name="developer_battery_sessions_footer">시계가 화면에 있었던 최근 30번, 최신순.</string>
+    <string name="developer_battery_none">아직 기록 없음</string>
+    <string name="developer_battery_span">%1$d%% → %2$d%%</string>
+    <string name="developer_battery_detail">%1$d분 · %2$s</string>
+    <string name="developer_battery_on_charger">충전 중</string>
+    <string name="developer_battery_too_short">너무 짧음</string>
+    <string name="developer_battery_clear">세션 기록 지우기</string>
+
     <string name="developer_crash">마지막 크래시</string>
     <string name="developer_crash_none">없음</string>
     <string name="developer_crash_present">1건 있음</string>

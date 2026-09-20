@@ -40,7 +40,7 @@ import com.lsk0522.nightstand.feature.main.R
 import com.lsk0522.nightstand.feature.widgets.StandbyWidgetHost
 
 /** Which of the tab's pages is showing. */
-private enum class DevPage { Root, Simulate, Logs, Sensors, WidgetHost, Crash }
+private enum class DevPage { Root, Simulate, Logs, Sensors, WidgetHost, Crash, Battery }
 
 /**
  * Diagnostics for the parts of the app that run with nothing on screen.
@@ -73,6 +73,7 @@ fun DeveloperTab(
         DevPage.Sensors -> SensorsPage(state, onBack = { page = DevPage.Root }, modifier)
         DevPage.WidgetHost -> WidgetHostPage(state, onBack = { page = DevPage.Root }, modifier)
         DevPage.Crash -> CrashPage(state, viewModel, onBack = { page = DevPage.Root }, modifier)
+        DevPage.Battery -> BatteryPage(state, viewModel, onBack = { page = DevPage.Root }, modifier)
     }
 }
 
@@ -178,6 +179,14 @@ private fun RootPage(
             header = R.string.developer_diagnostics_header,
             footer = R.string.developer_export_footer,
         ) {
+            ListRow(
+                title = stringResource(R.string.developer_battery),
+                value = state.averageDrainPerHour
+                    ?.let { stringResource(R.string.developer_battery_rate, it) }
+                    ?: stringResource(R.string.developer_battery_unmeasured),
+                showChevron = true,
+                onClick = { onOpen(DevPage.Battery) },
+            )
             ListRow(
                 title = stringResource(R.string.developer_crash),
                 value = stringResource(
@@ -457,7 +466,100 @@ private fun WidgetHostPage(
 }
 
 /**
+ * What StandBy costs the battery, measured on this phone.
+ *
+ * The plan set a target of under 5% an hour and nothing was ever held against
+ * it, because measuring needs a phone left alone with a stopwatch. The phone
+ * keeps the stopwatch now; this is where the readings land.
+ */
+@Composable
+private fun BatteryPage(
+    state: DeveloperUiState,
+    viewModel: DeveloperViewModel,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IosScreen(title = stringResource(R.string.developer_battery), modifier = modifier) {
+        backRow(onBack)
+
+        listSection(
+            key = "average",
+            header = R.string.developer_battery_average,
+            footer = R.string.developer_battery_footer,
+        ) {
+            ListRow(
+                title = stringResource(R.string.developer_battery_per_hour),
+                value = state.averageDrainPerHour
+                    ?.let { stringResource(R.string.developer_battery_rate, it) }
+                    ?: stringResource(R.string.developer_battery_unmeasured),
+            )
+            ListRow(
+                title = stringResource(R.string.developer_battery_target),
+                value = stringResource(R.string.developer_battery_target_value),
+                showSeparator = false,
+            )
+        }
+
+        listSection(
+            key = "sessions",
+            header = R.string.developer_battery_sessions,
+            footer = R.string.developer_battery_sessions_footer,
+        ) {
+            if (state.sessions.isEmpty()) {
+                ListRow(
+                    title = stringResource(R.string.developer_battery_none),
+                    enabled = false,
+                    showSeparator = false,
+                    onClick = null,
+                )
+            } else {
+                state.sessions.forEachIndexed { index, session ->
+                    ListRow(
+                        title = stringResource(
+                            R.string.developer_battery_span,
+                            session.startPercent,
+                            session.endPercent,
+                        ),
+                        subtitle = stringResource(
+                            R.string.developer_battery_detail,
+                            session.durationMillis / 60_000,
+                            relativeTime(session.startedAtEpochMillis),
+                        ),
+                        value = when {
+                            session.charging ->
+                                stringResource(R.string.developer_battery_on_charger)
+
+                            session.drainPerHour != null ->
+                                stringResource(
+                                    R.string.developer_battery_rate,
+                                    session.drainPerHour!!,
+                                )
+
+                            else -> stringResource(R.string.developer_battery_too_short)
+                        },
+                        showSeparator = index != state.sessions.lastIndex,
+                    )
+                }
+            }
+        }
+
+        if (state.sessions.isNotEmpty()) {
+            item(key = "clearSessions") {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    IosButton(
+                        label = stringResource(R.string.developer_battery_clear),
+                        prominent = false,
+                        onClick = viewModel::clearSessions,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
  * The last stack trace, in full.
+
  *
  * Shown as plain monospaced text rather than parsed into rows: what is useful
  * about a trace is every line of it, in order.

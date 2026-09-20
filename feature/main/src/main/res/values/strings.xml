@@ -185,6 +185,23 @@
     <string name="developer_host_unresolved">Provider app not found</string>
     <string name="developer_host_empty">No widgets added</string>
 
+    <string name="developer_battery">Battery cost</string>
+    <string name="developer_battery_unmeasured">Not measured yet</string>
+    <string name="developer_battery_rate">%1$.1f%%/h</string>
+    <string name="developer_battery_average">Average</string>
+    <string name="developer_battery_per_hour">Per hour, off the charger</string>
+    <string name="developer_battery_target">Target</string>
+    <string name="developer_battery_target_value">under 5%%/h</string>
+    <string name="developer_battery_footer">Averaged over sessions that can answer the question: at least five minutes long, and unplugged. To measure one, open the clock from the tool above with the charger out and leave the phone alone.</string>
+    <string name="developer_battery_sessions">Sessions</string>
+    <string name="developer_battery_sessions_footer">The last thirty times the clock was on screen, newest first.</string>
+    <string name="developer_battery_none">Nothing recorded yet</string>
+    <string name="developer_battery_span">%1$d%% → %2$d%%</string>
+    <string name="developer_battery_detail">%1$d min · %2$s</string>
+    <string name="developer_battery_on_charger">On charger</string>
+    <string name="developer_battery_too_short">Too short</string>
+    <string name="developer_battery_clear">Clear the sessions</string>
+
     <string name="developer_crash">Last crash</string>
     <string name="developer_crash_none">None</string>
     <string name="developer_crash_present">One stored</string>
