@@ -37,5 +37,5 @@
     <string name="widgets_rotate_30s">30 seconds</string>
     <string name="widgets_rotate_1m">1 minute</string>
     <string name="widgets_rotate_5m">5 minutes</string>
-    <string name="widgets_rotate_footer">Widgets are dealt alternately into the left and right slots, and each slot swipes up and down on its own. With auto-advance off, they only move when you move them.</string>
+    <string name="widgets_rotate_footer">Widgets are dealt round-robin into the slots beside each other, and each slot swipes up and down on its own. Phones have two slots; a tablet or unfolded foldable has three. With auto-advance off, they only move when you move them.</string>
 </resources>

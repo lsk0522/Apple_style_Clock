@@ -37,5 +37,5 @@
     <string name="widgets_rotate_30s">30초</string>
     <string name="widgets_rotate_1m">1분</string>
     <string name="widgets_rotate_5m">5분</string>
-    <string name="widgets_rotate_footer">위젯을 좌·우 두 칸에 번갈아 놓고, 칸마다 위·아래로 쓸어 넘깁니다. 자동 넘기기를 끄면 손으로만 넘어갑니다.</string>
+    <string name="widgets_rotate_footer">위젯을 칸에 돌아가며 넣고, 칸마다 위·아래로 쓸어 넘깁니다. 폰은 두 칸, 태블릿이나 펼친 폴더블은 세 칸입니다. 자동 넘기기를 끄면 손으로만 넘어갑니다.</string>
 </resources>

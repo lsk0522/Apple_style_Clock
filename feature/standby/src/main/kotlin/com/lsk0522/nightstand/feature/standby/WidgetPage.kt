@@ -35,15 +35,15 @@ import com.lsk0522.nightstand.feature.widgets.WidgetTile
 import kotlinx.coroutines.delay
 
 /**
- * The widget half of StandBy: two slots side by side, each its own stack.
+ * The widget half of StandBy: slots side by side, each its own stack.
  *
  * This is the iOS arrangement, and the reason for it is that a stack is what
  * makes more than two widgets reachable at all. The alternative — one page of
  * two, then another page of two — means the pair you put together is fixed,
  * and it is a different gesture from the one people already know.
  *
- * Widgets are dealt alternately into the two stacks, so the first two you add
- * are the two you see.
+ * Widgets are dealt round-robin into the stacks, so the first ones you add are
+ * the ones you see.
  */
 @Composable
 fun WidgetPage(
@@ -67,11 +67,17 @@ fun WidgetPage(
             return@BoxWithConstraints
         }
 
-        // Dealt alternately rather than split down the middle: with three
-        // widgets, splitting would bury the second one under the first.
-        val stacks = remember(widgets) {
+        // Two slots on a phone, the way iOS StandBy has it. A tablet or an
+        // unfolded foldable takes a third: the short edge is what decides,
+        // which is the same thing `sw600dp` means, and on those screens two
+        // tiles leave a conspicuous stripe of black between them.
+        val slots = if (maxHeight >= LargeScreenShortEdge) 3 else 2
+
+        // Dealt round-robin rather than split into blocks: with three widgets
+        // and two slots, splitting would bury the second one under the first.
+        val stacks = remember(widgets, slots) {
             widgets.withIndex()
-                .groupBy { it.index % 2 }
+                .groupBy { it.index % slots }
                 .toSortedMap()
                 .map { (_, entries) -> entries.map { it.value } }
         }
@@ -173,6 +179,9 @@ private fun StackDots(count: Int, current: Int, modifier: Modifier = Modifier) {
         }
     }
 }
+
+/** The short edge at which a third slot starts being worth it. */
+private val LargeScreenShortEdge = 600.dp
 
 private val Margin = 24.dp
 private val Gap = 20.dp
