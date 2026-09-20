@@ -130,7 +130,9 @@ private fun TabBarItem(
 
 private val BAR_HEIGHT = 56.dp
 private val BAR_SIDE_INSET = 16.dp
-private val BAR_BOTTOM_INSET = 10.dp
+// Raised off the navigation inset a touch more than the 10dp it started at,
+// which sat too close to the bottom edge on a tall phone.
+private val BAR_BOTTOM_INSET = 15.dp
 private val ICON_SIZE = 24.dp
 
 /**
