@@ -7,18 +7,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lsk0522.nightstand.core.design.theme.StandbyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Hosts the StandBy clock.
  *
- * Launched by the charging receiver, which is why so much of the setup here is
+ * Launched by the charging service, which is why so much of the setup here is
  * about appearing over whatever was already on screen:
  *
  *  - `setShowWhenLocked` puts it above the lock screen. The keyguard is left
@@ -38,11 +41,16 @@ class StandByActivity : ComponentActivity() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         goFullscreen()
-        requestLowestRefreshRate()
+        requestLowRefreshRate()
 
         setContent {
             val viewModel: StandByViewModel = hiltViewModel()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+            // Starts dimmed so the clock can be left on all night the way an
+            // always-on display is; a tap brings it back to normal.
+            var dimmed by remember { mutableStateOf(true) }
+            LaunchedEffect(dimmed) { applyBrightness(dimmed) }
 
             // Charging stopped, or stopped matching what the user asked for.
             // Null means the first reading has not arrived yet, so it must not
@@ -53,7 +61,11 @@ class StandByActivity : ComponentActivity() {
             }
 
             StandbyTheme(nightVision = false) {
-                StandByScreen(state = state, onExit = ::finish)
+                StandByScreen(
+                    state = state,
+                    onSingleTap = { dimmed = !dimmed },
+                    onExit = ::finish,
+                )
             }
         }
     }
@@ -69,18 +81,42 @@ class StandByActivity : ComponentActivity() {
     }
 
     /**
-     * Asks for the slowest mode the panel offers.
+     * Asks the panel to idle as slowly as it can.
      *
-     * The S25 Ultra's display runs from 1Hz to 120Hz, and a clock that changes
-     * once a minute has no use for the top of that range. On a phone left
-     * charging all night the difference in heat and power is worth asking for.
+     * Requesting 1Hz outright rather than the slowest mode the display
+     * advertises: an LTPO panel like the S25 Ultra's can hold a single frame
+     * for a second, but it does not publish that as a `Display.Mode`, so
+     * picking from `supportedModes` only ever gets down to 60Hz. The system
+     * clamps this to whatever it can actually do.
+     *
+     * The other half of this is in the screen itself — it only recomposes when
+     * a digit changes. A view that redrew every frame would hold the refresh
+     * rate up no matter what the window asked for.
      */
-    private fun requestLowestRefreshRate() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
-        val slowest = display?.supportedModes
-            ?.minByOrNull { it.refreshRate }
-            ?.refreshRate
-            ?: return
-        window.attributes = window.attributes.apply { preferredRefreshRate = slowest }
+    private fun requestLowRefreshRate() {
+        window.attributes = window.attributes.apply {
+            preferredRefreshRate = TARGET_REFRESH_HZ
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                // Lets the system drop below the mode's nominal rate when the
+                // content is static, which is the whole point on LTPO.
+                preferredDisplayModeId = 0
+            }
+        }
+    }
+
+    private fun applyBrightness(dimmed: Boolean) {
+        window.attributes = window.attributes.apply {
+            screenBrightness = if (dimmed) DIM_BRIGHTNESS else BRIGHT_BRIGHTNESS
+        }
+    }
+
+    private companion object {
+        const val TARGET_REFRESH_HZ = 1f
+
+        /** Readable in a dark room without lighting it up. */
+        const val DIM_BRIGHTNESS = 0.25f
+
+        /** Hand control back to the system's own brightness. */
+        const val BRIGHT_BRIGHTNESS = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
     }
 }

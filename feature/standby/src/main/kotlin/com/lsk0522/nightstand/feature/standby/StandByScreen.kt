@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,12 +33,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
 import com.lsk0522.nightstand.core.design.R as DesignR
 import com.lsk0522.nightstand.core.design.theme.NightstandMotion
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
@@ -52,18 +52,20 @@ import kotlinx.coroutines.delay
 /**
  * The clock that takes over the screen while charging — the Digital face.
  *
- * Laid out the way Apple's is: the time is the whole point, so it is set as
- * large as the screen allows, with the quieter information in a column beside
- * it rather than stacked underneath. Centring everything and hanging the date
- * below reads like a screensaver; this reads like a clock.
+ * The date column and the time sit together as one block, centred on the
+ * screen. An earlier version gave the column `weight(1f)`, which pushed the
+ * two halves to opposite edges: the date pinned far left, the clock far right,
+ * and nothing in between. They read as two things rather than one clock.
  *
  * The remaining five faces arrive in Phase 4.
  *
+ * @param onSingleTap toggles the dimmed, always-on brightness.
  * @param onExit called on a double tap, the gesture that dismisses StandBy.
  */
 @Composable
 fun StandByScreen(
     state: StandByUiState,
+    onSingleTap: () -> Unit,
     onExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -85,80 +87,85 @@ fun StandByScreen(
 
     val shift = rememberPixelShift(enabled = state.burnInProtection)
 
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
             .background(palette.canvas)
-            .pointerInput(onExit) {
-                detectTapGestures(onDoubleTap = { onExit() })
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { onSingleTap() },
+                    onDoubleTap = { onExit() },
+                )
             },
     ) {
+        // Sized from the screen rather than a fixed point size, so the same
+        // face fills a tall panel and a short one without clipping either.
+        val usableHeight = maxHeight - VERTICAL_MARGIN * 2
+        val digitSize = with(LocalDensity.current) {
+            (usableHeight * DIGIT_HEIGHT_RATIO).toSp()
+        }
+
         Row(
             modifier = Modifier
-                .fillMaxSize()
+                .align(Alignment.Center)
                 .alpha(fade)
                 .offset(x = shift.first, y = shift.second)
-                .padding(horizontal = SIDE_MARGIN, vertical = TOP_MARGIN),
+                .padding(horizontal = SIDE_MARGIN, vertical = VERTICAL_MARGIN),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SideInfo(
                 now = now,
                 batteryPercent = state.batteryPercent,
                 charging = state.chargeType.isCharging,
-                modifier = Modifier.weight(1f),
             )
-            Spacer(Modifier.width(SIDE_MARGIN))
+            Spacer(Modifier.width(COLUMN_GAP))
             TimeStack(
                 now = now,
                 use24Hour = state.use24Hour,
-                modifier = Modifier.fillMaxHeight(),
+                digitSize = digitSize,
             )
         }
     }
 }
 
-/**
- * Hour above minute, sized to whatever height it is given.
- *
- * A fixed point size would either leave the screen half empty or overflow it,
- * depending on the phone. Measuring first is what lets the same face fill a
- * tall panel and a short one.
- */
+/** Hour above minute, at the size the screen was measured for. */
 @Composable
 private fun TimeStack(
     now: LocalDateTime,
     use24Hour: Boolean,
+    digitSize: androidx.compose.ui.unit.TextUnit,
     modifier: Modifier = Modifier,
 ) {
     val palette = NightstandTheme.standby
 
-    BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
-        val digitSize = with(LocalDensity.current) { (maxHeight * DIGIT_HEIGHT_RATIO).toSp() }
-        val style = NightstandType.HeroClockDisplay.copy(
-            fontSize = digitSize,
-            lineHeight = digitSize * LINE_HEIGHT_RATIO,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = (-0.04).em,
-            lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Center,
-                trim = LineHeightStyle.Trim.Both,
-            ),
-        )
+    // Trimming to the glyph bounds is what lets the two rows sit close. Left
+    // to its default, a font this large carries enough built-in leading to
+    // open a visible gap between the hour and the minute.
+    val style: TextStyle = NightstandType.HeroClockDisplay.copy(
+        fontSize = digitSize,
+        lineHeight = digitSize * LINE_HEIGHT_RATIO,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = (-0.04).em,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Center,
+            trim = LineHeightStyle.Trim.Both,
+        ),
+    )
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = now.format(hourFormatter(use24Hour)),
-                style = style,
-                color = palette.textPrimary,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                text = now.format(MINUTE_FORMAT),
-                style = style,
-                color = palette.textPrimary,
-                textAlign = TextAlign.Center,
-            )
-        }
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = now.format(hourFormatter(use24Hour)),
+            style = style,
+            color = palette.textPrimary,
+        )
+        Text(
+            text = now.format(MINUTE_FORMAT),
+            style = style,
+            color = palette.textPrimary,
+        )
     }
 }
 
@@ -175,6 +182,7 @@ private fun SideInfo(
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = Alignment.Start,
     ) {
         Text(
             text = now.format(weekdayFormatter()),
@@ -188,7 +196,7 @@ private fun SideInfo(
         )
 
         if (batteryPercent != null) {
-            Spacer(Modifier.size(10.dp))
+            Spacer(Modifier.height(10.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (charging) {
                     Icon(
@@ -212,6 +220,9 @@ private fun SideInfo(
 /**
  * Ticks the clock, waking only as often as the display actually changes —
  * once a second when seconds are shown, otherwise on the minute.
+ *
+ * This is what lets the panel idle: a recomposition every frame would hold the
+ * refresh rate up no matter what the window asks for.
  */
 @Composable
 private fun rememberClock(showSeconds: Boolean) = produceState(
@@ -276,9 +287,10 @@ private fun localizedFormatter(skeleton: String): DateTimeFormatter {
     )
 }
 
-/** How much of the available height one of the two digit rows takes. */
-private const val DIGIT_HEIGHT_RATIO = 0.46f
+/** How much of the usable height one of the two digit rows takes. */
+private const val DIGIT_HEIGHT_RATIO = 0.42f
 private const val LINE_HEIGHT_RATIO = 0.95f
 
-private val SIDE_MARGIN = 40.dp
-private val TOP_MARGIN = 28.dp
+private val SIDE_MARGIN: Dp = 40.dp
+private val VERTICAL_MARGIN: Dp = 24.dp
+private val COLUMN_GAP: Dp = 44.dp
