@@ -185,6 +185,13 @@
     <string name="developer_host_unresolved">Provider app not found</string>
     <string name="developer_host_empty">No widgets added</string>
 
+    <string name="developer_crash">Last crash</string>
+    <string name="developer_crash_none">None</string>
+    <string name="developer_crash_present">One stored</string>
+    <string name="developer_crash_footer">Kept on this device only, and nothing is sent anywhere. Most of this app runs with nothing on screen, where a crash is otherwise invisible — the clock simply does not appear.</string>
+    <string name="developer_crash_share">Share the trace</string>
+    <string name="developer_crash_clear">Clear it</string>
+
     <string name="developer_export_footer">Turns the current settings, state and recent log into text and shares it. No identifying information is included.</string>
 
     <string name="developer_build_header">Build</string>

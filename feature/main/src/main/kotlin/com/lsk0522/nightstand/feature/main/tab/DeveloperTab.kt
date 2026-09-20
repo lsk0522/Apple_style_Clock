@@ -2,9 +2,12 @@ package com.lsk0522.nightstand.feature.main.tab
 
 import android.content.Intent
 import android.text.format.DateUtils
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -26,6 +30,8 @@ import com.lsk0522.nightstand.core.design.component.IosButton
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.listSection
+import com.lsk0522.nightstand.core.design.theme.NightstandTheme
+import com.lsk0522.nightstand.core.design.theme.NightstandType
 import com.lsk0522.nightstand.feature.main.DeveloperBlocker
 import com.lsk0522.nightstand.feature.main.DeveloperHostHolder
 import com.lsk0522.nightstand.feature.main.DeveloperUiState
@@ -34,7 +40,7 @@ import com.lsk0522.nightstand.feature.main.R
 import com.lsk0522.nightstand.feature.widgets.StandbyWidgetHost
 
 /** Which of the tab's pages is showing. */
-private enum class DevPage { Root, Simulate, Logs, Sensors, WidgetHost }
+private enum class DevPage { Root, Simulate, Logs, Sensors, WidgetHost, Crash }
 
 /**
  * Diagnostics for the parts of the app that run with nothing on screen.
@@ -66,6 +72,7 @@ fun DeveloperTab(
         DevPage.Logs -> LogsPage(state, viewModel, onBack = { page = DevPage.Root }, modifier)
         DevPage.Sensors -> SensorsPage(state, onBack = { page = DevPage.Root }, modifier)
         DevPage.WidgetHost -> WidgetHostPage(state, onBack = { page = DevPage.Root }, modifier)
+        DevPage.Crash -> CrashPage(state, viewModel, onBack = { page = DevPage.Root }, modifier)
     }
 }
 
@@ -171,6 +178,19 @@ private fun RootPage(
             header = R.string.developer_diagnostics_header,
             footer = R.string.developer_export_footer,
         ) {
+            ListRow(
+                title = stringResource(R.string.developer_crash),
+                value = stringResource(
+                    if (state.lastCrash == null) {
+                        R.string.developer_crash_none
+                    } else {
+                        R.string.developer_crash_present
+                    },
+                ),
+                showChevron = state.lastCrash != null,
+                enabled = state.lastCrash != null,
+                onClick = if (state.lastCrash == null) null else { { onOpen(DevPage.Crash) } },
+            )
             ListRow(
                 title = stringResource(R.string.developer_widget_host),
                 value = state.widgets.size.toString(),
@@ -436,8 +456,71 @@ private fun WidgetHostPage(
     }
 }
 
+/**
+ * The last stack trace, in full.
+ *
+ * Shown as plain monospaced text rather than parsed into rows: what is useful
+ * about a trace is every line of it, in order.
+ */
 @Composable
-private fun PermissionRow(label: Int, granted: Boolean, showSeparator: Boolean = true) {
+private fun CrashPage(
+    state: DeveloperUiState,
+    viewModel: DeveloperViewModel,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    val palette = NightstandTheme.palette
+    val trace = state.lastCrash ?: return
+
+    IosScreen(title = stringResource(R.string.developer_crash), modifier = modifier) {
+        backRow(onBack)
+
+        listSection(key = "trace", footer = R.string.developer_crash_footer) {
+            Text(
+                text = trace,
+                style = NightstandType.Footnote.copy(fontFamily = FontFamily.Monospace),
+                color = palette.label,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+
+        item(key = "actions") {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                IosButton(
+                    label = stringResource(R.string.developer_crash_share),
+                    onClick = {
+                        val share = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, trace)
+                        }
+                        runCatching {
+                            context.startActivity(
+                                Intent.createChooser(share, null)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                            )
+                        }
+                    },
+                )
+                IosButton(
+                    label = stringResource(R.string.developer_crash_clear),
+                    prominent = false,
+                    onClick = {
+                        viewModel.clearCrash()
+                        onBack()
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PermissionRow(
+label: Int, granted: Boolean, showSeparator: Boolean = true) {
     ListRow(
         title = stringResource(label),
         value = stringResource(

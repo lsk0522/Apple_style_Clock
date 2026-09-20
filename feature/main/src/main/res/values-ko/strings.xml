@@ -187,6 +187,13 @@
     <string name="developer_host_unresolved">제공 앱을 찾을 수 없음</string>
     <string name="developer_host_empty">추가한 위젯이 없습니다</string>
 
+    <string name="developer_crash">마지막 크래시</string>
+    <string name="developer_crash_none">없음</string>
+    <string name="developer_crash_present">1건 있음</string>
+    <string name="developer_crash_footer">이 기기에만 남고 어디로도 전송되지 않습니다. 이 앱은 대부분 화면에 아무것도 없는 상태에서 도는데, 그때 나는 크래시는 보이지 않습니다 — 그냥 시계가 안 뜰 뿐입니다.</string>
+    <string name="developer_crash_share">스택 트레이스 공유</string>
+    <string name="developer_crash_clear">지우기</string>
+
     <string name="developer_export_footer">지금 설정·상태·최근 기록을 글로 만들어 공유합니다. 식별 정보는 넣지 않습니다.</string>
 
     <string name="developer_build_header">빌드</string>

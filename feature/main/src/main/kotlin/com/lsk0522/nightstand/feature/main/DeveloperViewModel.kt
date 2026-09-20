@@ -9,6 +9,7 @@ import com.lsk0522.nightstand.core.common.model.StandbyPersistence
 import com.lsk0522.nightstand.core.data.charging.ChargingStatusMonitor
 import com.lsk0522.nightstand.core.data.charging.ScreenState
 import com.lsk0522.nightstand.core.data.charging.ScreenStateMonitor
+import com.lsk0522.nightstand.core.data.diagnostics.CrashRecorder
 import com.lsk0522.nightstand.core.data.sensor.AmbientLightMonitor
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.standby.StandbyAttempt
@@ -27,7 +28,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 
 data class DeveloperUiState(
@@ -45,6 +48,8 @@ data class DeveloperUiState(
     val overlayGranted: Boolean = false,
     val batteryUnrestricted: Boolean = false,
     val notificationsGranted: Boolean = false,
+    /** The last stack trace, or null if nothing has crashed. */
+    val lastCrash: String? = null,
 ) {
     /** Whether the current rule would let [type] bring the clock up. */
     fun wouldTrigger(type: ChargeType): Boolean = trigger.matches(type)
@@ -80,6 +85,7 @@ class DeveloperViewModel @Inject constructor(
     private val ambientLight: AmbientLightMonitor,
     widgetStore: HostedWidgetStore,
     private val attemptLog: StandbyAttemptLog,
+    private val crashRecorder: CrashRecorder,
     private val requirements: SystemRequirements,
     appVersion: AppVersion,
     private val standbyLauncher: StandbyLauncher,
@@ -119,6 +125,8 @@ class DeveloperViewModel @Inject constructor(
                 overlayGranted = requirements.canDrawOverlays(),
                 batteryUnrestricted = requirements.isIgnoringBatteryOptimizations(),
                 notificationsGranted = requirements.hasNotificationPermission(),
+                // A file read, so off the main thread even though it is tiny.
+                lastCrash = withContext(Dispatchers.IO) { crashRecorder.lastCrash() },
             )
         }.stateIn(
             scope = viewModelScope,
@@ -140,6 +148,11 @@ class DeveloperViewModel @Inject constructor(
 
     /** Opens the clock straight away, without waiting for a charger. */
     fun launchStandby() = standbyLauncher.launch()
+
+    fun clearCrash() {
+        crashRecorder.clear()
+        refresh()
+    }
 
     fun clearHistory() {
         viewModelScope.launch { attemptLog.clearHistory() }
@@ -180,6 +193,11 @@ class DeveloperViewModel @Inject constructor(
             appendLine("[widgets: " + s.widgets.size + "]")
             s.widgets.forEach { appendLine(it.appWidgetId.toString() + " " + it.providerFlattened) }
             appendLine()
+            s.lastCrash?.let {
+                appendLine("[last crash]")
+                appendLine(it)
+                appendLine()
+            }
             appendLine("[recent attempts: " + s.history.size + "]")
             s.history.forEach {
                 appendLine(
