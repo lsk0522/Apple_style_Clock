@@ -4,10 +4,18 @@
     <string name="widgets_pick_title">위젯 고르기</string>
     <string name="widgets_added_header">추가된 위젯</string>
     <string name="widgets_available_header">이 폰에 설치된 위젯</string>
+    <string name="widgets_available_footer">처음 추가할 때 시스템이 한 번 허용을 묻습니다. 위젯에 따라 자체 설정 화면이 이어서 열릴 수 있습니다.</string>
+    <string name="widgets_needs_setup">추가 시 설정 화면이 열립니다</string>
     <string name="widgets_empty">아직 추가된 위젯이 없습니다</string>
     <string name="widgets_add">위젯 추가</string>
     <string name="widgets_cancel">취소</string>
     <string name="widgets_remove_hint">눌러서 제거</string>
     <string name="widgets_unavailable">사용할 수 없는 위젯</string>
-    <string name="widgets_add_footer">폰에 설치된 위젯을 그대로 올릴 수 있습니다. 갤럭시라면 삼성 시계·날씨·캘린더도 포함됩니다. 처음 추가할 때 시스템이 한 번 허용을 묻습니다.</string>
+    <string name="widgets_add_footer">폰에 설치된 위젯을 그대로 올릴 수 있습니다. 갤럭시라면 삼성 시계·날씨·캘린더도 포함됩니다.</string>
+
+    <string name="widgets_rotate_header">자동 넘기기</string>
+    <string name="widgets_rotate_enabled">자동으로 넘기기</string>
+    <string name="widgets_rotate_interval">전환 간격</string>
+    <string name="widgets_rotate_interval_value">10초</string>
+    <string name="widgets_rotate_footer">여러 개를 올리면 순서대로 전환됩니다. 전환 동작은 Phase 6에서 구현됩니다.</string>
 </resources>

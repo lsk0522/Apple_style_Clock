@@ -8,11 +8,15 @@
 그 경험을 안드로이드에서 그대로 — 그리고 **안드로이드 위젯의 자유도까지 더해서** 구현합니다.
 
 [![Build](https://github.com/lsk0522/Apple_style_Clock/actions/workflows/build.yml/badge.svg)](https://github.com/lsk0522/Apple_style_Clock/actions/workflows/build.yml)
-[![Status](https://img.shields.io/badge/status-Phase%201%20in%20progress-orange)]()
+[![Status](https://img.shields.io/badge/status-Phase%205%20complete-brightgreen)]()
 [![Platform](https://img.shields.io/badge/platform-Android-3DDC84)]()
 [![Language](https://img.shields.io/badge/language-Kotlin-7F52FF)]()
 [![UI](https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
+
+### [⬇️ APK 내려받기](https://github.com/lsk0522/Apple_style_Clock/releases/download/latest-debug/nightstand-latest.apk)
+
+이 링크는 **항상 최신 빌드**를 가리킵니다. 파일 이름이 바뀌지 않으니 저장해 두고 쓰셔도 됩니다.
 
 **[기능](#-기능) · [설치](#-설치) · [사용법](#-사용법) · [FAQ](#-faq) · [개발](#-개발자용) · [로드맵](#-로드맵)**
 
@@ -82,11 +86,12 @@
 
 ### 방법 2 — 개발 빌드 APK (지금 가능)
 
-**[최신 개발 빌드 내려받기](https://github.com/lsk0522/Apple_style_Clock/releases/tag/latest-debug)**
+**[nightstand-latest.apk 내려받기](https://github.com/lsk0522/Apple_style_Clock/releases/download/latest-debug/nightstand-latest.apk)**
 
-이 링크는 **항상 최신 성공 빌드**를 가리킵니다. 푸시될 때마다 자동으로 갱신됩니다.
+항상 최신 성공 빌드를 가리키고, **파일 이름이 바뀌지 않습니다.** 저장소 첫 화면 오른쪽
+**Releases** 에서도 바로 보입니다.
 
-1. 위 링크에서 `.apk` 파일 다운로드
+1. 위 링크를 누르면 바로 다운로드됩니다
 2. 파일을 열고 **"이 출처 허용"** 을 켠 뒤 설치
 3. 앱을 실행하면 **설정 안내 화면**이 먼저 나옵니다 — 각 항목을 눌러 진행하세요
 

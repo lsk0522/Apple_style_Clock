@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lsk0522.nightstand.core.data.settings.SettingsRepository
 import com.lsk0522.nightstand.core.data.widget.HostedWidget
 import com.lsk0522.nightstand.core.data.widget.HostedWidgetStore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,14 +12,28 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class WidgetsViewModel @Inject constructor(
     private val store: HostedWidgetStore,
+    private val settings: SettingsRepository,
     val host: StandbyWidgetHost,
 ) : ViewModel() {
+
+    val autoRotate: StateFlow<Boolean> = settings.settings
+        .map { it.autoRotateWidgets }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+            initialValue = true,
+        )
+
+    fun setAutoRotate(value: Boolean) {
+        viewModelScope.launch { settings.setAutoRotateWidgets(value) }
+    }
 
     val widgets: StateFlow<List<HostedWidget>> = store.widgets.stateIn(
         scope = viewModelScope,

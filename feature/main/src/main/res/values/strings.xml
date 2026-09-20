@@ -8,11 +8,6 @@
     <string name="tab_donate">후원</string>
 
     <!-- 위젯 탭 -->
-    <string name="widgets_rotate_header">자동 넘기기</string>
-    <string name="widgets_rotate_enabled">자동으로 넘기기</string>
-    <string name="widgets_rotate_interval">전환 간격</string>
-    <string name="widgets_rotate_interval_value">10초</string>
-    <string name="widgets_rotate_footer">손으로 넘기면 10초 동안 자동 전환이 멈춥니다.</string>
 
     <!-- 충전 탭 -->
     <string name="charging_title">충전</string>

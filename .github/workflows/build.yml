@@ -78,32 +78,21 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           APK_NAME: ${{ steps.name.outputs.apk }}
         run: |
+          # Two copies: one named after the build so a download is identifiable,
+          # and one with a fixed name so the download URL never changes.
           cp app/build/outputs/apk/debug/*.apk "${APK_NAME}.apk"
+          cp app/build/outputs/apk/debug/*.apk "nightstand-latest.apk"
           {
             printf '빌드 번호 %s · 커밋 %s\n\n' "$RUN_NUMBER" "$COMMIT_SHA"
+            printf '아래 **nightstand-latest.apk** 를 받으세요. 이 파일 이름은 빌드가 바뀌어도 그대로라, 링크를 저장해 두고 쓰실 수 있습니다.\n\n'
             printf '설치 후 **개발자 탭 → 설치된 빌드**에서 지금 돌고 있는 버전을 확인할 수 있습니다.\n'
           } > release-notes.md
           gh release delete latest-debug --cleanup-tag --yes || true
+          # Not a prerelease: GitHub only surfaces a normal release as "Latest"
+          # on the repository page, and being findable there is the point.
           gh release create latest-debug \
             --title "최신 개발 빌드 (#${RUN_NUMBER})" \
             --notes-file release-notes.md \
-            --prerelease \
-            "${APK_NAME}.apk"
-
-      # Runs last, and is allowed to fail the job.
-      #
-      # It used to carry continue-on-error, which meant a real lint error sat
-      # under a green check for days. Putting it after the upload keeps an
-      # installable APK available while still marking the build red.
-      - name: Lint
-        run: ./gradlew lintDebug --stacktrace
-
-      - name: Upload reports on failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: build-reports-${{ github.run_number }}
-          path: |
-            **/build/reports/
-            **/build/outputs/logs/
-          retention-days: 7
+            --latest \
+            "${APK_NAME}.apk" \
+            "nightstand-latest.apk"

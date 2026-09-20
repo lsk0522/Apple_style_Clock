@@ -1,15 +1,16 @@
 package com.lsk0522.nightstand.feature.widgets
 
 import android.app.Activity
-import android.widget.ImageView
+import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
+import android.content.Intent
+import android.widget.ImageView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lsk0522.nightstand.core.design.component.IosButton
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
+import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
 
 /**
@@ -33,6 +35,10 @@ import com.lsk0522.nightstand.core.design.component.listSection
  * The list is whatever is installed on the phone, so on a Galaxy that is the
  * Samsung clock, weather and calendar — the thing iOS StandBy cannot do, since
  * it only accepts widgets built for it.
+ *
+ * Adding one is up to two prompts, neither of which this app controls:
+ * the system asks whether to allow binding, and then the widget itself may
+ * insist on being configured before it will draw anything.
  */
 @Composable
 fun WidgetsScreen(
@@ -41,41 +47,70 @@ fun WidgetsScreen(
 ) {
     val context = LocalContext.current
     val added by viewModel.widgets.collectAsStateWithLifecycle()
+    val autoRotate by viewModel.autoRotate.collectAsStateWithLifecycle()
     val providers = remember { viewModel.installedProviders() }
 
     var picking by remember { mutableStateOf(false) }
-    var pendingId by remember { mutableStateOf<Int?>(null) }
-    var pendingProvider by remember { mutableStateOf<ComponentName?>(null) }
+    var pending by remember { mutableStateOf<PendingWidget?>(null) }
 
-    // The system's consent prompt. Its result is the only way to learn whether
-    // the user allowed this app to bind the widget.
+    // Declared before the bind launcher because binding may hand straight over
+    // to it.
+    val configureLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+    ) { result ->
+        val current = pending
+        if (current != null) {
+            if (result.resultCode == Activity.RESULT_OK) {
+                viewModel.confirmAdded(current.id, current.provider)
+            } else {
+                // Configuration cancelled. A widget that was never configured
+                // would draw nothing, so drop it rather than leave a blank
+                // tile the user cannot explain.
+                viewModel.abandon(current.id)
+            }
+        }
+        pending = null
+        picking = false
+    }
+
+    fun finishAdding(id: Int, provider: ComponentName, configure: ComponentName?) {
+        if (configure == null) {
+            viewModel.confirmAdded(id, provider)
+            pending = null
+            picking = false
+            return
+        }
+        pending = PendingWidget(id, provider, configure)
+        configureLauncher.launch(
+            Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE).apply {
+                component = configure
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+            },
+        )
+    }
+
     val bindLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
     ) { result ->
-        val id = pendingId
-        val provider = pendingProvider
-        if (id != null && provider != null) {
-            if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.confirmAdded(id, provider)
-            } else {
-                // Declined. Hand the id back rather than leaking it.
-                viewModel.abandon(id)
-            }
+        val current = pending
+        if (current == null) return@rememberLauncherForActivityResult
+        if (result.resultCode == Activity.RESULT_OK) {
+            finishAdding(current.id, current.provider, current.configure)
+        } else {
+            // Declined. Hand the id back rather than leaking it.
+            viewModel.abandon(current.id)
+            pending = null
+            picking = false
         }
-        pendingId = null
-        pendingProvider = null
-        picking = false
     }
 
     fun add(info: AppWidgetProviderInfo) {
         val (id, alreadyBound) = viewModel.prepareBinding(info.provider)
         if (alreadyBound) {
-            viewModel.confirmAdded(id, info.provider)
-            picking = false
+            finishAdding(id, info.provider, info.configure)
             return
         }
-        pendingId = id
-        pendingProvider = info.provider
+        pending = PendingWidget(id, info.provider, info.configure)
         bindLauncher.launch(viewModel.host.bindIntent(id, info.provider))
     }
 
@@ -86,10 +121,19 @@ fun WidgetsScreen(
         modifier = modifier,
     ) {
         if (picking) {
-            listSection(key = "available", header = R.string.widgets_available_header) {
+            listSection(
+                key = "available",
+                header = R.string.widgets_available_header,
+                footer = R.string.widgets_available_footer,
+            ) {
                 providers.forEach { info ->
                     ListRow(
                         title = info.loadLabel(context.packageManager),
+                        subtitle = if (info.configure != null) {
+                            stringResource(R.string.widgets_needs_setup)
+                        } else {
+                            null
+                        },
                         leading = { ProviderIcon(info) },
                         showChevron = true,
                         showSeparator = info != providers.lastOrNull(),
@@ -138,8 +182,35 @@ fun WidgetsScreen(
                 onClick = { picking = true },
             )
         }
+
+        listSection(
+            key = "rotate",
+            header = R.string.widgets_rotate_header,
+            footer = R.string.widgets_rotate_footer,
+        ) {
+            SwitchRow(
+                title = stringResource(R.string.widgets_rotate_enabled),
+                checked = autoRotate,
+                onCheckedChange = viewModel::setAutoRotate,
+            )
+            ListRow(
+                title = stringResource(R.string.widgets_rotate_interval),
+                value = stringResource(R.string.widgets_rotate_interval_value),
+                showChevron = true,
+                enabled = false,
+                showSeparator = false,
+                onClick = null,
+            )
+        }
     }
 }
+
+/** A widget partway through being added. */
+private data class PendingWidget(
+    val id: Int,
+    val provider: ComponentName,
+    val configure: ComponentName?,
+)
 
 /** The provider's own icon, loaded as a plain view so no image library is needed. */
 @Composable
@@ -149,9 +220,7 @@ private fun ProviderIcon(info: AppWidgetProviderInfo) {
         modifier = Modifier.size(29.dp),
         factory = { ImageView(it) },
         update = { view ->
-            runCatching {
-                view.setImageDrawable(info.loadIcon(context, 0))
-            }
+            runCatching { view.setImageDrawable(info.loadIcon(context, 0)) }
         },
     )
 }
