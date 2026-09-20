@@ -26,6 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -252,7 +256,12 @@ fun SelectionRow(
     val palette = NightstandTheme.palette
     ListRow(
         title = title,
-        modifier = modifier,
+        // The checkmark is the only thing saying which one is chosen, and a
+        // drawn tick says nothing to a screen reader.
+        modifier = modifier.semantics {
+            this.selected = selected
+            role = Role.RadioButton
+        },
         subtitle = subtitle,
         showSeparator = showSeparator,
         enabled = enabled,

@@ -2,22 +2,34 @@ package com.lsk0522.nightstand.feature.standby.face
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import com.lsk0522.nightstand.core.common.model.ClockFace
 
-/** Draws whichever face the user chose. */
+/**
+ * Draws whichever face the user chose.
+ *
+ * The whole face is collapsed into one spoken line. Most of it is painted on a
+ * canvas, so a screen reader would otherwise find either nothing at all or a
+ * scatter of stray numerals from the dial — and what someone wants from a
+ * clock is the time, said once.
+ */
 @Composable
 fun ClockFaceHost(
     face: ClockFace,
     data: ClockFaceData,
     modifier: Modifier = Modifier,
 ) {
+    val spoken = data.spokenSummary()
+    val described = modifier.clearAndSetSemantics { contentDescription = spoken }
+
     when (face) {
-        ClockFace.DIGITAL -> DigitalFace(data, modifier)
-        ClockFace.ANALOG -> AnalogFace(data, modifier)
-        ClockFace.WORLD -> WorldFace(data, modifier)
-        ClockFace.SOLAR -> SolarFace(data, modifier)
-        ClockFace.FLOAT -> FloatFace(data, modifier)
-        ClockFace.MINIMAL_MONO -> MinimalMonoFace(data, modifier)
+        ClockFace.DIGITAL -> DigitalFace(data, described)
+        ClockFace.ANALOG -> AnalogFace(data, described)
+        ClockFace.WORLD -> WorldFace(data, described)
+        ClockFace.SOLAR -> SolarFace(data, described)
+        ClockFace.FLOAT -> FloatFace(data, described)
+        ClockFace.MINIMAL_MONO -> MinimalMonoFace(data, described)
     }
 }
 

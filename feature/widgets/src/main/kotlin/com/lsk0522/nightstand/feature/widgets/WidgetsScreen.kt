@@ -378,7 +378,12 @@ private fun ProviderIcon(info: AppWidgetProviderInfo) {
     val context = LocalContext.current
     AndroidView(
         modifier = Modifier.size(29.dp),
-        factory = { ImageView(it) },
+        factory = {
+            ImageView(it).apply {
+                // Decorative: the row title already names the widget.
+                importantForAccessibility = ImageView.IMPORTANT_FOR_ACCESSIBILITY_NO
+            }
+        },
         update = { view ->
             runCatching { view.setImageDrawable(info.loadIcon(context, 0)) }
         },

@@ -34,7 +34,21 @@ data class ClockFaceData(
 
     /** Whether anything at all would go in the column beside the time. */
     val hasSideColumn: Boolean get() = showDate || showsBattery
+
+    /**
+     * The face as one sentence, for a screen reader.
+     *
+     * Built from the same formatters the face draws with, so it says the time
+     * the same way the screen shows it — 24-hour if that is what was chosen,
+     * in the device's own date order.
+     */
+    fun spokenSummary(): String = buildList {
+        add(now.format(shortTimeFormatter(use24Hour)))
+        if (showDate) add(now.format(weekdayFormatter()) + " " + now.format(dateFormatter()))
+        if (showsBattery) add("$batteryPercent%")
+    }.joinToString(", ")
 }
+
 
 /**
  * Ticks the clock, waking only as often as the display actually changes.
