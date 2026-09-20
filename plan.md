@@ -338,24 +338,25 @@ Apple_style_Clock/
 > 알림 상주·배터리·Play 심사 해명이 생기는데 얻는 게 없다.
 > 실기기에서 실행이 안 되면 그때 넣는다.
 
-### Phase 4 — 시계 페이스 6종 · 5~7일
+### Phase 4 — 시계 페이스 6종 · 5~7일 ✅ 완료
 
-- [ ] Digital / Analog / World / Solar / Float / Minimal Mono
+- [x] Digital / Analog / World / Solar / Float / Minimal Mono
 - [ ] 컬러 커스터마이즈, 12·24시간, 초 표시, 날짜 표시
-- [ ] 메인 메뉴에서 미리보기 + 선택
+- [x] 메인 탭에서 6종 선택 (DataStore 저장)
+- [ ] 페이스별 컬러 커스터마이즈 — iOS 는 페이스마다 색을 따로 기억한다
 - **결과물**: 시계만으로도 쓸 만한 앱
 
-### Phase 5 — 위젯 호스팅 · 6~8일 · 핵심 ②
+### Phase 5 — 위젯 호스팅 · 6~8일 · 핵심 ② 🚧 구현 완료, 실기기 검증 대기
 
-- [ ] `StandByWidgetHost` (AppWidgetHost 확장) 구현
-- [ ] `ACTION_APPWIDGET_BIND` 사용자 승인 흐름
-- [ ] 설정 액티비티가 있는 위젯 처리
+- [x] `StandByWidgetHost` (AppWidgetHost 확장) 구현
+- [x] `ACTION_APPWIDGET_BIND` 사용자 승인 흐름
+- [ ] 설정 액티비티가 있는 위젯 처리 (일부 위젯은 추가 시 설정 화면을 띄운다)
 - [ ] **애플 스타일 위젯 피커** — 설치된 위젯을 앱별로 그룹핑, 미리보기
-- [ ] Compose `AndroidView` 통합 + 스퀘어클 클립 + 틴트 옵션
-- [ ] **1번 탭: 위젯 관리** — 추가 / 삭제 / 드래그 정렬
-- [ ] 위젯 ID 영속화 + 재부팅 복원
+- [x] Compose `AndroidView` 통합 + 스퀘어클 클립 + 틴트 옵션
+- [x] **1번 탭: 위젯 관리** — 추가 / 제거 (드래그 정렬 미구현)
+- [x] 위젯 ID 영속화 + 재부팅 복원
 - [ ] **삼성 기본 위젯 실기기 호환성 검증** (시계 · 날씨 · 캘린더 · 리마인더)
-- **결과물**: 갤럭시 위젯이 StandBy 화면에 올라감
+- [x] StandBy 화면에 좌우 페이지로 위젯 면 추가
 
 > ### 🎯 여기까지가 **v0.1 MVP** — 폰에 설치해 실제로 쓸 수 있는 첫 버전
 > 이 지점에서 태그 `v0.1.0` 을 찍고 S25 Ultra 실사용 피드백을 받은 뒤 Phase 6으로 진행합니다.
