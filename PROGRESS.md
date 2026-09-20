@@ -69,32 +69,22 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 
 ## ✅ 완료
 
-- [x] 프로젝트 기획 및 기술 조사
-- [x] `plan.md` (v0.3) · `README.md` · `PROGRESS.md` · `CLAUDE.md` 작성
-- [x] `Design.md` 작성 (Apple HIG + getdesign.md 기반 토큰 명세)
-- [x] `iOS_Design.md` 작성 (iOS 17/18 StandBy 모드 네이티브 아키텍처 및 SwiftUI 엔지니어링 전용 명세)
-- [x] `Android_StandBy_System_Architecture.md` 작성 (LTPO 1Hz, 온디바이스 안면인식, AppWidgetHost, Qi2/NFC 컨텍스트, 0.1nit 초저휘도 하드웨어 제어 심층 명세)
-- [x] 주요 결정 확정 (앱 이름 · minSdk · MVP 범위)
-- [x] GitHub 원격 연결 및 푸시 (`lsk0522/Apple_style_Clock`)
-- [x] **Phase 0** — Gradle Wrapper 9.7.1 (공식 배포본)
-- [x] **Phase 0** — Version Catalog + build-logic 컨벤션 플러그인 5종
-- [x] **Phase 0** — 10개 모듈 골격 생성
-- [x] **Phase 0** — app 매니페스트 · 권한 선언 · 어댑티브 런처 아이콘
-- [x] **Phase 0** — core:design 토큰 구현 (Squircle 연속 곡률 포함)
-- [x] **Phase 0** — Pretendard 가변 폰트 번들 (OFL, 6.7MB)
-- [x] **Phase 0** — GitHub Actions CI (빌드·테스트·린트 + APK 아티팩트)
-- [x] **Phase 0** — **AGP 9 마이그레이션 및 CI 그린 달성** 🟢
-- [x] **Phase 0** — 고정 디버그 서명키 + versionCode 자동 증가 → **업데이트 설치 동작**
+- [x] 기획 문서 일체 (plan / Design / iOS_Design / CLAUDE / README)
+- [x] **Phase 0** — Gradle 멀티 모듈 · AGP 9 · 컨벤션 플러그인 · CI
+- [x] **Phase 0** — 고정 디버그 서명키 + versionCode 자동 증가 (업데이트 설치)
+- [x] **Phase 0** — Pretendard 가변 폰트 · 디자인 토큰 · 연속 곡률 Shape
 - [x] **Phase 1** — 탭 아이콘 5종 직접 제작 (24dp 모노라인 벡터)
-- [x] **Phase 1** — NightstandTabBar + 5개 탭 골격 (feature:main)
-- [x] **Phase 1** — 앱 UI 를 iOS 디자인 언어로 재구축 (그룹 목록·라지 타이틀·스위치)- [x] **Phase 1** — iOS 27 Liquid Glass + Haze 실제 배경 블러- [x] **Phase 1** — 문서 역할 분리 (Design / iOS_Design / CLAUDE / plan)- [x] **Phase 2** — 충전 감지 엔진 (1.5초 디바운스 + 역무선충전 교차검증)- [x] **Phase 2** — DataStore 설정 영속화- [x] **Phase 2** — PowerConnectionReceiver + 백그라운드 감지 기록- [x] **Phase 2** — 충전 탭 실동작 (조건 선택 · 실시간 상태)
-- [x] **Phase 3** — StandByActivity (잠금화면 위 · 2초 지연 · 800ms 페이드인)- [x] **Phase 3** — 충전 해제 시 자동 종료, 번인 방지 픽셀 시프트, 최저 주사율- [x] **Phase 3** — 개발자 탭에서 강제 실행
-- [x] **Phase 3** — 매니페스트 리시버 폐기 → JobScheduler + 충전 중 서비스 (실기기 확인)
-- [x] **Phase 3** — 1Hz 요청 · 기본 디밍(탭 토글) — AOD 처럼 사용 가능
-- [x] **Phase 4** — 시계 페이스 6종 + 메인 탭 선택
+- [x] **Phase 1** — 앱 UI 를 iOS 디자인 언어로 구축 (그룹 목록·라지 타이틀·스위치)
+- [x] **Phase 1** — iOS 27 Liquid Glass + Haze 실제 배경 블러 · 떠 있는 캡슐 탭바
+- [x] **Phase 1** — 설정 안내 화면 (권한 딥링크, 포그라운드 복귀 시 재확인)
+- [x] **Phase 2** — 충전 감지 엔진 (디바운스 + 역무선충전 교차검증)
+- [x] **Phase 2** — DataStore 설정 영속화 · 충전 탭 실동작
+- [x] **Phase 3** — JobScheduler + 충전 중 포그라운드 서비스 → StandBy 실행
+- [x] **Phase 3** — 잠금화면 위 표시 · 2초 지연 · 800ms 페이드인 · 자동 종료
+- [x] **Phase 3** — 1Hz 요청 · 기본 디밍(탭 토글) · 번인 방지 픽셀 시프트
+- [x] **Phase 4** — 시계 페이스 6종 + 메인 탭에서 선택
 - [x] **Phase 5** — AppWidgetHost 위젯 호스팅 (피커 · 추가/제거 · 영속화)
 - [x] **Phase 5** — StandBy 화면에 위젯 면 (좌우 페이지)
-
 ---
 
 ## 🚧 진행 중
