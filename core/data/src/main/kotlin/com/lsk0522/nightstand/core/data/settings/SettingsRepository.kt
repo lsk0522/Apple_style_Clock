@@ -22,8 +22,6 @@ data class UserSettings(
     val autoRotateWidgets: Boolean = true,
     /** The first-run setup screen has been dismissed. */
     val setupSeen: Boolean = false,
-    /** User confirmed they dealt with One UI Daily Board. */
-    val dailyBoardHandled: Boolean = false,
 )
 
 @Singleton
@@ -41,7 +39,6 @@ class SettingsRepository @Inject constructor(
             burnInProtection = prefs[Keys.BURN_IN_PROTECTION] ?: true,
             autoRotateWidgets = prefs[Keys.AUTO_ROTATE_WIDGETS] ?: true,
             setupSeen = prefs[Keys.SETUP_SEEN] ?: false,
-            dailyBoardHandled = prefs[Keys.DAILY_BOARD_HANDLED] ?: false,
         )
     }
 
@@ -62,8 +59,6 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setSetupSeen(value: Boolean) = edit { it[Keys.SETUP_SEEN] = value }
 
-    suspend fun setDailyBoardHandled(value: Boolean) =
-        edit { it[Keys.DAILY_BOARD_HANDLED] = value }
 
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.nightstandDataStore.edit(block)
@@ -77,6 +72,5 @@ class SettingsRepository @Inject constructor(
         val BURN_IN_PROTECTION = booleanPreferencesKey("burn_in_protection")
         val AUTO_ROTATE_WIDGETS = booleanPreferencesKey("auto_rotate_widgets")
         val SETUP_SEEN = booleanPreferencesKey("setup_seen")
-        val DAILY_BOARD_HANDLED = booleanPreferencesKey("daily_board_handled")
     }
 }

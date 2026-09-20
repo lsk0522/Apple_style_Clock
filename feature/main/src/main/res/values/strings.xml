@@ -129,9 +129,6 @@
     <string name="setup_optional_footer">없어도 동작하지만 켜두면 더 안정적입니다.</string>
     <string name="setup_notifications">알림 허용</string>
     <string name="setup_notifications_why">충전 감시가 동작 중임을 알리는 데 사용됩니다</string>
-    <string name="setup_daily_board">삼성 Daily Board 끄기</string>
-    <string name="setup_daily_board_why">갤럭시의 충전 중 화면 표시 기능과 서로 충돌합니다</string>
-    <string name="setup_daily_board_done">껐습니다</string>
 
     <string name="setup_state_on">켜짐</string>
     <string name="setup_state_needed">필요함</string>

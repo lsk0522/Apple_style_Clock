@@ -27,7 +27,6 @@ import com.lsk0522.nightstand.core.data.system.SystemRequirementId
 import com.lsk0522.nightstand.core.design.component.IosButton
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
-import com.lsk0522.nightstand.core.design.component.SwitchRow
 import com.lsk0522.nightstand.core.design.component.listSection
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
@@ -114,34 +113,17 @@ fun SetupScreen(
             header = R.string.setup_optional_header,
             footer = R.string.setup_optional_footer,
         ) {
-            val hasDailyBoard = state.has(SystemRequirementId.SAMSUNG_DAILY_BOARD)
-
             RequirementRow(
                 requirement = state.requirement(SystemRequirementId.NOTIFICATIONS),
                 title = stringResource(R.string.setup_notifications),
                 subtitle = stringResource(R.string.setup_notifications_why),
-                showSeparator = hasDailyBoard,
+                showSeparator = false,
                 onOpen = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
                 },
             )
-
-            if (hasDailyBoard) {
-                ListRow(
-                    title = stringResource(R.string.setup_daily_board),
-                    subtitle = stringResource(R.string.setup_daily_board_why),
-                    showChevron = true,
-                    onClick = { open(SystemRequirementId.SAMSUNG_DAILY_BOARD) },
-                )
-                SwitchRow(
-                    title = stringResource(R.string.setup_daily_board_done),
-                    checked = state.isSatisfied(SystemRequirementId.SAMSUNG_DAILY_BOARD),
-                    onCheckedChange = viewModel::setDailyBoardHandled,
-                    showSeparator = false,
-                )
-            }
         }
 
         item(key = "continue") {

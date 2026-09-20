@@ -23,9 +23,6 @@ enum class SystemRequirementId {
 
     /** Needed once the charging service posts its ongoing notification. */
     NOTIFICATIONS,
-
-    /** One UI already has a charging display; two of them fight. */
-    SAMSUNG_DAILY_BOARD,
 }
 
 data class SystemRequirement(
@@ -47,9 +44,6 @@ data class SystemRequirement(
 class SystemRequirements @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) {
-    val isSamsung: Boolean =
-        Build.MANUFACTURER.equals("samsung", ignoreCase = true)
-
     fun canDrawOverlays(): Boolean = Settings.canDrawOverlays(context)
 
     fun isIgnoringBatteryOptimizations(): Boolean {
@@ -68,11 +62,7 @@ class SystemRequirements @Inject constructor(
             true
         }
 
-    /**
-     * @param dailyBoardHandled the user's own confirmation — One UI exposes no
-     *   way to read whether Daily Board is on, so this one has to be asked.
-     */
-    fun check(dailyBoardHandled: Boolean): List<SystemRequirement> = buildList {
+    fun check(): List<SystemRequirement> = buildList {
         add(
             SystemRequirement(
                 id = SystemRequirementId.OVERLAY,
@@ -94,15 +84,6 @@ class SystemRequirements @Inject constructor(
                 isRequired = false,
             ),
         )
-        if (isSamsung) {
-            add(
-                SystemRequirement(
-                    id = SystemRequirementId.SAMSUNG_DAILY_BOARD,
-                    isSatisfied = dailyBoardHandled,
-                    isRequired = false,
-                ),
-            )
-        }
     }
 
     /**
@@ -124,10 +105,6 @@ class SystemRequirements @Inject constructor(
         )
 
         SystemRequirementId.NOTIFICATIONS -> null // runtime permission
-
-        // One UI publishes no deep link for Daily Board, so Display settings is
-        // the closest the app can get the user.
-        SystemRequirementId.SAMSUNG_DAILY_BOARD -> Intent(Settings.ACTION_DISPLAY_SETTINGS)
     }
 
     /** Used when [settingsIntent] is refused by the device. */

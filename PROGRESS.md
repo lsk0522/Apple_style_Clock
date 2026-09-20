@@ -101,7 +101,7 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 
 1. **[사용자]** 실기기 검증 — 아래 "Phase 2 검증 항목"
 2. **Phase 3** — `ChargingMonitorService` (포그라운드, specialUse)
-3. **Phase 3** — 오버레이 권한 + 삼성 절전 예외 + Daily Board 끄기 온보딩
+3. **Phase 3** — 오버레이 권한 + 삼성 절전 예외 온보딩
 4. **Phase 3** — `StandByActivity` — 잠금화면 위 표시, 2초 지연 → 800ms 페이드인
 5. **Phase 3** — `DreamService` 보조 경로
 6. **Phase 4** — 시계 페이스 6종

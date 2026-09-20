@@ -113,7 +113,7 @@ rounded:
   xs: 6px
   sm: 10px
   md: 16px
-  list-card: 18px       # 앱 UI 그룹 목록 카드 (iOS 26 에서 10 -> 커짐)
+  list-card: 26px       # 앱 UI 그룹 목록 카드 (iOS 26 에서 10 -> 커짐)
   widget-tile: 22px     # StandBy / 홈 위젯 타일
   panel: 32px
   pill: 9999px          # 떠 있는 탭바, 캡슐 버튼
@@ -181,7 +181,7 @@ motion:
 | 테마 | 시스템 라이트/다크 추종 | **항상 어둡다** (+ 야간 적색 모드) |
 | 바탕 | `#F2F2F7` / `#000000` | 항상 `#000000` |
 | 카드 | `#FFFFFF` / `#1C1C1E` | `#1C1C1E` 타일 |
-| 곡률 | `list-card` 18px | `widget-tile` 22px |
+| 곡률 | `list-card` 26px | `widget-tile` 22px |
 | 여백 | `list-inset` 16px | `screen-margin` 32px |
 | 코드 | `NightstandTheme` / `NightstandColor.Ios` | `StandbyTheme` / `NightstandColor.Standby` |
 

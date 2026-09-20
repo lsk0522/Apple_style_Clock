@@ -55,7 +55,7 @@ class SetupViewModel @Inject constructor(
             refreshes,
         ) { settings, _ ->
             SetupUiState(
-                requirements = requirements.check(settings.dailyBoardHandled),
+                requirements = requirements.check(),
                 setupSeen = settings.setupSeen,
                 appVersion = appVersion.display,
             )
@@ -63,7 +63,7 @@ class SetupViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
             initialValue = SetupUiState(
-                requirements = requirements.check(false),
+                requirements = requirements.check(),
                 appVersion = appVersion.display,
             ),
         )
@@ -96,9 +96,6 @@ class SetupViewModel @Inject constructor(
         viewModelScope.launch { repository.setSetupSeen(false) }
     }
 
-    fun setDailyBoardHandled(value: Boolean) {
-        viewModelScope.launch { repository.setDailyBoardHandled(value) }
-    }
 
     /** The system screen for [id], or null when it is a runtime permission. */
     fun settingsIntent(id: SystemRequirementId): Intent? = requirements.settingsIntent(id)

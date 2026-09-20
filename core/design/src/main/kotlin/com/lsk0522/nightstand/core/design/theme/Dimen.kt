@@ -30,8 +30,14 @@ object Radius {
     val sm: Dp = 10.dp
     val md: Dp = 16.dp
 
-    /** App UI grouped list card. iOS 26 grew this from 10. */
-    val listCard: Dp = 18.dp
+    /**
+     * App UI grouped list card.
+     *
+     * iOS 26 grew this well past the old 10pt so corners sit concentric with
+     * the display curve. 26 also matches what the app looked like before the
+     * squircle maths was fixed, which is the roundness that was preferred.
+     */
+    val listCard: Dp = 26.dp
 
     /** StandBy / home-screen widget tile. */
     val widgetTile: Dp = 22.dp
