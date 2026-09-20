@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.core.design.theme.NightstandType
 import kotlin.math.cos
-import kotlin.math.min
 import kotlin.math.sin
 
 /**
@@ -37,7 +36,7 @@ fun AnalogFace(data: ClockFaceData, modifier: Modifier = Modifier) {
     val palette = NightstandTheme.standby
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-        val dial = min(maxWidth, maxHeight) - Margin * 2
+        val dial = minOf(maxWidth, maxHeight) - Margin * 2
 
         Row(
             modifier = Modifier
