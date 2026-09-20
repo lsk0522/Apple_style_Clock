@@ -9,9 +9,9 @@
 
 | | |
 |---|---|
-| **진행 중 Phase** | **Phase 2 완료 ✅** — 다음은 Phase 3 (StandBy 화면 실행) |
+| **진행 중 Phase** | **Phase 3** — StandBy 실행 구현 완료, 실기기 검증 대기 |
 | **마지막 갱신** | 2026-09-20 |
-| **마지막 커밋** | feat(charging): Phase 2 — 충전 감지 엔진과 설정 영속화 |
+| **마지막 커밋** | feat(standby): Phase 3 — 충전 감지 시 StandBy 화면 실행 |
 | **빌드 상태** | 🟢 **CI 그린** — 빌드·단위테스트·린트 통과, 디버그 APK 14MB 생성 |
 | **다음 마일스톤** | **v0.1 MVP = Phase 0~5** (약 3주) |
 
@@ -88,6 +88,7 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 - [x] **Phase 1** — 탭 아이콘 5종 직접 제작 (24dp 모노라인 벡터)
 - [x] **Phase 1** — NightstandTabBar + 5개 탭 골격 (feature:main)
 - [x] **Phase 1** — 앱 UI 를 iOS 디자인 언어로 재구축 (그룹 목록·라지 타이틀·스위치)- [x] **Phase 1** — iOS 27 Liquid Glass + Haze 실제 배경 블러- [x] **Phase 1** — 문서 역할 분리 (Design / iOS_Design / CLAUDE / plan)- [x] **Phase 2** — 충전 감지 엔진 (1.5초 디바운스 + 역무선충전 교차검증)- [x] **Phase 2** — DataStore 설정 영속화- [x] **Phase 2** — PowerConnectionReceiver + 백그라운드 감지 기록- [x] **Phase 2** — 충전 탭 실동작 (조건 선택 · 실시간 상태)
+- [x] **Phase 3** — StandByActivity (잠금화면 위 · 2초 지연 · 800ms 페이드인)- [x] **Phase 3** — 충전 해제 시 자동 종료, 번인 방지 픽셀 시프트, 최저 주사율- [x] **Phase 3** — 개발자 탭에서 강제 실행
 
 ---
 
@@ -99,12 +100,11 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 
 ## 다음 할 일 (우선순위 순)
 
-1. **[사용자]** 실기기 검증 — 아래 "Phase 2 검증 항목"
-2. **Phase 3** — `ChargingMonitorService` (포그라운드, specialUse)
-3. **Phase 3** — 오버레이 권한 + 삼성 절전 예외 온보딩
-4. **Phase 3** — `StandByActivity` — 잠금화면 위 표시, 2초 지연 → 800ms 페이드인
-5. **Phase 3** — `DreamService` 보조 경로
-6. **Phase 4** — 시계 페이스 6종
+1. **[사용자]** **Phase 3 검증** — 아래 표, 특히 2번
+2. **Phase 3** — `DreamService` 보조 경로 (오버레이 권한 거부한 사용자용)
+3. **Phase 4** — 시계 페이스 6종 (지금은 Digital 하나)
+4. **Phase 5** — AppWidgetHost 위젯 호스팅
+5. **Phase 7** — 조도 센서 · 야간 적색 모드 · 밝기 제어 (Phase 3에서 이월)
 
 ---
 
@@ -122,6 +122,25 @@ plugins { alias(libs.plugins.nightstand.android.library) }   // core 모듈
 | 8 | 설정 스위치 변경 → 앱 강제 종료 → 재실행 | 값 유지 |
 
 > **4번과 5번이 이 엔진의 핵심**입니다. 나머지는 단순 조회라 거의 확실합니다.
+
+---
+
+## Phase 3 검증 항목 (S25 Ultra) — 가장 중요
+
+| # | 확인할 것 | 기대 결과 |
+|---|---|---|
+| 1 | 개발자 탭 → **StandBy 강제 실행** | 시계 화면이 바로 열림 (충전기 불필요) |
+| 2 | 화면 끄고 **무선 패드에 올리기** | **2초 뒤** 화면이 켜지며 시계가 서서히 나타남 |
+| 3 | 잠금 상태에서 2번 반복 | 잠금화면 **위에** 뜨고 잠금은 풀리지 않음 |
+| 4 | 조건 "무선만" + **케이블** 연결 | 아무 일도 일어나지 않음 |
+| 5 | 시계가 떠 있을 때 **충전 해제** | 자동으로 닫힘 |
+| 6 | 꽂자마자 **2초 안에 다시 뽑기** | 시계가 뜨지 않음 |
+| 7 | 시계 화면 **두 번 탭** | 닫힘 |
+| 8 | 시계 화면 몇 분 켜두기 | 화면이 꺼지지 않음 |
+
+> **2번이 프로젝트 전체의 관문입니다.** 안 되면 먼저 오버레이 권한 상태를
+> 확인하고(메인 탭 → 동작에 필요한 설정), 그래도 안 되면 포그라운드 서비스를
+> 넣어야 한다는 신호입니다.
 
 ---
 
