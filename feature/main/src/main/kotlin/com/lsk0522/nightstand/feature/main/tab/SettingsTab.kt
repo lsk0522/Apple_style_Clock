@@ -124,7 +124,7 @@ fun SettingsTab(
         ) {
             ListRow(
                 title = stringResource(R.string.settings_about_version),
-                value = APP_VERSION,
+                value = setupState.appVersion,
             )
             ListRow(
                 title = stringResource(R.string.settings_about_licenses),
@@ -142,7 +142,3 @@ fun SettingsTab(
         }
     }
 }
-
-// TODO(next): Phase 11 — surface the real versionName from the app module
-// rather than repeating it here.
-private const val APP_VERSION = "0.1.0"

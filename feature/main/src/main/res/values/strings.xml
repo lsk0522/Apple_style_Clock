@@ -95,6 +95,7 @@
     <string name="developer_export">설정 내보내기</string>
     <string name="developer_footer">Phase 8에서 구현됩니다.</string>
     <string name="developer_build_header">빌드</string>
+    <string name="developer_version">설치된 빌드</string>
     <string name="developer_build_type">빌드 종류</string>
     <string name="developer_min_sdk">최소 지원</string>
 

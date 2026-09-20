@@ -1,15 +1,24 @@
 package com.lsk0522.nightstand.feature.main.tab
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
 import com.lsk0522.nightstand.core.design.component.IosScreen
 import com.lsk0522.nightstand.core.design.component.ListRow
 import com.lsk0522.nightstand.core.design.component.listSection
 import com.lsk0522.nightstand.feature.main.R
+import com.lsk0522.nightstand.feature.main.setup.SetupViewModel
 
 @Composable
-fun DeveloperTab(modifier: Modifier = Modifier) {
+fun DeveloperTab(
+    modifier: Modifier = Modifier,
+    setupViewModel: SetupViewModel = hiltViewModel(),
+) {
+    val state by setupViewModel.uiState.collectAsStateWithLifecycle()
+
     IosScreen(
         title = stringResource(R.string.developer_title),
         modifier = modifier,
@@ -70,6 +79,10 @@ fun DeveloperTab(modifier: Modifier = Modifier) {
             key = "build",
             header = R.string.developer_build_header,
         ) {
+            ListRow(
+                title = stringResource(R.string.developer_version),
+                value = state.appVersion,
+            )
             ListRow(
                 title = stringResource(R.string.developer_build_type),
                 value = "debug",

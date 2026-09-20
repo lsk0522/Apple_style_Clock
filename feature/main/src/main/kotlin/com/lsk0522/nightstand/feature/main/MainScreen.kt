@@ -49,9 +49,20 @@ fun MainScreen(
     // user sees is the screen that walks them there -- not a menu whose
     // options quietly would not work yet.
     val showSetup by setupViewModel.showSetup.collectAsStateWithLifecycle()
-    if (showSetup) {
-        SetupScreen(onDone = { }, modifier = modifier, viewModel = setupViewModel)
-        return
+    when (showSetup) {
+        // Still reading the stored flag: hold on the plain background rather
+        // than flashing a UI we may be about to replace.
+        null -> {
+            Box(modifier = modifier.fillMaxSize().background(palette.groupedBackground))
+            return
+        }
+
+        true -> {
+            SetupScreen(onDone = { }, modifier = modifier, viewModel = setupViewModel)
+            return
+        }
+
+        else -> Unit
     }
     var selectedIndex by rememberSaveable { mutableIntStateOf(MAIN_TAB_INDEX) }
 

@@ -3,6 +3,7 @@ package com.lsk0522.nightstand.feature.main.setup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lsk0522.nightstand.core.data.settings.SettingsRepository
+import com.lsk0522.nightstand.core.data.system.AppVersion
 import com.lsk0522.nightstand.core.data.system.SystemRequirement
 import com.lsk0522.nightstand.core.data.system.SystemRequirementId
 import android.content.Intent
@@ -20,6 +21,8 @@ import kotlinx.coroutines.launch
 data class SetupUiState(
     val requirements: List<SystemRequirement> = emptyList(),
     val setupSeen: Boolean = true,
+    /** The build running on the device, so it can be verified at a glance. */
+    val appVersion: String = "",
 ) {
     val blockingCount: Int get() = requirements.count { it.isRequired && !it.isSatisfied }
 
@@ -36,6 +39,7 @@ data class SetupUiState(
 class SetupViewModel @Inject constructor(
     private val repository: SettingsRepository,
     private val requirements: SystemRequirements,
+    private val appVersion: AppVersion,
 ) : ViewModel() {
 
     /**
@@ -53,20 +57,31 @@ class SetupViewModel @Inject constructor(
             SetupUiState(
                 requirements = requirements.check(settings.dailyBoardHandled),
                 setupSeen = settings.setupSeen,
+                appVersion = appVersion.display,
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = SetupUiState(requirements = requirements.check(false)),
+            initialValue = SetupUiState(
+                requirements = requirements.check(false),
+                appVersion = appVersion.display,
+            ),
         )
 
-    /** Whether the first-run screen should stand in front of the app. */
-    val showSetup: StateFlow<Boolean> = repository.settings
+    /**
+     * Whether the first-run screen should stand in front of the app.
+     *
+     * Null until the stored value has actually been read. Defaulting to false
+     * would show the tab bar for a frame and then yank it away, which reads as
+     * a glitch -- and worse, invites the user to start tapping options that do
+     * not work yet.
+     */
+    val showSetup: StateFlow<Boolean?> = repository.settings
         .map { !it.setupSeen }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = false,
+            initialValue = null,
         )
 
     fun refresh() {

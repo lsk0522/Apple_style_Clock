@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Assemble debug APK
@@ -42,22 +45,44 @@ jobs:
         run: ./gradlew lintDebug --stacktrace
         continue-on-error: true
 
-      # The debug APK is published as an artifact so the project can be
-      # installed on a test device even when no local Android SDK is available.
+      - name: Name the build
+        id: name
+        run: echo "apk=nightstand-${{ github.run_number }}-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      # Named after the run so a downloaded file is identifiable, and uploaded
+      # only when the build actually succeeded. An artifact hanging off a
+      # failed or cancelled run is worse than none, because it still looks
+      # current in the Actions list.
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: nightstand-debug-apk
+          name: ${{ steps.name.outputs.apk }}
           path: app/build/outputs/apk/debug/*.apk
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 30
+
+      # One stable link that always points at the newest working build, so
+      # there is never a question of which run to download from.
+      - name: Publish rolling debug release
+        if: github.ref == 'refs/heads/main_code' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/debug/*.apk "${{ steps.name.outputs.apk }}.apk"
+          gh release delete latest-debug --cleanup-tag --yes || true
+          gh release create latest-debug \
+            --title "최신 개발 빌드 (#${{ github.run_number }})" \
+            --notes "빌드 번호 ${{ github.run_number }} · 커밋 ${{ github.sha }}
+
+설치 후 **개발자 탭 → 설치된 빌드**에서 지금 돌고 있는 버전을 확인할 수 있습니다." \
+            --prerelease \
+            "${{ steps.name.outputs.apk }}.apk"
 
       - name: Upload reports on failure
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: build-reports
+          name: build-reports-${{ github.run_number }}
           path: |
             **/build/reports/
             **/build/outputs/logs/
