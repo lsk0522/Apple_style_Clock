@@ -1,6 +1,7 @@
 package com.lsk0522.nightstand.feature.standby
 
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,8 +15,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.lsk0522.nightstand.core.design.theme.StandbyTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Hosts the StandBy clock.
@@ -33,6 +38,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class StandByActivity : ComponentActivity() {
 
+    /** Mirrors the Compose dim state so the touch handler can read it. */
+    private var dimmed = true
+
+    /** True unless something on screen is animating continuously. */
+    private var lowRefreshAllowed = true
+
+    private var idleJob: Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
@@ -40,7 +53,6 @@ class StandByActivity : ComponentActivity() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         goFullscreen()
-        requestLowRefreshRate()
 
         setContent {
             val viewModel: StandByViewModel = hiltViewModel()
@@ -48,8 +60,13 @@ class StandByActivity : ComponentActivity() {
 
             // Starts dimmed so the clock can be left on all night the way an
             // always-on display is; a tap brings it back to normal.
-            var dimmed by remember { mutableStateOf(true) }
-            LaunchedEffect(dimmed) { applyBrightness(dimmed) }
+            var dim by remember { mutableStateOf(true) }
+
+            // A sweeping second hand redraws every frame, so the panel must
+            // not be parked while one is on screen.
+            LaunchedEffect(dim, state.showSeconds) {
+                applyDim(dim, allowLowRefresh = !state.showSeconds)
+            }
 
             // Charging stopped, or stopped matching what the user asked for.
             // Null means the first reading has not arrived yet, so it must not
@@ -63,11 +80,23 @@ class StandByActivity : ComponentActivity() {
                 StandByScreen(
                     state = state,
                     host = viewModel.widgetHost,
-                    onSingleTap = { dimmed = !dimmed },
+                    onSingleTap = { dim = !dim },
                     onExit = ::finish,
                 )
             }
         }
+    }
+
+    /**
+     * Any touch pulls the panel back up to full speed.
+     *
+     * Without this a swipe is drawn at one frame per second, because the
+     * window is still asking for the rate it idles at. The gesture is then
+     * unusable — which is exactly what asking for 1Hz unconditionally did.
+     */
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        wake()
+        return super.dispatchTouchEvent(event)
     }
 
     /** Nothing but the clock; the system bars would only add clutter. */
@@ -80,33 +109,69 @@ class StandByActivity : ComponentActivity() {
         }
     }
 
+    private fun applyDim(dim: Boolean, allowLowRefresh: Boolean) {
+        dimmed = dim
+        lowRefreshAllowed = allowLowRefresh
+
+        window.attributes = window.attributes.apply {
+            screenBrightness = if (dim) DIM_BRIGHTNESS else BRIGHT_BRIGHTNESS
+        }
+
+        if (dim) {
+            // Settling back down: let the idle timer decide, so the tap that
+            // dimmed it is not itself drawn at 1Hz.
+            wake()
+        } else {
+            idleJob?.cancel()
+            requestRefreshRate(low = false)
+        }
+    }
+
     /**
-     * Asks the panel to idle as slowly as it can.
+     * Full speed now, and back down once the screen has been left alone.
+     *
+     * The delay is what makes the panel usable and still lets it park: a
+     * gesture is a burst of events, and dropping the rate between two of them
+     * would stutter the very thing being touched.
+     */
+    private fun wake() {
+        requestRefreshRate(low = false)
+        idleJob?.cancel()
+        if (!dimmed || !lowRefreshAllowed) return
+        idleJob = lifecycleScope.launch {
+            delay(IDLE_BEFORE_PARKING_MILLIS)
+            requestRefreshRate(low = true)
+        }
+    }
+
+    /**
+     * Asks the panel to idle as slowly as it can, or to stop asking.
      *
      * Requesting 1Hz outright rather than the slowest mode the display
      * advertises: an LTPO panel like the S25 Ultra's can hold a single frame
      * for a second, but it does not publish that as a `Display.Mode`, so
-     * picking from `supportedModes` only ever gets down to 60Hz. The system
-     * clamps this to whatever it can actually do.
+     * picking from `supportedModes` only ever gets down to 60Hz. Zero means no
+     * preference at all, which hands the choice back to the system.
      *
      * The other half of this is in the screen itself — it only recomposes when
      * a digit changes. A view that redrew every frame would hold the refresh
      * rate up no matter what the window asked for.
      */
-    private fun requestLowRefreshRate() {
-        window.attributes = window.attributes.apply {
-            preferredRefreshRate = TARGET_REFRESH_HZ
-        }
-    }
-
-    private fun applyBrightness(dimmed: Boolean) {
-        window.attributes = window.attributes.apply {
-            screenBrightness = if (dimmed) DIM_BRIGHTNESS else BRIGHT_BRIGHTNESS
-        }
+    private fun requestRefreshRate(low: Boolean) {
+        val target = if (low) IDLE_REFRESH_HZ else SYSTEM_CHOOSES
+        if (window.attributes.preferredRefreshRate == target) return
+        window.attributes = window.attributes.apply { preferredRefreshRate = target }
     }
 
     private companion object {
-        const val TARGET_REFRESH_HZ = 1f
+        /** What the panel is asked to hold while the clock just sits there. */
+        const val IDLE_REFRESH_HZ = 1f
+
+        /** No preference: the system picks, which is what interaction needs. */
+        const val SYSTEM_CHOOSES = 0f
+
+        /** Long enough to outlast a gesture, short enough to still save power. */
+        const val IDLE_BEFORE_PARKING_MILLIS = 3_000L
 
         /** Readable in a dark room without lighting it up. */
         const val DIM_BRIGHTNESS = 0.25f
