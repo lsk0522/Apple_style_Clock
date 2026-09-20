@@ -1,9 +1,20 @@
 name: Build
 
+# Documentation-only pushes must not produce a build. They would bump the
+# build number and republish a byte-identical APK, which makes it impossible
+# to tell which download actually contains a change.
 on:
   push:
     branches: [main, main_code]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - LICENSE
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - LICENSE
   workflow_dispatch:
 
 concurrency:
