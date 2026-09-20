@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.nightstand.android.application)
     alias(libs.plugins.nightstand.android.compose)
@@ -20,7 +22,7 @@ val buildNumber = providers.environmentVariable("GITHUB_RUN_NUMBER")
  * shipping something signed with the public debug key.
  */
 val keystoreProperties = rootProject.file("keystore.properties").takeIf { it.exists() }
-    ?.let { file -> java.util.Properties().apply { file.inputStream().use(::load) } }
+    ?.let { file -> Properties().apply { file.inputStream().use { load(it) } } }
 
 fun releaseSecret(key: String, environmentName: String): String? =
     keystoreProperties?.getProperty(key)
