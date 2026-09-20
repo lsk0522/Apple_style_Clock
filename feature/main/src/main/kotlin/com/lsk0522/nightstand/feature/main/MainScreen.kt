@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.using
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -111,7 +110,7 @@ fun MainScreen(
                         fadeOut(NightstandMotion.tabSwap()) + slideOutHorizontally(
                             NightstandMotion.tabSwap(),
                         ) { width -> if (forward) -travel(width) else travel(width) }
-                        ) using null
+                        )
                 },
                 label = "tabPane",
             ) { index ->
