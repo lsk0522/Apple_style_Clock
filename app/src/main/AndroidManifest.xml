@@ -19,7 +19,6 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!-- TODO(next): Phase 5 — READ_CALENDAR (캘린더 위젯) -->
-    <!-- TODO(next): Phase 9 — com.android.vending.BILLING (후원) -->
 
     <!-- Night mode reads the room's light level. Not required: a phone
          without one simply never switches to the red palette, and Play

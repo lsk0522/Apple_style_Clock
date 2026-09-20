@@ -33,6 +33,8 @@ import com.lsk0522.nightstand.core.design.theme.SquircleShape
  * Material's `AlertDialog` puts its actions in a right-aligned row at the
  * bottom, which is the one detail that gives an imitation away immediately.
  *
+ * @param cancelLabel null for a one-button alert -- an acknowledgement,
+ *   where there is nothing to decline.
  * @param confirmIsDestructive draws the confirming action in red, for choices
  *   that lose something.
  */
@@ -41,7 +43,7 @@ fun IosAlert(
     title: String,
     message: String,
     confirmLabel: String,
-    cancelLabel: String,
+    cancelLabel: String? = null,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     confirmIsDestructive: Boolean = false,
@@ -80,18 +82,20 @@ fun IosAlert(
             Hairline()
 
             Row(modifier = Modifier.height(IntrinsicSize.Min)) {
-                AlertAction(
-                    label = cancelLabel,
-                    emphasised = false,
-                    onClick = onDismiss,
-                    modifier = Modifier.weight(1f),
-                )
-                Box(
-                    Modifier
-                        .width(HAIRLINE)
-                        .fillMaxHeight()
-                        .background(palette.separator),
-                )
+                if (cancelLabel != null) {
+                    AlertAction(
+                        label = cancelLabel,
+                        emphasised = false,
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Box(
+                        Modifier
+                            .width(HAIRLINE)
+                            .fillMaxHeight()
+                            .background(palette.separator),
+                    )
+                }
                 AlertAction(
                     label = confirmLabel,
                     emphasised = true,

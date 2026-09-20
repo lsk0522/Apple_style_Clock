@@ -191,16 +191,6 @@
     <string name="developer_build_type">빌드 종류</string>
     <string name="developer_min_sdk">최소 지원</string>
 
-    <!-- 후원 탭 -->
-    <string name="donate_title">후원</string>
-    <string name="donate_intro_header">고맙습니다</string>
-    <string name="donate_intro">이 앱은 광고도 구독도 없습니다.\n마음이 동하실 때만 후원해 주세요.</string>
-    <string name="donate_items_header">후원하기</string>
-    <string name="donate_coffee">커피 한 잔</string>
-    <string name="donate_meal">밥 한 끼</string>
-    <string name="donate_generous">든든한 후원</string>
-    <string name="donate_preparing">준비 중</string>
-    <string name="donate_footer">Google Play 결제로 진행되며 Phase 9에서 연결됩니다.</string>
 
     <!-- 공통 -->
     <!-- 초침을 켤 때 뜨는 경고 -->

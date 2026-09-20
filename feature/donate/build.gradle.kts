@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "com.lsk0522.nightstand.feature.donate"
 }
+
+dependencies {
+    implementation(libs.billing.ktx)
+}

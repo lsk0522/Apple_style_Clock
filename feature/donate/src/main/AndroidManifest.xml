@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Declared here rather than in :app, the same as the charging module's
+         permissions: the module that needs it is the module that asks for it,
+         so removing the feature removes the permission with it. The Play
+         Billing library declares this too; the merger dedupes. -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+</manifest>

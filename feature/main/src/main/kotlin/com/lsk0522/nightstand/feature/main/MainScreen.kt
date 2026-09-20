@@ -29,8 +29,8 @@ import com.lsk0522.nightstand.core.design.theme.NightstandMotion
 import com.lsk0522.nightstand.core.design.theme.NightstandTheme
 import com.lsk0522.nightstand.feature.main.tab.ChargingTab
 import com.lsk0522.nightstand.feature.main.tab.DeveloperTab
-import com.lsk0522.nightstand.feature.main.tab.DonateTab
 import com.lsk0522.nightstand.feature.main.tab.SettingsTab
+import com.lsk0522.nightstand.feature.donate.DonateScreen
 import com.lsk0522.nightstand.feature.widgets.WidgetsScreen
 import com.lsk0522.nightstand.feature.main.setup.SetupScreen
 import com.lsk0522.nightstand.feature.main.setup.SetupViewModel
@@ -119,7 +119,7 @@ fun MainScreen(
                     1 -> ChargingTab()
                     2 -> SettingsTab()
                     3 -> DeveloperTab()
-                    else -> DonateTab()
+                    else -> DonateScreen()
                 }
             }
         }
