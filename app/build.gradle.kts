@@ -10,6 +10,33 @@ plugins {
 val buildNumber = providers.environmentVariable("GITHUB_RUN_NUMBER")
     .orNull?.toIntOrNull() ?: 1
 
+/**
+ * Release signing, from a file or from the environment — never from the repo.
+ *
+ * `keystore.properties` is for signing on a developer's own machine and is
+ * gitignored; CI has no such file and reads the same four values out of
+ * secrets instead. When neither is present the release build simply has no
+ * signing config, which fails loudly at assemble time rather than quietly
+ * shipping something signed with the public debug key.
+ */
+val keystoreProperties = rootProject.file("keystore.properties").takeIf { it.exists() }
+    ?.let { file -> java.util.Properties().apply { file.inputStream().use(::load) } }
+
+fun releaseSecret(key: String, environmentName: String): String? =
+    keystoreProperties?.getProperty(key)
+        ?: providers.environmentVariable(environmentName).orNull
+
+val releaseStorePath = releaseSecret("storeFile", "NIGHTSTAND_KEYSTORE")
+val releaseStorePassword = releaseSecret("storePassword", "NIGHTSTAND_STORE_PASSWORD")
+val releaseKeyAlias = releaseSecret("keyAlias", "NIGHTSTAND_KEY_ALIAS")
+val releaseKeyPassword = releaseSecret("keyPassword", "NIGHTSTAND_KEY_PASSWORD")
+val canSignRelease = listOf(
+    releaseStorePath,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+).all { !it.isNullOrBlank() }
+
 android {
     namespace = "com.lsk0522.nightstand"
 
@@ -34,6 +61,15 @@ android {
             keyAlias = "nightstand-debug"
             keyPassword = "nightstand"
         }
+
+        if (canSignRelease) {
+            create("release") {
+                storeFile = file(releaseStorePath!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
     }
 
     buildTypes {
@@ -49,8 +85,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            // TODO(next): Phase 11 — wire release signing from keystore.properties
-            signingConfig = signingConfigs.getByName("debug")
+            // Left unsigned when no key is configured. Falling back to the
+            // debug key would produce a release build signed with a key whose
+            // password is printed in this file, and Play would accept it once
+            // and then own that identity forever.
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 

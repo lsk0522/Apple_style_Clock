@@ -106,3 +106,9 @@ jobs:
       # already uploaded and released by this point.
       - name: Lint
         run: ./gradlew lintDebug --stacktrace
+
+      # The release build is the one R8 actually runs on, and R8 config errors
+      # do not show up in a debug build at all. Unsigned is fine here — the
+      # point is that shrinking completes and nothing is missing.
+      - name: Assemble release (unsigned)
+        run: ./gradlew assembleRelease --stacktrace
